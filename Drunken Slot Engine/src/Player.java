@@ -8,17 +8,23 @@ public class Player
 	private boolean active = true;
 	private int shots = 0;
 	private int schluecke = 0;
-	
+	private int playerSymbol;
 	public Player(int id, String name, Image image)
 	{
 		this.id = id;
 		this.name = name;
 		this.image = image;
+		playerSymbol = id + 7;
 	}
 
 	public int getId() 
 	{
 		return id;
+	}
+	
+	public int getPlayerSymbol()
+	{
+		return playerSymbol;
 	}
 
 	public String getName() 
