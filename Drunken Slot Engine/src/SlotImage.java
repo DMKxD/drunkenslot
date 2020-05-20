@@ -19,4 +19,14 @@ public class SlotImage
 		}
 		return -1;
 	}
+	
+	public int getLengthX()
+	{
+		return values.length;
+	}
+	
+	public int getLengthY()
+	{
+		return values[0].length;
+	}
 }

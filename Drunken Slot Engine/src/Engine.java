@@ -54,4 +54,26 @@ public class Engine implements GameModel
 	{
 		
 	}
+	
+	public void printSlot(SlotImage si)
+	{
+		System.out.println("\n");
+		for(int y = 0; y < si.getLengthY(); y ++)
+		{
+			String line = "[";
+			for(int x = 0; x < si.getLengthX(); x ++)
+			{
+				if(x < (si.getLengthX() - 1))
+				{
+					line += si.get(x, y)+" ";
+				}
+				else
+				{
+					line += si.get(x, y);
+				}
+			}
+			line +="]";
+			System.out.println(line);
+		}
+	}
 }
