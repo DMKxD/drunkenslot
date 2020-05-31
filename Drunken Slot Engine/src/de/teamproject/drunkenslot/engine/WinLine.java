@@ -86,6 +86,10 @@ public class WinLine
 			{
 				return false;
 			}
+			else if(symbol == 5)//Scatter Win Line
+			{
+				return false;
+			}
 			return true;
 		}
 		return false;
@@ -127,31 +131,31 @@ public class WinLine
 			switch(symbol)
 			{
 		        case 0:
-		        	win.setPlayerID(getPlayer()-7);
+		        	win.setPlayerID(getPlayer()-8);
 		        	win.setAmount(length -2);
 		        	win.setShots(true);
 		        	win.setDistribute(true);
 		            break;
 		        case 1:
-		        	win.setPlayerID(getPlayer()-7);
+		        	win.setPlayerID(getPlayer()-8);
 		        	win.setAmount(length -2);
 		        	win.setShots(false);
 		        	win.setDistribute(true);
 		            break;
 		        case 2:
-		        	win.setPlayerID(getPlayer()-7);
+		        	win.setPlayerID(getPlayer()-8);
 		        	win.setAmount(length -2);
 		        	win.setShots(true);
 		        	win.setDistribute(false);
 		            break;
 		        case 3:
-		        	win.setPlayerID(getPlayer()-7);
+		        	win.setPlayerID(getPlayer()-8);
 		        	win.setAmount(length -2);
 		        	win.setShots(false);
 		        	win.setDistribute(false);
 		            break;
 		        case 4:
-		        	win.setPlayerID(getPlayer()-7);
+		        	win.setPlayerID(getPlayer()-8);
 		        	win.setRule(true);
 		            break;
 		        case 5:
@@ -159,7 +163,7 @@ public class WinLine
 		            //TODO Nichts da scatter?
 		            break;
 		        default://Bei AllPlayerSymbol oder nur Wilds
-		        	win.setPlayerID(getPlayer()-7);
+		        	win.setPlayerID(getPlayer()-8);
 		        	win.setAmount(length -2);
 		        	win.setShots(true);
 		        	win.setDistribute(true);

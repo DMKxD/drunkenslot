@@ -7,7 +7,7 @@ public class DSEngineMain
 		Engine engine = new Engine();
 		engine.createPlayer(engine.getID(), "Dominik", null);
 		engine.createPlayer(engine.getID(), "Jonas", null);
-		engine.createSlotMachine();
+		engine.createGame();
 		SlotImage si = engine.roll();
 		engine.printSlot(si);
 		engine.scanWinLines(si);
