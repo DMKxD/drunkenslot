@@ -2,6 +2,7 @@ package de.teamproject.drunkenslot.engine;
 
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Engine implements GameModel
 {
@@ -89,34 +90,88 @@ public class Engine implements GameModel
 			if(winlines[i].isWin())
 			{
 				Win currentWin = winlines[i].getWin();
-				if(currentWin.isRule())
+				if(currentWin.isAllPlayer())
 				{
-					roundRules[currentWin.getPlayerID()] = 1;
+					if(currentWin.isRule())
+					{
+						for(int j = 0; j < roundRules.length; j ++)
+						{
+							roundRules[j] = roundRules[j] ++;
+						}
+						
+					}
+					else if(currentWin.isShots())
+					{
+						if(currentWin.isDistribute())
+						{
+							for(int j = 0; j < roundRules.length; j ++)
+							{
+								roundShotsDistribute[j] = roundShotsDistribute[j] + currentWin.getAmount();
+							}
+						}
+						else
+						{
+							for(int j = 0; j < roundRules.length; j ++)
+							{
+								roundShots[j] = roundShots[j] + currentWin.getAmount();
+							}
+						}
+					}
+					else 
+					{
+						if(currentWin.isDistribute())
+						{
+							for(int j = 0; j < roundRules.length; j ++)
+							{
+								roundDrinksDistribute[j] = roundDrinksDistribute[j] + currentWin.getAmount();
+							}
+						}
+						else
+						{
+							for(int j = 0; j < roundRules.length; j ++)
+							{
+								roundDrinks[j] = roundDrinks[j] + currentWin.getAmount();
+							}
+						}
+					}
 				}
-				else if(currentWin.isShots())
+				else
 				{
-					if(currentWin.isDistribute())
+					if(currentWin.isRule())
 					{
-						roundShotsDistribute[currentWin.getPlayerID()] = currentWin.getAmount();
+						roundRules[currentWin.getPlayerID()] = roundRules[currentWin.getPlayerID()] ++;
 					}
-					else
+					else if(currentWin.isShots())
 					{
-						roundShots[currentWin.getPlayerID()] = currentWin.getAmount();
+						if(currentWin.isDistribute())
+						{
+							roundShotsDistribute[currentWin.getPlayerID()] = roundShotsDistribute[currentWin.getPlayerID()] + currentWin.getAmount();
+						}
+						else
+						{
+							roundShots[currentWin.getPlayerID()] = roundShots[currentWin.getPlayerID()] + currentWin.getAmount();
+						}
 					}
-				}
-				else 
-				{
-					if(currentWin.isDistribute())
+					else 
 					{
-						roundDrinksDistribute[currentWin.getPlayerID()] = currentWin.getAmount();
-					}
-					else
-					{
-						roundDrinks[currentWin.getPlayerID()] = currentWin.getAmount();
+						if(currentWin.isDistribute())
+						{
+							roundDrinksDistribute[currentWin.getPlayerID()] = roundDrinksDistribute[currentWin.getPlayerID()] + currentWin.getAmount();
+						}
+						else
+						{
+							roundDrinks[currentWin.getPlayerID()] = roundDrinks[currentWin.getPlayerID()] + currentWin.getAmount();
+						}
 					}
 				}
 			}
 		}
+		//DEBUG
+		System.out.println("Round Shots:"+Arrays.toString(roundShots));
+		System.out.println("Round Shots Distribute:"+Arrays.toString(roundShotsDistribute));
+		System.out.println("Round Drinks:"+Arrays.toString(roundDrinks));
+		System.out.println("Round Drinks Distribute:"+Arrays.toString(roundDrinksDistribute));
+		System.out.println("Round Rules:"+Arrays.toString(roundRules));
 	}
 	
 	public void testWinLine()//TODO Falls ein fehler auftritt hiermit den Fehler rekonstruieren und testen
