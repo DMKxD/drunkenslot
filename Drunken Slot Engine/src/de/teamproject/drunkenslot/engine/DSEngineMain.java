@@ -1,7 +1,7 @@
+package de.teamproject.drunkenslot.engine;
 
 public class DSEngineMain 
 {
-
 	public static void main(String[] args) 
 	{
 		Engine engine = new Engine();
@@ -13,5 +13,4 @@ public class DSEngineMain
 		engine.scanWinLines(si);
 		//engine.testWinLine();//TODO Debug
 	}
-
 }

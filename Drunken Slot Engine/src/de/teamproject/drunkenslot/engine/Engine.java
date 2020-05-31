@@ -1,12 +1,19 @@
+package de.teamproject.drunkenslot.engine;
+
 import java.awt.Image;
 import java.util.ArrayList;
 
 public class Engine implements GameModel
 {
 	private static int id = 0;
-	private int currentPlayerSybol = 8;//8 is player 0;
+	private int currentPlayerSymbol = 8;//8 is player 0;
 	private ArrayList<Player> playerList = new ArrayList<Player>();
 	private SlotMachine slotMachine;
+	private boolean isFreeGameEnabled = false;
+	private int freeSpinsLeft = 0;
+	
+	private int[] roundShots, roundDrinks, roundShotsDistribute, roundDrinksDistribute;
+	private int[] roundRules;
 	
 	@Override
 	public void createPlayer(int id, String name, Image image) 
@@ -15,9 +22,14 @@ public class Engine implements GameModel
 	}
 
 	@Override
-	public void createGame() 
+	public void createGame() //TODO mit Schwierigkeiten
 	{
-		
+		roundShots = new int[playerList.size()];
+		roundDrinks = new int[playerList.size()];
+		roundShotsDistribute = new int[playerList.size()];
+		roundDrinksDistribute = new int[playerList.size()];
+		roundRules = new int[playerList.size()];
+		createSlotMachine();
 	}
 	
 	public static int getID()
@@ -48,30 +60,68 @@ public class Engine implements GameModel
 	public SlotImage roll()//TODO Schwierigkeiten
 	{
 		return slotMachine.generateRandom();
-		
 	}
 	
 	public void scanWinLines(SlotImage si)//TODO codierung zum hin und her senden
 	{
-		WinLine winline[] = new WinLine[9];
-		winline[0] = checkWinLine1(si);
-		winline[1] = checkWinLine2(si);
-		winline[2] = checkWinLine3(si);
-		winline[3] = checkWinLine4(si);
-		winline[4] = checkWinLine5(si);
-		winline[5] = checkWinLine6(si);
-		winline[6] = checkWinLine7(si);
-		winline[7] = checkWinLine8(si);
-		winline[8] = checkWinLine9(si);
-		for(int i = 0; i < winline.length; i ++)
+		WinLine winlines[] = new WinLine[9];
+		winlines[0] = checkWinLine1(si);
+		winlines[1] = checkWinLine2(si);
+		winlines[2] = checkWinLine3(si);
+		winlines[3] = checkWinLine4(si);
+		winlines[4] = checkWinLine5(si);
+		winlines[5] = checkWinLine6(si);
+		winlines[6] = checkWinLine7(si);
+		winlines[7] = checkWinLine8(si);
+		winlines[8] = checkWinLine9(si);
+		for(int i = 0; i < winlines.length; i ++)
 		{
-			System.out.print(winline[i].winLineText());
+			System.out.print(winlines[i].winLineText());
+		}
+		updateWinArrays(winlines);
+		//TODO Spieler die Shots zuweisen, und Schlücke verteilen einbauen.
+	}
+	
+	public void updateWinArrays(WinLine winlines[])
+	{
+		for(int i = 0; i < winlines.length; i ++)
+		{
+			if(winlines[i].isWin())
+			{
+				Win currentWin = winlines[i].getWin();
+				if(currentWin.isRule())
+				{
+					roundRules[currentWin.getPlayerID()] = 1;
+				}
+				else if(currentWin.isShots())
+				{
+					if(currentWin.isDistribute())
+					{
+						roundShotsDistribute[currentWin.getPlayerID()] = currentWin.getAmount();
+					}
+					else
+					{
+						roundShots[currentWin.getPlayerID()] = currentWin.getAmount();
+					}
+				}
+				else 
+				{
+					if(currentWin.isDistribute())
+					{
+						roundDrinksDistribute[currentWin.getPlayerID()] = currentWin.getAmount();
+					}
+					else
+					{
+						roundDrinks[currentWin.getPlayerID()] = currentWin.getAmount();
+					}
+				}
+			}
 		}
 	}
 	
 	public void testWinLine()//TODO Falls ein fehler auftritt hiermit den Fehler rekonstruieren und testen
 	{
-		WinLine line = new WinLine(currentPlayerSybol, 1);
+		WinLine line = new WinLine(currentPlayerSymbol, 1);
 		line.setSymbol(2);
 		line.setSymbol(9);
 		line.setSymbol(9);
@@ -82,7 +132,7 @@ public class Engine implements GameModel
 	
 	public WinLine checkWinLine1(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSybol, 1);
+		WinLine line = new WinLine(currentPlayerSymbol, 1);
 		int y = 0;
 		for(int x = 0; x < si.getLengthX(); x ++)
 		{
@@ -93,7 +143,7 @@ public class Engine implements GameModel
 	
 	public WinLine checkWinLine2(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSybol, 2);
+		WinLine line = new WinLine(currentPlayerSymbol, 2);
 		int y = 1;
 		for(int x = 0; x < si.getLengthX(); x ++)
 		{
@@ -104,7 +154,7 @@ public class Engine implements GameModel
 	
 	public WinLine checkWinLine3(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSybol, 3);
+		WinLine line = new WinLine(currentPlayerSymbol, 3);
 		int y = 2;
 		for(int x = 0; x < si.getLengthX(); x ++)
 		{
@@ -115,7 +165,7 @@ public class Engine implements GameModel
 	
 	public WinLine checkWinLine4(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSybol, 4);
+		WinLine line = new WinLine(currentPlayerSymbol, 4);
 		line.setSymbol(si.get(0, 1));
 		line.setSymbol(si.get(1, 0));
 		line.setSymbol(si.get(2, 0));
@@ -126,7 +176,7 @@ public class Engine implements GameModel
 	
 	public WinLine checkWinLine5(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSybol, 5);
+		WinLine line = new WinLine(currentPlayerSymbol, 5);
 		line.setSymbol(si.get(0, 1));
 		line.setSymbol(si.get(1, 2));
 		line.setSymbol(si.get(2, 2));
@@ -137,7 +187,7 @@ public class Engine implements GameModel
 	
 	public WinLine checkWinLine6(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSybol, 6);
+		WinLine line = new WinLine(currentPlayerSymbol, 6);
 		line.setSymbol(si.get(0, 0));
 		line.setSymbol(si.get(1, 1));
 		line.setSymbol(si.get(2, 2));
@@ -148,7 +198,7 @@ public class Engine implements GameModel
 	
 	public WinLine checkWinLine7(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSybol, 7);
+		WinLine line = new WinLine(currentPlayerSymbol, 7);
 		line.setSymbol(si.get(0, 2));
 		line.setSymbol(si.get(1, 1));
 		line.setSymbol(si.get(2, 0));
@@ -159,7 +209,7 @@ public class Engine implements GameModel
 	
 	public WinLine checkWinLine8(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSybol, 8);
+		WinLine line = new WinLine(currentPlayerSymbol, 8);
 		line.setSymbol(si.get(0, 0));
 		line.setSymbol(si.get(1, 0));
 		line.setSymbol(si.get(2, 1));
@@ -170,7 +220,7 @@ public class Engine implements GameModel
 	
 	public WinLine checkWinLine9(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSybol, 9);
+		WinLine line = new WinLine(currentPlayerSymbol, 9);
 		line.setSymbol(si.get(0, 2));
 		line.setSymbol(si.get(1, 2));
 		line.setSymbol(si.get(2, 1));
@@ -219,5 +269,30 @@ public class Engine implements GameModel
 			line +="]";
 			System.out.println(line);
 		}
+	}
+	
+	public int[] getRoundShots()
+	{
+		return roundShots;
+	}
+	
+	public int[] getRoundShotsDistribute()
+	{
+		return roundShotsDistribute;
+	}
+	
+	public int[] getRoundDrinks()
+	{
+		return roundDrinks;
+	}
+	
+	public int[] getRoundDrinksDistribute()
+	{
+		return roundDrinksDistribute;
+	}
+	
+	public int[] getRoundRules()
+	{
+		return roundRules;
 	}
 }

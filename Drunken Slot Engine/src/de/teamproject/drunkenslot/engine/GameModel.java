@@ -1,3 +1,5 @@
+package de.teamproject.drunkenslot.engine;
+
 import java.awt.Image;
 
 public interface GameModel 

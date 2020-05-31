@@ -1,3 +1,5 @@
+package de.teamproject.drunkenslot.engine;
+
 public class WinLine 
 {
 	private int length;
@@ -113,6 +115,62 @@ public class WinLine
 		return line;
 	}
 	
+	public Win getWin()
+	{
+		if(isWin())
+		{
+			Win win = new Win();
+			if(isAllPlayer())
+			{
+				win.setAllPlayer(true);
+			}
+			switch(symbol)
+			{
+		        case 0:
+		        	win.setPlayerID(getPlayer()-7);
+		        	win.setAmount(length -2);
+		        	win.setShots(true);
+		        	win.setDistribute(true);
+		            break;
+		        case 1:
+		        	win.setPlayerID(getPlayer()-7);
+		        	win.setAmount(length -2);
+		        	win.setShots(false);
+		        	win.setDistribute(true);
+		            break;
+		        case 2:
+		        	win.setPlayerID(getPlayer()-7);
+		        	win.setAmount(length -2);
+		        	win.setShots(true);
+		        	win.setDistribute(false);
+		            break;
+		        case 3:
+		        	win.setPlayerID(getPlayer()-7);
+		        	win.setAmount(length -2);
+		        	win.setShots(false);
+		        	win.setDistribute(false);
+		            break;
+		        case 4:
+		        	win.setPlayerID(getPlayer()-7);
+		        	win.setRule(true);
+		            break;
+		        case 5:
+		        	//text+="Nichts, da Scatter\n";
+		            //TODO Nichts da scatter?
+		            break;
+		        default://Bei AllPlayerSymbol oder nur Wilds
+		        	win.setPlayerID(getPlayer()-7);
+		        	win.setAmount(length -2);
+		        	win.setShots(true);
+		        	win.setDistribute(true);
+		            break;
+	        }
+			return win;
+		}
+		return null;
+	}
+	
+	//DEBUG
 	public String winLineText()//TODO Was passiert bei all Player und nur Player Symbol?
 	{
 		String text = "";

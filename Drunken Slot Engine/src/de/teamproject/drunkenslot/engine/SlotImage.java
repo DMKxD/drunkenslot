@@ -1,3 +1,5 @@
+package de.teamproject.drunkenslot.engine;
+
 public class SlotImage 
 {
 	private int values[][];
