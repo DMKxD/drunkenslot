@@ -13,6 +13,8 @@ public class Engine implements GameModel
 	private boolean isFreeGameEnabled = false;
 	private int freeSpinsLeft = 0;
 	
+	private String rule = "";
+	
 	private int[] roundShots, roundDrinks, roundShotsDistribute, roundDrinksDistribute;
 	private int[] roundRules;
 	
@@ -349,5 +351,15 @@ public class Engine implements GameModel
 	public int[] getRoundRules()
 	{
 		return roundRules;
+	}
+	
+	public String getRule()
+	{
+		return rule;
+	}
+	
+	public ArrayList<Player> getPlayerList()
+	{
+		return playerList;
 	}
 }
