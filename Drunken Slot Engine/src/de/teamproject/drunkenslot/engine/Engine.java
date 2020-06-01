@@ -42,7 +42,7 @@ public class Engine implements GameModel
 		createSlotMachine();
 	}
 	
-	public void gameLoop()
+	public void gameLoop()//Demo Gameloop for CMD
 	{
 		sc = new Scanner(System.in);
 		while(isMoreThanOnePlayerActive())
@@ -361,7 +361,7 @@ public class Engine implements GameModel
 					{
 						for(int j = 0; j < roundRules.length; j ++)
 						{
-							roundRules[j] = roundRules[j] ++;
+							roundRules[j] = 1;
 						}
 						
 					}
@@ -404,7 +404,7 @@ public class Engine implements GameModel
 				{
 					if(currentWin.isRule())
 					{
-						roundRules[currentWin.getPlayerID()] = roundRules[currentWin.getPlayerID()] ++;
+						roundRules[currentWin.getPlayerID()] = 1;
 					}
 					else if(currentWin.isShots())
 					{

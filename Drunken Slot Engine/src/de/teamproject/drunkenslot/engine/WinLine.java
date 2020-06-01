@@ -198,7 +198,7 @@ public class WinLine
 			        	text += "Spieler" +(getPlayer()-7)+" darf "+(length - 2)+" Schluck(Schlücke) trinken.\n";
 			            break;
 			        case 4:
-			        	text += "Spieler" +(getPlayer()-7)+" darf sich eine Regel ausdenken";
+			        	text += "Spieler" +(getPlayer()-7)+" darf sich eine Regel ausdenken\n";
 			            break;
 			        case 5:
 			        	text+="Nichts, da Scatter\n";
@@ -227,7 +227,7 @@ public class WinLine
 			        	text += "Alle Spieler dürfen "+(length - 2)+" Schluck(Schlücke) trinken.\n";
 			            break;
 			        case 4:
-			        	text += "Alle Spieler dürfen sich eine Regel ausdenken";
+			        	text += "Alle Spieler dürfen sich eine Regel ausdenken\n";
 			            break;
 			        case 5:
 			        	text+="Nichts, da Scatter\n";
