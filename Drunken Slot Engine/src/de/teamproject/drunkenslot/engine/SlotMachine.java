@@ -6,6 +6,7 @@ import java.util.Random;
 public class SlotMachine 
 {
 	private ArrayList<Integer> slotSymbols;
+	private int symbolOffset  = 8;
 	
 	public SlotMachine(ArrayList<Integer> slotSymbols)
 	{
@@ -24,5 +25,15 @@ public class SlotMachine
 			}
 		}
 		return new SlotImage(slotValues);
+	}
+	
+	public void setSymbolOffset(int symbolOffset)
+	{
+		this.symbolOffset = symbolOffset;
+	}
+	
+	public int getSymbolOffset()
+	{
+		return symbolOffset;
 	}
 }

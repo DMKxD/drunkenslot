@@ -9,7 +9,7 @@ public class Player
 	private Image image;
 	private boolean active = true;
 	private int shots = 0;
-	private int schluecke = 0;
+	private int drinks = 0;
 	private int playerSymbol;
 	public Player(int id, String name, Image image)
 	{
@@ -64,13 +64,13 @@ public class Player
 		this.shots = shots;
 	}
 
-	public int getSchluecke() 
+	public int getDrinks() 
 	{
-		return schluecke;
+		return drinks;
 	}
 
-	public void setSchluecke(int schluecke) 
+	public void setDrinks(int drinks) 
 	{
-		this.schluecke = schluecke;
+		this.drinks = drinks;
 	}
 }

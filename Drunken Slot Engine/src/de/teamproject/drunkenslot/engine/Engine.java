@@ -3,6 +3,8 @@ package de.teamproject.drunkenslot.engine;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
 public class Engine implements GameModel
 {
@@ -12,7 +14,7 @@ public class Engine implements GameModel
 	private SlotMachine slotMachine;
 	private boolean isFreeGameEnabled = false;
 	private int freeSpinsLeft = 0;
-	
+	private int freeGamesAmount = 5;
 	private String rule = "";
 	
 	private int[] roundShots, roundDrinks, roundShotsDistribute, roundDrinksDistribute;
@@ -35,6 +37,65 @@ public class Engine implements GameModel
 		createSlotMachine();
 	}
 	
+	public void gameLoop()
+	{
+		while(isMoreThanOnePlayerActive())
+		{
+			SlotImage si = roll();
+			printSlot(si);//DEBUG
+			scanWinLines(si);
+			distributeRoundShots();
+			distributeRoundDrinks();
+			//TODO Rules and Freegames
+			
+			finalizeRound();
+		}
+	}
+	
+	public void finalizeRound()
+	{
+		for(int i = 0; i < roundShots.length; i ++)
+		{
+			playerList.get(i).setShots(playerList.get(i).getShots() + roundShots[i]);
+		}
+		
+		for(int i = 0; i < roundDrinks.length; i ++)
+		{
+			playerList.get(i).setShots(playerList.get(i).getDrinks() + roundDrinks[i]);
+		}
+		
+		clearRoundArrays();
+	}
+	
+	private void clearRoundArrays() 
+	{
+		for(int i = 0; i < playerList.size(); i++)
+		{
+			roundShots[i] = 0;
+			roundDrinks[i] = 0;
+			roundShotsDistribute[i] = 0;
+			roundDrinksDistribute[i] = 0;
+			roundRules[i] = 0;
+		}
+	}
+
+	public boolean isMoreThanOnePlayerActive()
+	{
+		int playerActiveCounter = 0;
+		for(int i = 0; i < playerList.size(); i ++)
+		{
+			if(playerList.get(i).isActive())
+			{
+				playerActiveCounter ++;
+			}
+		}
+		if(playerActiveCounter > 1)
+		{
+			return true;
+		}
+		return false;
+	}
+	
 	public static int getID()
 	{
 		return id++;
@@ -54,10 +115,26 @@ public class Engine implements GameModel
 			//5 = Scatter
 			//6 = Wild
 			//7 = Wild für alle Spieler
-			//8-n = Player 1-n
+			//8-n = Player 0-n
 			symbols.add(i);
 		}
 		slotMachine = new SlotMachine(symbols);
+	}
+	
+	public void checkFreeGames(SlotImage si)
+	{
+		if(isFreeGames(si))
+		{
+			if(isFreeGameEnabled)
+			{
+				freeSpinsLeft = freeSpinsLeft + freeGamesAmount;
+			}
+			else
+			{
+				isFreeGameEnabled = true;
+				freeSpinsLeft = freeGamesAmount;
+			}
+		}
 	}
 	
 	public SlotImage roll()//TODO Schwierigkeiten
@@ -176,7 +253,129 @@ public class Engine implements GameModel
 		System.out.println("Round Rules:"+Arrays.toString(roundRules));
 	}
 	
-	public void testWinLine()//TODO Falls ein fehler auftritt hiermit den Fehler rekonstruieren und testen
+	public void distributeRoundShots()
+	{
+		for(int i = 0; i < roundShotsDistribute.length; i ++)
+		{
+			if(roundShotsDistribute[i] != 0)
+			{
+				distributeRoundShotsLoop(i);
+			}
+		}
+	}
+	
+	public void distributeRoundShotsLoop(int playerID)//TODO für Client-Server anpassen
+	{
+		while(roundShotsDistribute[playerID] != 0)
+		{
+			System.out.println("Spieler "+playerList.get(playerID).getName()+" verteile noch "+roundShotsDistribute[playerID]+" Shot(s).");
+			Scanner sc = new Scanner(System.in);
+			System.out.print("Bitte gib den Spielernamen ein: ");
+			String name = sc.next();
+			boolean playerNameFound = false;
+			int targetPlayer = -1;
+			for(int i = 0; i < playerList.size(); i ++)
+			{
+				if(playerList.get(i).getName().equals(name))
+				{
+					playerNameFound = true;
+					targetPlayer = i;
+					break;
+				}
+			}
+			if(playerNameFound)
+			{
+				System.out.print("Bitte gib die Anzahl an Shots ein [1-"+ roundShotsDistribute[playerID]+"]: ");
+				int amount = 0;
+				try
+				{
+					amount = sc.nextInt();
+				}
+				catch(InputMismatchException e)
+				{
+					System.out.println("Eingabe ist keine Zahl!");
+					continue;
+				}
+				sc.close();
+				if(amount <= 0 || amount > roundShotsDistribute[playerID])
+				{
+					System.out.println("Konnte angegebenen Spieler nicht finden!");
+				}
+				else
+				{
+					roundShotsDistribute[playerID] -= amount;
+					roundShots[targetPlayer] += amount;
+				}
+			}
+			else
+			{
+				System.out.println("Konnte angegebenen Spieler nicht finden!");
+			}
+		}
+	}
+	
+	public void distributeRoundDrinks()
+	{
+		for(int i = 0; i < roundDrinksDistribute.length; i ++)
+		{
+			if(roundDrinksDistribute[i] != 0)
+			{
+				distributeRoundDrinksLoop(i);
+			}
+		}
+	}
+	
+	public void distributeRoundDrinksLoop(int playerID)//TODO für Client-Server anpassen
+	{
+		while(roundDrinksDistribute[playerID] != 0)
+		{
+			System.out.println("Spieler "+playerList.get(playerID).getName()+" verteile noch "+roundDrinksDistribute[playerID]+" Schlücke.");
+			Scanner sc = new Scanner(System.in);
+			System.out.print("Bitte gib den Spielernamen ein: ");
+			String name = sc.next();
+			boolean playerNameFound = false;
+			int targetPlayer = -1;
+			for(int i = 0; i < playerList.size(); i ++)
+			{
+				if(playerList.get(i).getName().equals(name))
+				{
+					playerNameFound = true;
+					targetPlayer = i;
+					break;
+				}
+			}
+			if(playerNameFound)
+			{
+				System.out.print("Bitte gib die Anzahl an Schlücken ein [1-"+ roundDrinksDistribute[playerID]+"]: ");
+				int amount = 0;
+				try
+				{
+					amount = sc.nextInt();
+				}
+				catch(InputMismatchException e)
+				{
+					System.out.println("Eingabe ist keine Zahl!");
+					continue;
+				}
+				sc.close();
+				if(amount <= 0 || amount > roundDrinksDistribute[playerID])
+				{
+					System.out.println("Konnte angegebenen Spieler nicht finden!");
+				}
+				else
+				{
+					roundDrinksDistribute[playerID] -= amount;
+					roundDrinks[targetPlayer] += amount;
+				}
+			}
+			else
+			{
+				System.out.println("Konnte angegebenen Spieler nicht finden!");
+			}
+		}
+	}
+	
+	public void testWinLine()//DEBUG Falls ein fehler auftritt hiermit den Fehler rekonstruieren und testen
 	{
 		WinLine line = new WinLine(currentPlayerSymbol, 1);
 		line.setSymbol(2);
