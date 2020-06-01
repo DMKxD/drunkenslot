@@ -627,6 +627,7 @@ public class Engine implements GameModel
 				continue;
 			}
 			rule = ruleInput;
+			nextRuleSet = true;
 			System.out.println("----------------------------------------------------");
 		}
 	}

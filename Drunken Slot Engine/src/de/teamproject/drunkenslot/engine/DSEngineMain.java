@@ -5,8 +5,8 @@ public class DSEngineMain
 	public static void main(String[] args) 
 	{
 		Engine engine = new Engine();
-		engine.createPlayer(engine.getID(), "Dominik", null);
-		engine.createPlayer(engine.getID(), "Jonas", null);
+		engine.createPlayer(Engine.getID(), "Dominik", null);
+		engine.createPlayer(Engine.getID(), "Jonas", null);
 		engine.createGame();
 		engine.gameLoop();
 		//SlotImage si = engine.roll();
