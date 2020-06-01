@@ -4,6 +4,8 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
+import java.util.NoSuchElementException;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Engine implements GameModel
@@ -19,8 +21,9 @@ public class Engine implements GameModel
 	private int freeSpinsTotal = 0;
 	private String rule = "";
 	
-	private int[] roundShots, roundDrinks, roundShotsDistribute, roundDrinksDistribute;
-	private int[] roundRules;
+	private int[] roundShots, roundDrinks, roundShotsDistribute, roundDrinksDistribute, roundRules;
+	
+	static Scanner sc;
 	
 	@Override
 	public void createPlayer(int id, String name, Image image) 
@@ -41,6 +44,7 @@ public class Engine implements GameModel
 	
 	public void gameLoop()
 	{
+		sc = new Scanner(System.in);
 		while(isMoreThanOnePlayerActive())
 		{
 			if(!isFreeGameEnabled)
@@ -64,14 +68,20 @@ public class Engine implements GameModel
 			scanWinLines(si);
 			distributeRoundShots();
 			distributeRoundDrinks();
-			//TODO Rules
+			checkChangeRule();
 			
 			finalizeRound();
 			showStandingsScreen();
+			try 
+			{
+				Thread.sleep(1000);
+			} 
+			catch (InterruptedException e) {}
 			waitForEnter();
 			updateCurrentPlayer();
 		}
 		showResultScreen();
+		sc.close();
 	}
 	
 	public void updateFreeGames()
@@ -153,30 +163,35 @@ public class Engine implements GameModel
 		while(yesOrNo == false)
 		{
 			System.out.print("Spieler "+playerList.get(currentPlayer).getName()+" möchtest du diese Runde spielen? [Ja / Nein]: ");
-			Scanner sc = new Scanner(System.in);
-			String name = sc.next();
+			String name;
+			try
+			{
+				name = sc.nextLine();
+			}
+			catch(NoSuchElementException e)
+			{
+				continue;
+			}
 			if(name.equalsIgnoreCase("Ja"))
 			{
 				yesOrNo = true;
-				sc.close();
 				return true;
 			}
 			else if(name.equalsIgnoreCase("Nein"))
 			{
 				yesOrNo = true;
-				sc.close();
 				return false;
 			}
 			else
 			{
-				sc.close();
+				;
 				System.out.println("Falsche Eingabe!");
 			}
 		}
 		return false;
 	}
 	
-	public void finalizeRound()
+	public void finalizeRound()//TODO fehler?
 	{
 		for(int i = 0; i < roundShots.length; i ++)
 		{
@@ -185,7 +200,7 @@ public class Engine implements GameModel
 		
 		for(int i = 0; i < roundDrinks.length; i ++)
 		{
-			playerList.get(i).setShots(playerList.get(i).getDrinks() + roundDrinks[i]);
+			playerList.get(i).setDrinks(playerList.get(i).getDrinks() + roundDrinks[i]);
 		}
 		
 		clearRoundArrays();
@@ -331,7 +346,6 @@ public class Engine implements GameModel
 			System.out.print(winlines[i].winLineText());
 		}
 		updateWinArrays(winlines);
-		//TODO Spieler die Shots zuweisen, und Schlücke verteilen einbauen.
 	}
 	
 	public void updateWinArrays(WinLine winlines[])
@@ -438,12 +452,20 @@ public class Engine implements GameModel
 	
 	public void distributeRoundShotsLoop(int playerID)//TODO für Client-Server anpassen
 	{
+		System.out.println("----------------------------------------------------");
 		while(roundShotsDistribute[playerID] != 0)
 		{
 			System.out.println("Spieler "+playerList.get(playerID).getName()+" verteile noch "+roundShotsDistribute[playerID]+" Shot(s).");
-			Scanner sc = new Scanner(System.in);
 			System.out.print("Bitte gib den Spielernamen ein: ");
-			String name = sc.next();
+			String name;
+			try
+			{
+				name = sc.nextLine();
+			}
+			catch(NoSuchElementException e)
+			{
+				continue;
+			}
 			boolean playerNameFound = false;
 			int targetPlayer = -1;
 			for(int i = 0; i < playerList.size(); i ++)
@@ -468,7 +490,7 @@ public class Engine implements GameModel
 					System.out.println("Eingabe ist keine Zahl!");
 					continue;
 				}
-				sc.close();
+				;
 				if(amount <= 0 || amount > roundShotsDistribute[playerID])
 				{
 					System.out.println("Konnte angegebenen Spieler nicht finden!");
@@ -484,6 +506,7 @@ public class Engine implements GameModel
 				System.out.println("Konnte angegebenen Spieler nicht finden!");
 			}
 		}
+		System.out.println("----------------------------------------------------");
 	}
 	
 	public void distributeRoundDrinks()
@@ -499,12 +522,21 @@ public class Engine implements GameModel
 	
 	public void distributeRoundDrinksLoop(int playerID)//TODO für Client-Server anpassen
 	{
+		System.out.println("----------------------------------------------------");
 		while(roundDrinksDistribute[playerID] != 0)
 		{
 			System.out.println("Spieler "+playerList.get(playerID).getName()+" verteile noch "+roundDrinksDistribute[playerID]+" Schlücke.");
-			Scanner sc = new Scanner(System.in);
 			System.out.print("Bitte gib den Spielernamen ein: ");
-			String name = sc.next();
+			String name = "";
+			try
+			{
+				name = sc.nextLine();
+			}
+			catch (NoSuchElementException e)
+			{
+				System.out.println("Dieser Spieler existiert nicht");
+				continue;
+			}
 			boolean playerNameFound = false;
 			int targetPlayer = -1;
 			for(int i = 0; i < playerList.size(); i ++)
@@ -529,7 +561,7 @@ public class Engine implements GameModel
 					System.out.println("Eingabe ist keine Zahl!");
 					continue;
 				}
-				sc.close();
+				;
 				if(amount <= 0 || amount > roundDrinksDistribute[playerID])
 				{
 					System.out.println("Konnte angegebenen Spieler nicht finden!");
@@ -545,6 +577,75 @@ public class Engine implements GameModel
 				System.out.println("Konnte angegebenen Spieler nicht finden!");
 			}
 		}
+		System.out.println("----------------------------------------------------");
+	}
+	
+	public void checkChangeRule()
+	{
+		int ruleID = -1;
+		if(isMoreThanOneRule())
+		{
+			ArrayList<Integer> ids = new ArrayList<Integer>();
+			for(int i = 0; i < roundRules.length; i ++)
+			{
+				if(roundRules[i] != 0)
+				{
+					ids.add(i);
+				}
+			}
+			Random random = new Random();
+			ruleID = ids.get(random.nextInt(ids.size()));
+			
+		}
+		if(ruleID != -1)
+		{
+			rulesLoop(ruleID);
+		}
+		else
+		{
+			for(int i = 0; i < roundRules.length; i ++)
+			{
+				if(roundRules[i] != 0)
+				{
+					rulesLoop(i);
+				}
+			}
+		}
+	}
+	
+	public void rulesLoop(int playerID) 
+	{
+		boolean nextRuleSet = false;
+		while(!nextRuleSet)
+		{
+			System.out.println("----------------------------------------------------");
+			System.out.print("Spieler "+playerList.get(playerID).getName()+" gib deine Regel ein: ");
+			String ruleInput = sc.nextLine();
+			if(ruleInput.trim().equals("") || ruleInput == null)
+			{
+				System.out.println("Keine Eingabe!");
+				continue;
+			}
+			rule = ruleInput;
+			System.out.println("----------------------------------------------------");
+		}
+	}
+
+	public boolean isMoreThanOneRule()
+	{
+		int ruleCounter = 0;
+		for(int i = 0; i < roundRules.length; i ++)
+		{
+			if(roundRules[i] != 0)
+			{
+				ruleCounter ++;
+			}
+		}
+		if(ruleCounter > 1)
+		{
+			return true;
+		}
+		return false;
 	}
 	
 	public void testWinLine()//DEBUG Falls ein fehler auftritt hiermit den Fehler rekonstruieren und testen

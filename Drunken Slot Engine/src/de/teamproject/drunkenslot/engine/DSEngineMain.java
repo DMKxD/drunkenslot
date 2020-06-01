@@ -8,9 +8,10 @@ public class DSEngineMain
 		engine.createPlayer(engine.getID(), "Dominik", null);
 		engine.createPlayer(engine.getID(), "Jonas", null);
 		engine.createGame();
-		SlotImage si = engine.roll();
-		engine.printSlot(si);
-		engine.scanWinLines(si);
+		engine.gameLoop();
+		//SlotImage si = engine.roll();
+		//engine.printSlot(si);
+		//engine.scanWinLines(si);
 		//engine.testWinLine();//TODO Debug
 	}
 }
