@@ -22,6 +22,17 @@ public class SlotImage
 		return -1;
 	}
 	
+	public void set(int x, int y, int value)
+	{
+		if(x < values.length)
+		{
+			if(y < values[0].length)
+			{
+				values[x][y] = value;
+			}
+		}
+	}
+	
 	public int getLengthX()
 	{
 		return values.length;
