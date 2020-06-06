@@ -12,7 +12,7 @@ public class Engine implements GameModel
 {
 	private static int id = 0;
 	private int currentPlayerSymbol = 8;//8 is player 0;
-	private int currentPlayer = 0;
+	private int currentPlayerID = 0;
 	private ArrayList<Player> playerList = new ArrayList<Player>();
 	private SlotMachine slotMachine;
 	private boolean isFreeGameEnabled = false;
@@ -42,7 +42,12 @@ public class Engine implements GameModel
 		createSlotMachine();
 	}
 	
-	public void gameLoop()//Demo Gameloop for CMD
+	/**
+	 * Demo GameLoop for testing the engine in CMD
+	 * will be reused for offline client and server
+	 * game loop.
+	 */
+	public void gameLoop()
 	{
 		sc = new Scanner(System.in);
 		while(isMoreThanOnePlayerActive())
@@ -51,7 +56,7 @@ public class Engine implements GameModel
 			{
 				if(!askPlayerForTurn())
 				{
-					playerList.get(currentPlayer).setActive(false);
+					playerList.get(currentPlayerID).setActive(false);
 					showStandingsScreen();
 					updateCurrentPlayer();
 					continue;
@@ -84,6 +89,9 @@ public class Engine implements GameModel
 		sc.close();
 	}
 	
+	/**
+	 * Decrease FreeSpins Amount, if no FreeSpins remain, deactivate FreeGame Mode
+	 */
 	public void updateFreeGames()
 	{
 		freeSpinsLeft -= 1;
@@ -93,6 +101,18 @@ public class Engine implements GameModel
 		}
 	}
 	
+	/**
+	 * Update the currentPlayer and currentPlayerSymbol
+	 */
+	public void updateCurrentPlayer()
+	{
+		currentPlayerID = getNextPlayerID();
+		currentPlayerSymbol = getPlayerByID(currentPlayerID).getPlayerSymbol();
+	}
+	
+	/**
+	 * Wait for player to press Enter, used for Demo GameLoop
+	 */
 	public void waitForEnter()
 	{
 		System.out.println("Bitte drücke Eingabe zum fortsetzen...");
@@ -103,12 +123,9 @@ public class Engine implements GameModel
 		catch(Exception e){}
 	}
 	
-	public void updateCurrentPlayer()
-	{
-		currentPlayer = getNextPlayer();
-		currentPlayerSymbol = currentPlayer + slotMachine.getSymbolOffset();
-	}
-	
+	/**
+	 * Print current standings in the Console
+	 */
 	public void showStandingsScreen()
 	{
 		System.out.println("----------------------------------------------------");
@@ -122,6 +139,9 @@ public class Engine implements GameModel
 		System.out.println("----------------------------------------------------");
 	}
 	
+	/**
+	 * Print end results in the Console
+	 */
 	public void showResultScreen()
 	{
 		System.out.println("----------------------------------------------------");
@@ -138,102 +158,34 @@ public class Engine implements GameModel
 		System.out.println("----------------------------------------------------");
 	}
 	
-	public Player getWinner()
-	{
-		if(isMoreThanOnePlayerActive())
-		{
-			return null;
-		}
-		else
-		{
-			for(int i = 0; i < playerList.size(); i ++)
-			{
-				if(playerList.get(i).isActive())
-				{
-					return playerList.get(i);
-				}
-			}
-		}
-		return null;
-	}
-	
-	public boolean askPlayerForTurn()
-	{
-		boolean yesOrNo = false;
-		while(yesOrNo == false)
-		{
-			System.out.print("Spieler "+playerList.get(currentPlayer).getName()+" möchtest du diese Runde spielen? [Ja / Nein]: ");
-			String name;
-			try
-			{
-				name = sc.nextLine();
-			}
-			catch(NoSuchElementException e)
-			{
-				continue;
-			}
-			if(name.equalsIgnoreCase("Ja"))
-			{
-				yesOrNo = true;
-				return true;
-			}
-			else if(name.equalsIgnoreCase("Nein"))
-			{
-				yesOrNo = true;
-				return false;
-			}
-			else
-			{
-				;
-				System.out.println("Falsche Eingabe!");
-			}
-		}
-		return false;
-	}
-	
-	public void finalizeRound()//TODO fehler?
+	/**
+	 * Add the roundShots and roundDrinks arrays in the player shots and drinks
+	 * if the player is active
+	 */
+	public void finalizeRound()
 	{
 		for(int i = 0; i < roundShots.length; i ++)
 		{
-			playerList.get(i).setShots(playerList.get(i).getShots() + roundShots[i]);
+			if(playerList.get(i).isActive())
+			{
+				playerList.get(i).setShots(playerList.get(i).getShots() + roundShots[i]);
+			}
 		}
 		
 		for(int i = 0; i < roundDrinks.length; i ++)
 		{
-			playerList.get(i).setDrinks(playerList.get(i).getDrinks() + roundDrinks[i]);
+			if(playerList.get(i).isActive())
+			{
+				playerList.get(i).setDrinks(playerList.get(i).getDrinks() + roundDrinks[i]);
+			}
 		}
 		
 		clearRoundArrays();
 	}
 	
-	public int getNextPlayer()
-	{
-		int nextPlayer = -1;
-		for(int i = currentPlayer; i < playerList.size(); i++)
-		{
-			if(i == currentPlayer)
-			{
-				continue;
-			}
-			if(playerList.get(i).isActive())
-			{
-				nextPlayer = playerList.get(i).getId();
-			}
-		}
-		if(nextPlayer != -1)
-		{
-			return nextPlayer;
-		}
-		for(int i = 0; i < currentPlayer; i++)
-		{
-			if(playerList.get(i).isActive())
-			{
-				nextPlayer = playerList.get(i).getId();
-			}
-		}
-		return nextPlayer;
-	}
-	
+	/**
+	 * Clear all round arrays to get them ready for the next round
+	 */
 	public void clearRoundArrays() 
 	{
 		for(int i = 0; i < playerList.size(); i++)
@@ -245,49 +197,36 @@ public class Engine implements GameModel
 			roundRules[i] = 0;
 		}
 	}
-
-	public boolean isMoreThanOnePlayerActive()
-	{
-		int playerActiveCounter = 0;
-		for(int i = 0; i < playerList.size(); i ++)
-		{
-			if(playerList.get(i).isActive())
-			{
-				playerActiveCounter ++;
-			}
-		}
-		if(playerActiveCounter > 1)
-		{
-			return true;
-		}
-		return false;
-	}
 	
-	public static int getID()
-	{
-		return id++;
-	}
-	
+	/**
+	 * Create Slot Machine with the standard symbols 0 - 7
+	 * and the player symbols 8-n
+	 * 0 = Distribute Shot
+	 * 1 = Distribute Drink
+	 * 2 = Drink Shot
+	 * 3 = Drink Drink
+	 * 4 = Rule
+	 * 5 = Scatter
+	 * 6 = Wild
+	 * 7 = All Player Wild
+	 * 8-n = Player Symbol (Only Wild if symbols from one player is in the line, 2 different player symbols break a win line)
+	 */
 	public void createSlotMachine()
 	{
 		ArrayList<Integer> symbols = new ArrayList<Integer>();
 		
 		for(int i = 0; i < (8 + playerList.size()); i++)
 		{
-			//0 = Shot Verteilen
-			//1 = Schluck Verteilen
-			//2 = Shot Trinken
-			//3 = Schluck Trinken
-			//4 = Regel
-			//5 = Scatter
-			//6 = Wild
-			//7 = Wild für alle Spieler
-			//8-n = Player 0-n
 			symbols.add(i);
 		}
 		slotMachine = new SlotMachine(symbols);
 	}
 	
+	/**
+	 * If there are 3 Scatter Symbols in the current SlotImage active FreeGames, or if they are already active add the 
+	 * freeSpinsAmount to freeSpinsLeft and freeSpinsTotal.
+	 * @param si Current SlotImage returned from the SlotMachine
+	 */
 	public void checkFreeGames(SlotImage si)
 	{
 		if(isFreeGames(si))
@@ -306,6 +245,10 @@ public class Engine implements GameModel
 		}
 	}
 	
+	/**
+	 * Generate a new random SlotImage, if free games are enabled replace all player symbols with normal wilds
+	 * @return generated SlotImage
+	 */
 	public SlotImage roll()//TODO Schwierigkeiten
 	{
 		if(isFreeGameEnabled)//First Iteration, alle Spieler Wilds durch normale ersetzen
@@ -329,6 +272,10 @@ public class Engine implements GameModel
 		}
 	}
 	
+	/**
+	 * Scan the 9 WinLines for wins and save them in a WinLine Array.
+	 * @param si Generated SlotImage from the Slotmachine
+	 */
 	public void scanWinLines(SlotImage si)//TODO codierung zum hin und her senden
 	{
 		WinLine winlines[] = new WinLine[9];
@@ -341,6 +288,7 @@ public class Engine implements GameModel
 		winlines[6] = checkWinLine7(si);
 		winlines[7] = checkWinLine8(si);
 		winlines[8] = checkWinLine9(si);
+		//TODO DEBUG and CMD
 		for(int i = 0; i < winlines.length; i ++)
 		{
 			System.out.print(winlines[i].winLineText());
@@ -348,6 +296,11 @@ public class Engine implements GameModel
 		updateWinArrays(winlines);
 	}
 	
+	/**
+	 * Update the round Win Arrays roundRules, roundShotsDistribute, roundShots, roundDrinksDistribute and roundDrinks
+	 * Get the Win Object from each WinLine that has a Win for calculation.
+	 * @param winlines Generated with scanWinLines(SlotImage si)
+	 */
 	public void updateWinArrays(WinLine winlines[])
 	{
 		for(int i = 0; i < winlines.length; i ++)
@@ -439,17 +392,28 @@ public class Engine implements GameModel
 		System.out.println("Round Rules:"+Arrays.toString(roundRules));
 	}
 	
+	/**
+	 * Work threw the roundShotsDistribute Array and let each player distribute the Shots to another Player.
+	 */
 	public void distributeRoundShots()
 	{
 		for(int i = 0; i < roundShotsDistribute.length; i ++)
 		{
 			if(roundShotsDistribute[i] != 0)
 			{
-				distributeRoundShotsLoop(i);
+				if(playerList.get(i).isActive())
+				{
+					distributeRoundShotsLoop(i);
+				}
 			}
 		}
 	}
 	
+	/**
+	 * Loop as long as the roundShotsDistribute for playerID is not empty and
+	 * let the player distribute the Shots to the other players.
+	 * @param playerID Id from the Player that can distribute Shots
+	 */
 	public void distributeRoundShotsLoop(int playerID)//TODO für Client-Server anpassen
 	{
 		System.out.println("----------------------------------------------------");
@@ -472,9 +436,12 @@ public class Engine implements GameModel
 			{
 				if(playerList.get(i).getName().equals(name))
 				{
-					playerNameFound = true;
-					targetPlayer = i;
-					break;
+					if(playerList.get(i).isActive())
+					{
+						playerNameFound = true;
+						targetPlayer = i;
+						break;
+					}
 				}
 			}
 			if(playerNameFound)
@@ -503,7 +470,7 @@ public class Engine implements GameModel
 			}
 			else
 			{
-				System.out.println("Konnte angegebenen Spieler nicht finden!");
+				System.out.println("Angegebener Spieler nicht vorhanden oder inaktiv!");
 			}
 		}
 		System.out.println("----------------------------------------------------");
@@ -515,7 +482,10 @@ public class Engine implements GameModel
 		{
 			if(roundDrinksDistribute[i] != 0)
 			{
-				distributeRoundDrinksLoop(i);
+				if(playerList.get(i).isActive())
+				{
+					distributeRoundDrinksLoop(i);
+				}
 			}
 		}
 	}
@@ -543,9 +513,12 @@ public class Engine implements GameModel
 			{
 				if(playerList.get(i).getName().equals(name))
 				{
-					playerNameFound = true;
-					targetPlayer = i;
-					break;
+					if(playerList.get(i).isActive())
+					{
+						playerNameFound = true;
+						targetPlayer = i;
+						break;
+					}
 				}
 			}
 			if(playerNameFound)
@@ -574,7 +547,7 @@ public class Engine implements GameModel
 			}
 			else
 			{
-				System.out.println("Konnte angegebenen Spieler nicht finden!");
+				System.out.println("Angegebener Spieler nicht vorhanden oder inaktiv!");
 			}
 		}
 		System.out.println("----------------------------------------------------");
@@ -594,7 +567,20 @@ public class Engine implements GameModel
 				}
 			}
 			Random random = new Random();
-			ruleID = ids.get(random.nextInt(ids.size()));
+			while(ids.size() > 0)
+			{
+				int nextRuleID = ids.get(random.nextInt(ids.size()));
+				if(playerList.get(nextRuleID).isActive())
+				{
+					ruleID = nextRuleID;
+					break;
+				}
+				else
+				{
+					ids.remove(nextRuleID);
+				}
+				System.out.println("RULE");//TODO Debug
+			}
 			
 		}
 		if(ruleID != -1)
@@ -607,7 +593,10 @@ public class Engine implements GameModel
 			{
 				if(roundRules[i] != 0)
 				{
-					rulesLoop(i);
+					if(playerList.get(i).isActive())
+					{
+						rulesLoop(i);
+					}
 				}
 			}
 		}
@@ -632,22 +621,6 @@ public class Engine implements GameModel
 		}
 	}
 
-	public boolean isMoreThanOneRule()
-	{
-		int ruleCounter = 0;
-		for(int i = 0; i < roundRules.length; i ++)
-		{
-			if(roundRules[i] != 0)
-			{
-				ruleCounter ++;
-			}
-		}
-		if(ruleCounter > 1)
-		{
-			return true;
-		}
-		return false;
-	}
 	
 	public void testWinLine()//DEBUG Falls ein fehler auftritt hiermit den Fehler rekonstruieren und testen
 	{
@@ -759,22 +732,36 @@ public class Engine implements GameModel
 		return line;
 	}
 	
-	public boolean isFreeGames(SlotImage si)
+	public boolean askPlayerForTurn()
 	{
-		int scatter = 0;
-		for(int y = 0; y < si.getLengthY(); y ++)
+		boolean yesOrNo = false;
+		while(yesOrNo == false)
 		{
-			for(int x = 0; x < si.getLengthX(); x ++)
+			System.out.print("Spieler "+playerList.get(currentPlayerID).getName()+" möchtest du diese Runde spielen? [Ja / Nein]: ");
+			String name;
+			try
 			{
-				if(si.get(x, y) == 5)
-				{
-					scatter ++;
-				}
+				name = sc.nextLine();
 			}
-		}
-		if(scatter == 3)
-		{
-			return true;
+			catch(NoSuchElementException e)
+			{
+				continue;
+			}
+			if(name.equalsIgnoreCase("Ja"))
+			{
+				yesOrNo = true;
+				return true;
+			}
+			else if(name.equalsIgnoreCase("Nein"))
+			{
+				yesOrNo = true;
+				return false;
+			}
+			else
+			{
+				;
+				System.out.println("Falsche Eingabe!");
+			}
 		}
 		return false;
 	}
@@ -799,6 +786,60 @@ public class Engine implements GameModel
 			line +="]";
 			System.out.println(line);
 		}
+	}
+	
+	public boolean isFreeGames(SlotImage si)
+	{
+		int scatter = 0;
+		for(int y = 0; y < si.getLengthY(); y ++)
+		{
+			for(int x = 0; x < si.getLengthX(); x ++)
+			{
+				if(si.get(x, y) == 5)
+				{
+					scatter ++;
+				}
+			}
+		}
+		if(scatter == 3)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isMoreThanOneRule()
+	{
+		int ruleCounter = 0;
+		for(int i = 0; i < roundRules.length; i ++)
+		{
+			if(roundRules[i] != 0)
+			{
+				ruleCounter ++;
+			}
+		}
+		if(ruleCounter > 1)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isMoreThanOnePlayerActive()
+	{
+		int playerActiveCounter = 0;
+		for(int i = 0; i < playerList.size(); i ++)
+		{
+			if(playerList.get(i).isActive())
+			{
+				playerActiveCounter ++;
+			}
+		}
+		if(playerActiveCounter > 1)
+		{
+			return true;
+		}
+		return false;
 	}
 	
 	public int[] getRoundShots()
@@ -826,13 +867,147 @@ public class Engine implements GameModel
 		return roundRules;
 	}
 	
+	public static int getID()
+	{
+		return id++;
+	}
+	
 	public String getRule()
 	{
 		return rule;
 	}
 	
+	public int getNextPlayerID()
+	{
+		int nextPlayer = -1;
+		for(int i = currentPlayerID; i < playerList.size(); i++)
+		{
+			if(i == currentPlayerID)
+			{
+				continue;
+			}
+			if(playerList.get(i).isActive())
+			{
+				nextPlayer = playerList.get(i).getId();
+			}
+		}
+		if(nextPlayer != -1)
+		{
+			return nextPlayer;
+		}
+		for(int i = 0; i < currentPlayerID; i++)
+		{
+			if(playerList.get(i).isActive())
+			{
+				nextPlayer = playerList.get(i).getId();
+			}
+		}
+		return nextPlayer;
+	}
+	
 	public ArrayList<Player> getPlayerList()
 	{
 		return playerList;
+	}
+	
+	public Player getWinner()
+	{
+		if(isMoreThanOnePlayerActive())
+		{
+			return null;
+		}
+		else
+		{
+			for(int i = 0; i < playerList.size(); i ++)
+			{
+				if(playerList.get(i).isActive())
+				{
+					return playerList.get(i);
+				}
+			}
+		}
+		return null;
+	}
+	
+	public Player getPlayerByID(int id)
+	{
+		for(int i = 0; i < playerList.size(); i ++)
+		{
+			if(playerList.get(i).getId() == id)
+			{
+				return playerList.get(i);
+			}
+		}
+		return null;
+	}
+	
+	public Player getPlayerByName(String name)
+	{
+		for(int i = 0; i < playerList.size(); i ++)
+		{
+			if(playerList.get(i).getName().equals(name))
+			{
+				return playerList.get(i);
+			}
+		}
+		return null;
+	}
+	
+	public ArrayList<Player> getActivePlayers()
+	{
+		ArrayList<Player> activeList = new ArrayList<Player>();
+		for(int i = 0; i <  playerList.size(); i++)
+		{
+			if(playerList.get(i).isActive())
+			{
+				activeList.add(playerList.get(i));
+			}
+		}
+		return activeList;
+	}
+
+	public int getCurrentPlayerSymbol() 
+	{
+		return currentPlayerSymbol;
+	}
+
+	public void setCurrentPlayerSymbol(int currentPlayerSymbol) 
+	{
+		this.currentPlayerSymbol = currentPlayerSymbol;
+	}
+
+	public int getCurrentPlayerID() 
+	{
+		return currentPlayerID;
+	}
+
+	public void setCurrentPlayerID(int currentPlayerID) 
+	{
+		this.currentPlayerID = currentPlayerID;
+	}
+
+	public boolean isFreeGameEnabled() 
+	{
+		return isFreeGameEnabled;
+	}
+
+	public int getFreeSpinsLeft() 
+	{
+		return freeSpinsLeft;
+	}
+
+	public int getFreeSpinsAmount() 
+	{
+		return freeSpinsAmount;
+	}
+
+	public int getFreeSpinsTotal() 
+	{
+		return freeSpinsTotal;
+	}
+
+	public void setSlotMachine(SlotMachine slotMachine) 
+	{
+		this.slotMachine = slotMachine;
 	}
 }

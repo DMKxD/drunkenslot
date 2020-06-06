@@ -16,12 +16,17 @@ public class Player
 		this.id = id;
 		this.name = name;
 		this.image = image;
-		playerSymbol = id + 7;
+		playerSymbol = id + 8;
 	}
 
 	public int getId() 
 	{
 		return id;
+	}
+	
+	public void setId(int id)
+	{
+		this.id  = id;
 	}
 	
 	public int getPlayerSymbol()
@@ -49,7 +54,7 @@ public class Player
 		return active;
 	}
 	
-	public String getSymbol()
+	public String getIDString()
 	{
 		return "P"+id;
 	}
