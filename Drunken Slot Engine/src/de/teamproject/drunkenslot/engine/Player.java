@@ -11,6 +11,13 @@ public class Player
 	private int shots = 0;
 	private int drinks = 0;
 	private int playerSymbol;
+	
+	/**
+	 * Constructor for the Player class
+	 * @param id Player ID
+	 * @param name Player name
+	 * @param image Player image
+	 */
 	public Player(int id, String name, Image image)
 	{
 		this.id = id;

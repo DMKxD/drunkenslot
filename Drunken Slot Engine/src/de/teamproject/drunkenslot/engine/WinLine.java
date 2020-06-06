@@ -10,6 +10,11 @@ public class WinLine
 	private boolean allPlayer;
 	private boolean isBroken;
 	
+	/**
+	 * Constructor for the WinLine class
+	 * @param currentPlayer id of the current player
+	 * @param line number of the winline
+	 */
 	public WinLine(int currentPlayer, int line)
 	{
 		this.currentPlayer = currentPlayer;
@@ -29,7 +34,7 @@ public class WinLine
 	//set next symbol and check for winline break;
 	public void setSymbol(int symbol)
 	{
-		//System.out.println("This:"+this.symbol+" Input:"+symbol);//TODO Debug
+		//System.out.println("This:"+this.symbol+" Input:"+symbol);//Debug
 		if(!isBroken)
 		{
 			if(symbol == 7)//Symbol = allPlayerWild
@@ -68,7 +73,7 @@ public class WinLine
 			}
 			if(!isBroken)
 			{
-				//System.out.println("length ++"); TODO Debug
+				//System.out.println("length ++");//Debug
 				length ++;
 			}
 		}

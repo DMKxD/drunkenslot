@@ -5,6 +5,9 @@ public class Win
 	private int playerID, amount;
 	private boolean isAllPlayer, isShots, isRule, isDistribute;
 	
+	/**
+	 * Empty Constructor for the Win Class, set all values to negative or false
+	 */
 	public Win()
 	{
 		this.setPlayerID(-1);
@@ -15,6 +18,15 @@ public class Win
 		this.setAmount(-1);
 	}
 	
+	/**
+	 * Constructor for the Win Class
+	 * @param playerID Player ID
+	 * @param isAllPlayer boolean if this win affects all players
+	 * @param isShots boolean if it is a shots win or a drink win
+	 * @param isDistribute boolean if it is a distribute win
+	 * @param isRule boolean if it is a rule win
+	 * @param amount the amount of the win
+	 */
 	public Win(int playerID, boolean isAllPlayer, boolean isShots, boolean isDistribute, boolean isRule, int amount)
 	{
 		this.setPlayerID(playerID);

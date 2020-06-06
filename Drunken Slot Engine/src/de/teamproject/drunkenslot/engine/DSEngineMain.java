@@ -2,6 +2,10 @@ package de.teamproject.drunkenslot.engine;
 
 public class DSEngineMain 
 {
+	/**
+	 * Main Method to test the engine
+	 * @param args
+	 */
 	public static void main(String[] args) 
 	{
 		Engine engine = new Engine();

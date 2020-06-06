@@ -925,7 +925,7 @@ public class Engine implements GameModel
 	}
 	
 	/**
-	 * Return shots in current Round
+	 * Return shots Array in current Round 
 	 * @return roundShots
 	 */
 	public int[] getRoundShots()
@@ -933,36 +933,64 @@ public class Engine implements GameModel
 		return roundShots;
 	}
 	
+	/**
+	 * Return shots to distribute Array in current Round 
+	 * @return roundShotsDistribute
+	 */
 	public int[] getRoundShotsDistribute()
 	{
 		return roundShotsDistribute;
 	}
 	
+	/**
+	 * Return drinks Array in current Round
+	 * @return roundDrinks
+	 */
 	public int[] getRoundDrinks()
 	{
 		return roundDrinks;
 	}
 	
+	/**
+	 * Return drinks to distribute Array in current Round 
+	 * @return roundDrinksDistribute
+	 */
 	public int[] getRoundDrinksDistribute()
 	{
 		return roundDrinksDistribute;
 	}
 	
+	/**
+	 * Return rules Array in current Round
+	 * @return roundRules
+	 */
 	public int[] getRoundRules()
 	{
 		return roundRules;
 	}
 	
+	/**
+	 * Generate the next Player ID, maybe only use playerList index?
+	 * @return id
+	 */
 	public static int getID()
 	{
 		return id++;
 	}
 	
+	/**
+	 * Get the currently active Rule
+	 * @return rule
+	 */
 	public String getRule()
 	{
 		return rule;
 	}
 	
+	/**
+	 * Get the id for the next players turn
+	 * @return nextPlayerID
+	 */
 	public int getNextPlayerID()
 	{
 		int nextPlayer = -1;
@@ -991,11 +1019,19 @@ public class Engine implements GameModel
 		return nextPlayer;
 	}
 	
+	/**
+	 * Get the games player list
+	 * @return playerList
+	 */
 	public ArrayList<Player> getPlayerList()
 	{
 		return playerList;
 	}
 	
+	/**
+	 * If there is only one player who is active, return that player
+	 * @return last active player
+	 */
 	public Player getWinner()
 	{
 		if(isMoreThanOnePlayerActive())
@@ -1015,6 +1051,11 @@ public class Engine implements GameModel
 		return null;
 	}
 	
+	/**
+	 * Get the player from the playerList by id
+	 * @param id ID of the Player
+	 * @return Player with ID, if he exists
+	 */
 	public Player getPlayerByID(int id)
 	{
 		for(int i = 0; i < playerList.size(); i ++)
@@ -1027,6 +1068,11 @@ public class Engine implements GameModel
 		return null;
 	}
 	
+	/**
+	 * Get the player from the playerList by name
+	 * @param name Name of the Player
+	 * @return Player with name, if he exists
+	 */
 	public Player getPlayerByName(String name)
 	{
 		for(int i = 0; i < playerList.size(); i ++)
@@ -1039,6 +1085,10 @@ public class Engine implements GameModel
 		return null;
 	}
 	
+	/**
+	 * Get a list of all active Players
+	 * @return active Players
+	 */
 	public ArrayList<Player> getActivePlayers()
 	{
 		ArrayList<Player> activeList = new ArrayList<Player>();
@@ -1051,49 +1101,76 @@ public class Engine implements GameModel
 		}
 		return activeList;
 	}
-
+	
+	/**
+	 * Get the current symbol of the player
+	 * @return currentPlayerSymbol
+	 */
 	public int getCurrentPlayerSymbol() 
 	{
 		return currentPlayerSymbol;
 	}
 
+	/**
+	 * Set the current symbol of the player
+	 * @param currentPlayerSymbol Symbol of the Player
+	 */
 	public void setCurrentPlayerSymbol(int currentPlayerSymbol) 
 	{
 		this.currentPlayerSymbol = currentPlayerSymbol;
 	}
 
+	/**
+	 * Get the ID of the current Player
+	 * @return currentPlayerID
+	 */
 	public int getCurrentPlayerID() 
 	{
 		return currentPlayerID;
 	}
 
+	/**
+	 * Set the ID of the current Player
+	 * @param currentPlayerID override current player id
+	 */
 	public void setCurrentPlayerID(int currentPlayerID) 
 	{
 		this.currentPlayerID = currentPlayerID;
 	}
 
+	/**
+	 * Check if free games are enabled
+	 * @return isFreeGameEnabled
+	 */
 	public boolean isFreeGameEnabled() 
 	{
 		return isFreeGameEnabled;
 	}
 
+	/**
+	 * Get the number of the remaining free spins
+	 * @return freeSpinsLeft
+	 */
 	public int getFreeSpinsLeft() 
 	{
 		return freeSpinsLeft;
 	}
 
+	/**
+	 * Get the amount of free spins, that will be set, if a new free game round starts
+	 * @return freeSpinsAmount
+	 */
 	public int getFreeSpinsAmount() 
 	{
 		return freeSpinsAmount;
 	}
 
+	/**
+	 * Return the total number of free spins in the current free game round
+	 * @return freeSpinsTotal
+	 */
 	public int getFreeSpinsTotal() 
 	{
 		return freeSpinsTotal;
-	}
-
-	public void setSlotMachine(SlotMachine slotMachine) 
-	{
-		this.slotMachine = slotMachine;
 	}
 }
