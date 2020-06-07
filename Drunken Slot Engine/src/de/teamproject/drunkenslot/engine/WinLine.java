@@ -1,5 +1,10 @@
 package de.teamproject.drunkenslot.engine;
 
+/**
+ * WinLine class to calculate if there is a Win in the selected Line.
+ * @author Dominik Haacke
+ *
+ */
 public class WinLine 
 {
 	private int length;
@@ -13,7 +18,7 @@ public class WinLine
 	/**
 	 * Constructor for the WinLine class
 	 * @param currentPlayer id of the current player
-	 * @param line number of the winline
+	 * @param line number of the WinLine
 	 */
 	public WinLine(int currentPlayer, int line)
 	{
@@ -26,12 +31,16 @@ public class WinLine
 		length = 0;
 	}
 	
-	public void setAllPlayer()
-	{
-		allPlayer = true;
-	}
-	
-	//set next symbol and check for winline break;
+	/**
+	 * This method gets called for every step we take through a WinLine
+	 * if the symbol breaks the WinLine it is set to isBroken. Else we
+	 * check what Symbol it is, if the current Symbol is Wild or a Player
+	 * Symbol it gets overwritten by the symbol, if the symbol is not
+	 * a Wild or a Player Symbol. If there are two different Player Symbols
+	 * in the Line, the Line will break. As long as the WinLine isn't broken
+	 * we will increase its length with each step.
+	 * @param symbol next Symbol in this Line
+	 */
 	public void setSymbol(int symbol)
 	{
 		//System.out.println("This:"+this.symbol+" Input:"+symbol);//Debug
@@ -79,6 +88,10 @@ public class WinLine
 		}
 	}
 	
+	/**
+	 * Check if there is a Win in this WinLine
+	 * @return Win or No Win true or false
+	 */
 	public boolean isWin()
 	{
 		if(length >= 3)
@@ -124,6 +137,18 @@ public class WinLine
 		return line;
 	}
 	
+	/**
+	 * Sets WinLine to All Player Win
+	 */
+	public void setAllPlayer()
+	{
+		allPlayer = true;
+	}
+	
+	/**
+	 * Generate the Win from the WinLine if it exists.
+	 * @return Win if there is a Win, or null if there isn't.
+	 */
 	public Win getWin()
 	{
 		if(isWin())
@@ -179,7 +204,7 @@ public class WinLine
 		return null;
 	}
 	
-	//DEBUG
+	//DEBUG for the CMD Engine Test
 	public String winLineText()//TODO Was passiert bei all Player und nur Player Symbol?
 	{
 		String text = "";

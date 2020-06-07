@@ -2,6 +2,11 @@ package de.teamproject.drunkenslot.engine;
 
 import java.awt.Image;
 
+/**
+ * Player class that stores the Player data.
+ * @author Dominik Haacke
+ *
+ */
 public class Player 
 {
 	private int id;

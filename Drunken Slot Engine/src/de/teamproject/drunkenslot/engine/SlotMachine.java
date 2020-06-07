@@ -3,11 +3,20 @@ package de.teamproject.drunkenslot.engine;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * SlotMachine class that can generate a SlotImage for the game.
+ * @author Dominik Haacke
+ *
+ */
 public class SlotMachine 
 {
 	private ArrayList<Integer> slotSymbols;
 	private int symbolOffset  = 8;
 	
+	/**
+	 * Create a SlotMachine with the given symbols of integers
+	 * @param slotSymbols ArrayList<Integer> of the slot Symbols
+	 */
 	public SlotMachine(ArrayList<Integer> slotSymbols)
 	{
 		this.slotSymbols = slotSymbols;

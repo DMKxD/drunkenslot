@@ -1,5 +1,10 @@
 package de.teamproject.drunkenslot.engine;
 
+/**
+ * Class to store the WinData from a WinLine.
+ * @author Dominik Haacke
+ *
+ */
 public class Win 
 {
 	private int playerID, amount;

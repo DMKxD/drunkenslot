@@ -8,6 +8,11 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Scanner;
 
+/**
+ * Engine Class that runs the game and all background calculations.
+ * @author Dominik Haacke
+ *
+ */
 public class Engine implements GameModel
 {
 	private static int id = 0;

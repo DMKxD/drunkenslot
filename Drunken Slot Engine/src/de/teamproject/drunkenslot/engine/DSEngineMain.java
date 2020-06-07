@@ -1,5 +1,10 @@
 package de.teamproject.drunkenslot.engine;
 
+/**
+ * Test Main Class to run the CMD Engine and demo Game.
+ * @author Dominik Haacke
+ *
+ */
 public class DSEngineMain 
 {
 	/**
