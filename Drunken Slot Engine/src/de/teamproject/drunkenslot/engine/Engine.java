@@ -19,15 +19,18 @@ public class Engine implements GameModel
 	private final int symbolOffset = 11;
 	private int currentPlayerSymbol = 11;//11 is player 0;
 	private int currentPlayerID = 0;
-	private ArrayList<Player> playerList = new ArrayList<Player>();
-	private ArrayList<Integer> alternativeSymbolList = new ArrayList<Integer>();
-	private SlotMachine slotMachine;
 	private boolean isFreeGameEnabled = false;
 	private int freeSpinsLeft = 0;
 	private int freeSpinsAmount = 5;
 	private int freeSpinsTotal = 0;
+	
 	private String rule = "";
 	private SlotImage currentSlotImage;
+	private SlotMachine slotMachine;
+	private WinLine[] currentWinLines;
+	
+	private ArrayList<Player> playerList = new ArrayList<Player>();
+	private ArrayList<Integer> alternativeSymbolList = new ArrayList<Integer>();
 	
 	private int[] roundShots, roundDrinks, roundShotsDistribute, roundDrinksDistribute, roundRules;
 	
@@ -348,22 +351,22 @@ public class Engine implements GameModel
 	 */
 	public void scanWinLines(SlotImage si)//TODO codierung zum hin und her senden
 	{
-		WinLine winlines[] = new WinLine[9];
-		winlines[0] = checkWinLine1(si);
-		winlines[1] = checkWinLine2(si);
-		winlines[2] = checkWinLine3(si);
-		winlines[3] = checkWinLine4(si);
-		winlines[4] = checkWinLine5(si);
-		winlines[5] = checkWinLine6(si);
-		winlines[6] = checkWinLine7(si);
-		winlines[7] = checkWinLine8(si);
-		winlines[8] = checkWinLine9(si);
+		currentWinLines = new WinLine[9];
+		currentWinLines[0] = checkWinLine1(si);
+		currentWinLines[1] = checkWinLine2(si);
+		currentWinLines[2] = checkWinLine3(si);
+		currentWinLines[3] = checkWinLine4(si);
+		currentWinLines[4] = checkWinLine5(si);
+		currentWinLines[5] = checkWinLine6(si);
+		currentWinLines[6] = checkWinLine7(si);
+		currentWinLines[7] = checkWinLine8(si);
+		currentWinLines[8] = checkWinLine9(si);
 		//TODO DEBUG and CMD
-		for(int i = 0; i < winlines.length; i ++)
+		for(int i = 0; i < currentWinLines.length; i ++)
 		{
-			System.out.print(winlines[i].winLineText());
+			System.out.print(currentWinLines[i].winLineText());
 		}
-		updateWinArrays(winlines);
+		updateWinArrays(currentWinLines);
 	}
 	
 	/**
@@ -1247,6 +1250,11 @@ public class Engine implements GameModel
 	public SlotImage getCurrentSlotImage()
 	{
 		return currentSlotImage;
+	}
+	
+	public WinLine[] getCurrentWinLines()
+	{
+		return currentWinLines;
 	}
 	
 	public void setPlayerInactive(int playerId)
