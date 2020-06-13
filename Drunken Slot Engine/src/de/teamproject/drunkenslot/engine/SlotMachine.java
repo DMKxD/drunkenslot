@@ -17,8 +17,9 @@ public class SlotMachine
 	 * Create a SlotMachine with the given symbols of integers
 	 * @param slotSymbols ArrayList<Integer> of the slot Symbols
 	 */
-	public SlotMachine(ArrayList<Integer> slotSymbols)
+	public SlotMachine(ArrayList<Integer> slotSymbols, int symbolOffset)
 	{
+		this.symbolOffset = symbolOffset;
 		this.slotSymbols = slotSymbols;
 	}
 	

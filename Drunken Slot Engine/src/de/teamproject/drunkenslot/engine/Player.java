@@ -28,7 +28,7 @@ public class Player
 		this.id = id;
 		this.name = name;
 		this.image = image;
-		playerSymbol = id + 8;
+		playerSymbol = id + 11;
 	}
 
 	public int getId() 

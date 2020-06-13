@@ -13,9 +13,14 @@ public class DSEngineMain
 	 */
 	public static void main(String[] args) 
 	{
-		Engine engine = new Engine();
-		engine.createPlayer(Engine.getID(), "Dominik", null);
-		engine.createPlayer(Engine.getID(), "Jonas", null);
+		GameConfig config = new GameConfig();
+		config.createPlayer(Engine.getID(), "Dominik", null);
+		config.createPlayer(Engine.getID(), "Jonas", null);
+		
+		System.out.println(config.getPlayerList().get(0).getId());
+		System.out.println(config.getPlayerList().get(1).getId());
+		
+		Engine engine = new Engine(config);
 		engine.createGame();
 		engine.gameLoop();
 		//SlotImage si = engine.roll();

@@ -12,6 +12,7 @@ public class WinLine
 	private int playerSymbol;
 	private int symbol;
 	private int line;
+	private int playerOffset;
 	private boolean allPlayer;
 	private boolean isBroken;
 	
@@ -20,7 +21,7 @@ public class WinLine
 	 * @param currentPlayer id of the current player
 	 * @param line number of the WinLine
 	 */
-	public WinLine(int currentPlayer, int line)
+	public WinLine(int currentPlayer, int line, int playerOffset)
 	{
 		this.currentPlayer = currentPlayer;
 		this.line = line;
@@ -29,6 +30,7 @@ public class WinLine
 		symbol = -1;
 		playerSymbol = -1;
 		length = 0;
+		this.playerOffset = playerOffset;
 	}
 	
 	/**
@@ -50,7 +52,7 @@ public class WinLine
 			{
 				allPlayer = true;
 			}
-			if(symbol > 7)//If PlayerSymbol then check if match, else broken, override currentsymbol, if its the first time
+			if(symbol > 10)//If PlayerSymbol then check if match, else broken, override currentsymbol, if its the first time
 			{
 				if(playerSymbol == -1)
 				{
@@ -65,7 +67,7 @@ public class WinLine
 					isBroken = true;
 				}
 			}
-			else if(this.symbol >= 6)//Override current Symbol, if it is a Wild or allPlayerWild or player Symbol 
+			else if(this.symbol == 6 || this.symbol == 7 || this.symbol >= 11)//Override current Symbol, if it is a Wild or allPlayerWild or player Symbol 
 			{
 				this.symbol = symbol;
 			}
@@ -79,6 +81,10 @@ public class WinLine
 				{
 					isBroken = true;
 				}
+			}
+			else if(this.symbol >= 8 && this.symbol <= 10)//Niete, somit brechen
+			{
+				isBroken = true;
 			}
 			if(!isBroken)
 			{
@@ -94,6 +100,10 @@ public class WinLine
 	 */
 	public boolean isWin()
 	{
+		if(this.symbol >= 8 && this.symbol <= 10 || this.symbol == 5)//Niete oder Scatter
+		{
+			return false;
+		}
 		if(length >= 3)
 		{
 			if(symbol == 4 && length == 5) //IF Rule
@@ -101,10 +111,6 @@ public class WinLine
 				return true;
 			}
 			else if(symbol == 4 && length < 5)
-			{
-				return false;
-			}
-			else if(symbol == 5)//Scatter Win Line
 			{
 				return false;
 			}
@@ -161,39 +167,35 @@ public class WinLine
 			switch(symbol)
 			{
 		        case 0:
-		        	win.setPlayerID(getPlayer()-8);
+		        	win.setPlayerID(getPlayer()-playerOffset);
 		        	win.setAmount(length -2);
 		        	win.setShots(true);
 		        	win.setDistribute(true);
 		            break;
 		        case 1:
-		        	win.setPlayerID(getPlayer()-8);
+		        	win.setPlayerID(getPlayer()-playerOffset);
 		        	win.setAmount(length -2);
 		        	win.setShots(false);
 		        	win.setDistribute(true);
 		            break;
 		        case 2:
-		        	win.setPlayerID(getPlayer()-8);
+		        	win.setPlayerID(getPlayer()-playerOffset);
 		        	win.setAmount(length -2);
 		        	win.setShots(true);
 		        	win.setDistribute(false);
 		            break;
 		        case 3:
-		        	win.setPlayerID(getPlayer()-8);
+		        	win.setPlayerID(getPlayer()-playerOffset);
 		        	win.setAmount(length -2);
 		        	win.setShots(false);
 		        	win.setDistribute(false);
 		            break;
 		        case 4:
-		        	win.setPlayerID(getPlayer()-8);
+		        	win.setPlayerID(getPlayer()-playerOffset);
 		        	win.setRule(true);
 		            break;
-		        case 5:
-		        	//text+="Nichts, da Scatter\n";
-		            //TODO Nichts da scatter?
-		            break;
 		        default://Bei AllPlayerSymbol oder nur Wilds
-		        	win.setPlayerID(getPlayer()-8);
+		        	win.setPlayerID(getPlayer()-playerOffset);
 		        	win.setAmount(length -2);
 		        	win.setShots(true);
 		        	win.setDistribute(true);
@@ -216,26 +218,26 @@ public class WinLine
 				switch(symbol)
 				{
 			        case 0:
-			            text += "Spieler" +(getPlayer()-7)+" darf "+(length - 2)+" Shot(s) verteilen.\n";
+			            text += "Spieler" +(getPlayer()-playerOffset)+" darf "+(length - 2)+" Shot(s) verteilen.\n";
 			            break;
 			        case 1:
-			        	text += "Spieler" +(getPlayer()-7)+" darf "+(length - 2)+" Schluck(Schlücke) verteilen.\n";
+			        	text += "Spieler" +(getPlayer()-playerOffset)+" darf "+(length - 2)+" Schluck(Schlücke) verteilen.\n";
 			            break;
 			        case 2:
-			        	text += "Spieler" +(getPlayer()-7)+" darf "+(length - 2)+" Shot(s) trinken.\n";
+			        	text += "Spieler" +(getPlayer()-playerOffset)+" darf "+(length - 2)+" Shot(s) trinken.\n";
 			            break;
 			        case 3:
-			        	text += "Spieler" +(getPlayer()-7)+" darf "+(length - 2)+" Schluck(Schlücke) trinken.\n";
+			        	text += "Spieler" +(getPlayer()-playerOffset)+" darf "+(length - 2)+" Schluck(Schlücke) trinken.\n";
 			            break;
 			        case 4:
-			        	text += "Spieler" +(getPlayer()-7)+" darf sich eine Regel ausdenken\n";
+			        	text += "Spieler" +(getPlayer()-playerOffset)+" darf sich eine Regel ausdenken\n";
 			            break;
 			        case 5:
 			        	text+="Nichts, da Scatter\n";
 			            //TODO Nichts da scatter?
 			            break;
 			        default:
-			        	text += "Spieler" +(getPlayer()-7)+" darf "+(length - 2)+" Shot(s) verteilen.\n";
+			        	text += "Spieler" +(getPlayer()-playerOffset)+" darf "+(length - 2)+" Shot(s) verteilen.\n";
 			            break;
 		        }
 			}

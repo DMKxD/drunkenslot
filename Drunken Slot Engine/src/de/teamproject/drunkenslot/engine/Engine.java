@@ -16,24 +16,68 @@ import java.util.Scanner;
 public class Engine implements GameModel
 {
 	private static int id = 0;
-	private int currentPlayerSymbol = 8;//8 is player 0;
+	private final int symbolOffset = 11;
+	private int currentPlayerSymbol = 11;//11 is player 0;
 	private int currentPlayerID = 0;
 	private ArrayList<Player> playerList = new ArrayList<Player>();
+	private ArrayList<Integer> alternativeSymbolList = new ArrayList<Integer>();
 	private SlotMachine slotMachine;
 	private boolean isFreeGameEnabled = false;
 	private int freeSpinsLeft = 0;
 	private int freeSpinsAmount = 5;
 	private int freeSpinsTotal = 0;
 	private String rule = "";
+	private SlotImage currentSlotImage;
 	
 	private int[] roundShots, roundDrinks, roundShotsDistribute, roundDrinksDistribute, roundRules;
 	
 	static Scanner sc;
 	
+	public Engine(GameConfig config)
+	{
+		for(int i = 0; i < config.getPlayerList().size(); i++)
+		{
+			createPlayer(config.getPlayerList().get(i));
+		}
+		updateAlternativeSymbolList();
+	}
+	
+	private void updateAlternativeSymbolList() 
+	{
+		alternativeSymbolList = new ArrayList<Integer>();
+		alternativeSymbolList.add(0);
+		alternativeSymbolList.add(1);
+		alternativeSymbolList.add(2);
+		alternativeSymbolList.add(3);
+		alternativeSymbolList.add(4);
+		alternativeSymbolList.add(5);
+		alternativeSymbolList.add(6);
+		alternativeSymbolList.add(7);
+		alternativeSymbolList.add(10);
+		if(getActivePlayers().size() <= 2)
+		{
+			alternativeSymbolList.add(8);
+			alternativeSymbolList.add(9);
+		}
+		else if(getActivePlayers().size() >= 3 && getActivePlayers().size() <= 6)
+		{
+			alternativeSymbolList.add(9);
+		}
+		for(int i = symbolOffset; i < (symbolOffset + playerList.size()); i ++)
+		{
+			alternativeSymbolList.add(i);
+		}
+	}
+
 	@Override
 	public void createPlayer(int id, String name, Image image) 
 	{
 		playerList.add(new Player(id, name, image));
+	}
+	
+	public void createPlayer(Player player)
+	{
+		playerList.add(player);
 	}
 
 	@Override
@@ -61,7 +105,7 @@ public class Engine implements GameModel
 			{
 				if(!askPlayerForTurn())
 				{
-					playerList.get(currentPlayerID).setActive(false);
+					setPlayerInactive(currentPlayerID);
 					showStandingsScreen();
 					updateCurrentPlayer();
 					continue;
@@ -204,8 +248,8 @@ public class Engine implements GameModel
 	}
 	
 	/**
-	 * Create Slot Machine with the standard symbols 0 - 7
-	 * and the player symbols 8-n
+	 * Create Slot Machine with the standard symbols 0 - n
+	 * and the player symbols 11-n
 	 * 0 = Distribute Shot
 	 * 1 = Distribute Drink
 	 * 2 = Drink Shot
@@ -214,17 +258,20 @@ public class Engine implements GameModel
 	 * 5 = Scatter
 	 * 6 = Wild
 	 * 7 = All Player Wild
-	 * 8-n = Player Symbol (Only Wild if symbols from one player is in the line, 2 different player symbols break a win line)
+	 * 8 = No Win Symbol for player count 2
+	 * 9 = No Win Symbol for player count <= 4
+	 * 10 = No Win Symbol always
+	 * 11-n = Player Symbol (Only Wild if symbols from one player is in the line, 2 different player symbols break a win line)
 	 */
 	public void createSlotMachine()
 	{
 		ArrayList<Integer> symbols = new ArrayList<Integer>();
 		
-		for(int i = 0; i < (8 + playerList.size()); i++)
+		for(int i = 0; i < (symbolOffset + playerList.size()); i++)
 		{
 			symbols.add(i);
 		}
-		slotMachine = new SlotMachine(symbols);
+		slotMachine = new SlotMachine(symbols, symbolOffset);
 	}
 	
 	/**
@@ -254,14 +301,35 @@ public class Engine implements GameModel
 	 * Generate a new random SlotImage, if free games are enabled replace all player symbols with normal wilds
 	 * @return generated SlotImage
 	 */
-	public SlotImage roll()//TODO Schwierigkeiten
+	public SlotImage roll()//TODO Schwierigkeiten und ersetzen die Nieten durch normale Symbole bei bestimmter Spieleranzahl
 	{
-		if(isFreeGameEnabled)//First Iteration, alle Spieler Wilds durch normale ersetzen
+		SlotImage slotImage = slotMachine.generateRandom();
+		Random randomizer = new Random();
+		
+		for(int i = 0; i < slotImage.getLengthX(); i ++)
 		{
-			SlotImage slotImage = slotMachine.generateRandom();
-			for(int i = 0; i < slotImage.getLengthX(); i ++)
+			for (int j = 0; j < slotImage.getLengthY(); j++)
 			{
-				for (int j = 0; j < slotImage.getLengthY(); j++)
+				if(getActivePlayers().size() >= 3 && getActivePlayers().size() <= 6)//Niete 8 ersetzen
+				{
+					if(slotImage.get(i, j) == 8)
+					{
+						slotImage.set(i, j, alternativeSymbolList.get(randomizer.nextInt(alternativeSymbolList.size())));
+					}
+				}
+				else if(getActivePlayers().size() >= 6) //Niete 8 + 9 ersetzen
+				{
+					if(slotImage.get(i, j) == 8)
+					{
+						slotImage.set(i, j, alternativeSymbolList.get(randomizer.nextInt(alternativeSymbolList.size())));
+					}
+					
+					if(slotImage.get(i, j) == 9)
+					{
+						slotImage.set(i, j, alternativeSymbolList.get(randomizer.nextInt(alternativeSymbolList.size())));
+					}
+				}
+				if(isFreeGameEnabled)//First Iteration, alle Spieler Wilds durch normale ersetzen
 				{
 					if(slotImage.get(i, j) >= slotMachine.getSymbolOffset())
 					{
@@ -269,12 +337,9 @@ public class Engine implements GameModel
 					}
 				}
 			}
-			return slotImage;
 		}
-		else
-		{
-			return slotMachine.generateRandom();
-		}
+		currentSlotImage = slotImage;
+		return currentSlotImage;
 	}
 	
 	/**
@@ -646,7 +711,7 @@ public class Engine implements GameModel
 	 */
 	public void testWinLine()
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 1);
+		WinLine line = new WinLine(currentPlayerSymbol, 1, symbolOffset);
 		line.setSymbol(2);
 		line.setSymbol(9);
 		line.setSymbol(9);
@@ -662,7 +727,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine1(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 1);
+		WinLine line = new WinLine(currentPlayerSymbol, 1, symbolOffset);
 		int y = 0;
 		for(int x = 0; x < si.getLengthX(); x ++)
 		{
@@ -678,7 +743,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine2(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 2);
+		WinLine line = new WinLine(currentPlayerSymbol, 2, symbolOffset);
 		int y = 1;
 		for(int x = 0; x < si.getLengthX(); x ++)
 		{
@@ -694,7 +759,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine3(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 3);
+		WinLine line = new WinLine(currentPlayerSymbol, 3, symbolOffset);
 		int y = 2;
 		for(int x = 0; x < si.getLengthX(); x ++)
 		{
@@ -710,7 +775,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine4(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 4);
+		WinLine line = new WinLine(currentPlayerSymbol, 4, symbolOffset);
 		line.setSymbol(si.get(0, 1));
 		line.setSymbol(si.get(1, 0));
 		line.setSymbol(si.get(2, 0));
@@ -726,7 +791,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine5(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 5);
+		WinLine line = new WinLine(currentPlayerSymbol, 5, symbolOffset);
 		line.setSymbol(si.get(0, 1));
 		line.setSymbol(si.get(1, 2));
 		line.setSymbol(si.get(2, 2));
@@ -742,7 +807,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine6(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 6);
+		WinLine line = new WinLine(currentPlayerSymbol, 6, symbolOffset);
 		line.setSymbol(si.get(0, 0));
 		line.setSymbol(si.get(1, 1));
 		line.setSymbol(si.get(2, 2));
@@ -758,7 +823,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine7(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 7);
+		WinLine line = new WinLine(currentPlayerSymbol, 7, symbolOffset);
 		line.setSymbol(si.get(0, 2));
 		line.setSymbol(si.get(1, 1));
 		line.setSymbol(si.get(2, 0));
@@ -774,7 +839,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine8(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 8);
+		WinLine line = new WinLine(currentPlayerSymbol, 8, symbolOffset);
 		line.setSymbol(si.get(0, 0));
 		line.setSymbol(si.get(1, 0));
 		line.setSymbol(si.get(2, 1));
@@ -790,7 +855,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine9(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 9);
+		WinLine line = new WinLine(currentPlayerSymbol, 9, symbolOffset);
 		line.setSymbol(si.get(0, 2));
 		line.setSymbol(si.get(1, 2));
 		line.setSymbol(si.get(2, 1));
@@ -870,9 +935,9 @@ public class Engine implements GameModel
 	public boolean isFreeGames(SlotImage si)
 	{
 		int scatter = 0;
-		for(int y = 0; y < si.getLengthY(); y ++)
+		for(int x = 0; x < si.getLengthX(); x ++)
 		{
-			for(int x = 0; x < si.getLengthX(); x ++)
+			for(int y = 0; y < si.getLengthY(); y ++)
 			{
 				if(si.get(x, y) == 5)
 				{
@@ -1010,7 +1075,7 @@ public class Engine implements GameModel
 				nextPlayer = playerList.get(i).getId();
 			}
 		}
-		if(nextPlayer != -1)
+		if(nextPlayer >= 0)
 		{
 			return nextPlayer;
 		}
@@ -1177,5 +1242,16 @@ public class Engine implements GameModel
 	public int getFreeSpinsTotal() 
 	{
 		return freeSpinsTotal;
+	}
+	
+	public SlotImage getCurrentSlotImage()
+	{
+		return currentSlotImage;
+	}
+	
+	public void setPlayerInactive(int playerId)
+	{
+		playerList.get(playerId).setActive(false);
+		updateAlternativeSymbolList();
 	}
 }
