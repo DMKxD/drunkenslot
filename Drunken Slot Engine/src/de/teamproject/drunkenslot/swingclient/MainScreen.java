@@ -58,20 +58,23 @@ public class MainScreen extends JFrame
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
-		JPanel panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+		
+		Component rigidArea = Box.createRigidArea(new Dimension(0, 70));
+		buttonPanel.add(rigidArea);
 		
 		JButton buttonOnline = new JButton("Online");
 		buttonOnline.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel.add(buttonOnline);
+		buttonPanel.add(buttonOnline);
 		
 		Component rigidButtonArea = Box.createRigidArea(new Dimension(20, 20));
-		panel.add(rigidButtonArea);
+		buttonPanel.add(rigidButtonArea);
 		
 		JButton buttonOffline = new JButton("Offline");
 		buttonOffline.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel.add(buttonOffline);
-		contentPane.add(panel, BorderLayout.CENTER);
+		buttonPanel.add(buttonOffline);
+		contentPane.add(buttonPanel, BorderLayout.CENTER);
 		
 		try 
 		{
@@ -89,6 +92,7 @@ public class MainScreen extends JFrame
 	{
 		BufferedImage wPic = ImageIO.read(this.getClass().getResource("/TitleImagePlaceholder.png"));
 		mainImageLabel = new JLabel(new ImageIcon(wPic));
+		mainImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 	}
 
 }

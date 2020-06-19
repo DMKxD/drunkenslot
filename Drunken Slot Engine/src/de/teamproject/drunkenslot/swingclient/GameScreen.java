@@ -22,6 +22,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Component;
+import javax.swing.Box;
+import java.awt.Dimension;
 
 public class GameScreen extends JFrame {
 
@@ -74,10 +76,36 @@ public class GameScreen extends JFrame {
 		slotTable.getColumnModel().getColumn(2).setMaxWidth(80);
 		slotTable.getColumnModel().getColumn(3).setMaxWidth(80);
 		slotTable.getColumnModel().getColumn(4).setMaxWidth(80);
+		
+		Component rigidArea_1 = Box.createRigidArea(new Dimension(20, 20));
+		tablePanel.add(rigidArea_1);
+		
+		JPanel panel = new JPanel();
+		tablePanel.add(panel);
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+		
+		JPanel panel_1 = new JPanel();
+		FlowLayout flowLayout_1 = (FlowLayout) panel_1.getLayout();
+		flowLayout_1.setAlignment(FlowLayout.LEFT);
+		panel.add(panel_1);
+		
+		JPanel panel_2 = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel_2.getLayout();
+		flowLayout.setAlignment(FlowLayout.RIGHT);
+		panel.add(panel_2);
+		
+		JLabel playerDescLabel = new JLabel("Player:");
+		panel_2.add(playerDescLabel);
+		
+		JLabel playerLabel = new JLabel("PlaxerX");
+		panel_2.add(playerLabel);
 		tablePanel.add(slotTable);
 		
 		JTextArea winLineTextArea = new JTextArea();
 		tablePanel.add(winLineTextArea);
+		
+		Component rigidArea = Box.createRigidArea(new Dimension(20, 20));
+		tablePanel.add(rigidArea);
 		
 		JPanel buttonPanel = new JPanel();
 		FlowLayout fl_buttonPanel = (FlowLayout) buttonPanel.getLayout();

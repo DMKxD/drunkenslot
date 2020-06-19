@@ -1,5 +1,7 @@
 package de.teamproject.drunkenslot.engine;
 
+import java.util.ArrayList;
+
 /**
  * WinLine class to calculate if there is a Win in the selected Line.
  * @author Dominik Haacke
@@ -272,5 +274,151 @@ public class WinLine
 			}
 		}
 		return text;
+	}
+	
+	public String getWinLineText(ArrayList<Player> spielerListe)
+	{
+		String returnText = "";
+		if(isWin())
+		{
+			if(isAllPlayer())
+			{
+				returnText += "Alle Spieler dürfen ";
+			}
+			switch(symbol)
+			{
+		        case 0:
+		        	if((length - 2) > 1)
+		        	{
+		        		if(returnText == "")
+		        		{
+		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Shots verteilen.\n";
+		        		}
+		        		else
+		        		{
+			        		returnText += (length - 2)+" Shots verteilen.\n";
+		        		}
+		        	}
+		        	else
+		        	{
+		        		if(returnText == "")
+		        		{
+		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Shot verteilen.\n";
+		        		}
+		        		else
+		        		{
+			        		returnText += (length - 2)+" Shot verteilen.\n";
+		        		}
+		        	}
+		            break;
+		        case 1:
+		        	if((length - 2) > 1)
+		        	{
+		        		if(returnText == "")
+		        		{
+		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Schlücke verteilen.\n";
+		        		}
+		        		else
+		        		{
+		        			returnText += (length - 2)+" Schlücke verteilen.\n";
+		        		}
+		        	}
+		        	else
+		        	{
+		        		if(returnText == "")
+		        		{
+		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Schluck verteilen.\n";
+		        		}
+		        		else
+		        		{
+		        			returnText += (length - 2)+" Schluck verteilen.\n";
+		        		}
+		        	}
+		            break;
+		        case 2:
+		        	if((length - 2) > 1)
+		        	{
+		        		if(returnText == "")
+		        		{
+		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Shots trinken.\n";
+		        		}
+		        		else
+		        		{
+		        			returnText += (length - 2)+" Shots trinken.\n";
+		        		}
+		        	}
+		        	else
+		        	{
+		        		if(returnText == "")
+		        		{
+		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Shot trinken.\n";
+		        		}
+		        		else
+		        		{
+			        		returnText += (length - 2)+" Shot trinken.\n";
+		        		}
+		        	}
+		            break;
+		        case 3:
+		        	if((length - 2) > 1)
+		        	{
+		        		if(returnText == "")
+		        		{
+		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Schlücke trinken.\n";
+		        		}
+		        		else
+		        		{
+		        			returnText += (length - 2)+" Schlücke trinken.\n";
+		        		}
+		        	}
+		        	else
+		        	{
+		        		if(returnText == "")
+		        		{
+		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Schluck trinken.\n";
+		        		}
+		        		else
+		        		{
+		        			returnText += (length - 2)+" Schluck trinken.\n";
+		        		}
+		        	}
+		            break;
+		        case 4:
+		        	if(returnText == "")
+	        		{
+	        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf sich eine Regel ausdenken.\n";
+	        		}
+		        	else
+		        	{
+		        		returnText += (length - 2)+" sich eine Regel ausdenken, einer wird zufällig ausgesucht.\n";
+		        	}
+		            break;
+		        default://Bei AllPlayerSymbol oder nur Wilds
+		        	if((length - 2) > 1)
+		        	{
+		        		if(returnText == "")
+		        		{
+		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Shots verteilen.\n";
+		        		}
+		        		else
+		        		{
+		        			returnText += (length - 2)+" Shots verteilen.\n";
+		        		}
+		        	}
+		        	else
+		        	{
+		        		if(returnText == "")
+		        		{
+		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Shot verteilen.\n";
+		        		}
+		        		else
+		        		{
+		        			returnText += (length - 2)+" Shot verteilen.\n";
+		        		}
+		        	}
+		            break;
+	        }
+		}
+		return returnText;
 	}
 }

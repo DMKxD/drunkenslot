@@ -342,6 +342,7 @@ public class Engine implements GameModel
 			}
 		}
 		currentSlotImage = slotImage;
+		scanWinLines(slotImage);
 		return currentSlotImage;
 	}
 	
@@ -1261,5 +1262,10 @@ public class Engine implements GameModel
 	{
 		playerList.get(playerId).setActive(false);
 		updateAlternativeSymbolList();
+	}
+	
+	public int getSymbolOffset()
+	{
+		return symbolOffset;
 	}
 }
