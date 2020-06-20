@@ -267,6 +267,47 @@ public class GameScreen extends JFrame
 		}
 	}
 	
+	public void showDialogs()
+	{
+		boolean dialogShown = false;
+		for(int i = 0; i < engine.getRoundDrinksDistribute().length; i++)
+		{
+			if(engine.getRoundDrinksDistribute()[i] != 0)
+			{
+				DistributionDialog distDialog = new DistributionDialog(this, engine, true, engine.getRoundDrinksDistribute()[i], i);
+				distDialog.setVisible(true);
+				dialogShown = true;
+				break;
+			}
+		}
+		if(!dialogShown)
+		{
+			for(int i = 0; i < engine.getRoundShotsDistribute().length; i++)
+			{
+				if(engine.getRoundShotsDistribute()[i] != 0)
+				{
+					DistributionDialog distDialog = new DistributionDialog(this, engine, false, engine.getRoundShotsDistribute()[i], i);
+					distDialog.setVisible(true);
+					dialogShown = true;
+					break;
+				}
+			}
+		}
+		if(!dialogShown)
+		{
+			for(int i = 0; i < engine.getRoundRules().length; i++)
+			{
+				if(engine.getRoundRules()[i] != 0)
+				{
+					DistributionDialog distDialog = new DistributionDialog(this, engine, false, engine.getRoundShotsDistribute()[i], i);
+					distDialog.setVisible(true);
+					dialogShown = true;
+					break;
+				}
+			}
+		}
+	}
+	
 	public JPanel getScreen()
 	{
 		return contentPane;
