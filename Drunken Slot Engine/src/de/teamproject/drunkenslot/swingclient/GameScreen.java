@@ -24,7 +24,7 @@ import de.teamproject.drunkenslot.engine.*;
 import java.awt.FlowLayout;
 import javax.swing.Box;
 
-public class GameScreenV4 extends JFrame 
+public class GameScreen extends JFrame 
 {
 	/**
 	 * 
@@ -69,7 +69,7 @@ public class GameScreenV4 extends JFrame
 			{
 				try 
 				{
-					GameScreenV4 frame = new GameScreenV4();
+					GameScreen frame = new GameScreen();
 					frame.setVisible(true);
 				} 
 				catch (Exception e) 
@@ -218,7 +218,7 @@ public class GameScreenV4 extends JFrame
 	/**
 	 * Create the frame.
 	 */
-	public GameScreenV4() 
+	public GameScreen() 
 	{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 750);
@@ -265,5 +265,10 @@ public class GameScreenV4 extends JFrame
 		{
 			slotImages[i] = ImageIO.read(this.getClass().getResource("/slotImages/slotSymbol"+i+".png"));
 		}
+	}
+	
+	public JPanel getScreen()
+	{
+		return contentPane;
 	}
 }

@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,12 +33,12 @@ public class DistributionDialog extends JDialog
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private JPanel gridPanel;
-	private JPanel buttonPane;
+	private JPanel buttonPanel;
 	private JLabel headerLaber;
 	private JTextField[] amountTextFields;
 	private JButton okButton = new JButton("Best\u00E4tigen");
-	private JFrame parent;
-	private final int amount;
+	private GameScreen parentGUI;
+	private final int amount, playerID;
 	private Engine engine;
 	private boolean drinks;
 	/**
@@ -67,10 +68,7 @@ public class DistributionDialog extends JDialog
 			
 			int testAmount = 15;
 			
-			String testHeader = "Dominik bitte verteile 15 Shots";
-			
-			DistributionDialog dialog = new DistributionDialog(new JFrame(), engine, testHeader, true, testAmount);
-			dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+			DistributionDialog dialog = new DistributionDialog(new GameScreen(), engine, true, testAmount, 0);
 			dialog.setVisible(true);
 		} 
 		catch (Exception e) 
@@ -79,25 +77,28 @@ public class DistributionDialog extends JDialog
 		}
 	}
 	
-	public DistributionDialog(JFrame parent, Engine engine, String header, boolean drinks, int amount) 
+	public DistributionDialog(GameScreen parentGUI, Engine engine, boolean drinks, int amount, int playerID) 
 	{
 		this.amount = amount;
-		this.parent = parent;
+		this.parentGUI = parentGUI;
 		this.engine = engine;
 		this.drinks = drinks;
+		this.playerID = playerID;
 		
-		setBounds(100, 100, 600, 180);
+		setBounds(100, 100, 600, 200);
+		setResizable(false);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout());
 		
 		createTitle();
 		createContentPanel();
-		createHeaderLabel(header);
+		createHeaderLabel();
 		createGridPanel(engine.getActivePlayers());
 		createButtonPanel();
 		createButton();
 		
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		getContentPane().add(buttonPane, BorderLayout.SOUTH);
+		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 	}
 	
 	private void createTitle() 
@@ -143,11 +144,14 @@ public class DistributionDialog extends JDialog
 			gridPanel.add(innerGridPanel);
 			
 		}
+		gridPanel.setBorder(BorderFactory.createTitledBorder("Spieler"));
 		contentPanel.add(gridPanel);
 	}
 	
-	public void createHeaderLabel(String header)
+	public void createHeaderLabel()
 	{
+		String header = engine.getPlayerList().get(playerID).getName()+
+				" verteile "+amount+" "+(drinks ? ((amount > 1) ? "Schlücke!": "Schluck!") : ((amount > 1) ? "Shots!": "Shot!"));
 		headerLaber = new JLabel(header);
 		headerLaber.setAlignmentX(Component.CENTER_ALIGNMENT);
 		contentPanel.add(headerLaber);
@@ -161,8 +165,8 @@ public class DistributionDialog extends JDialog
 	
 	public void createButtonPanel()
 	{
-		buttonPane = new JPanel();
-		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		buttonPanel = new JPanel();
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 	}
 	
 	public void createButton()
@@ -200,13 +204,13 @@ public class DistributionDialog extends JDialog
 				else
 				{
 					JOptionPane.showMessageDialog(ref,
-						    "Bitte verteile insgesamt "+amount+" "+(drinks ? ((amount > 1) ? "Schlücke!": "Schluck!") : ((amount > 1) ? "Shots!": "Shot")),
+						    "Bitte verteile insgesamt "+amount+" "+(drinks ? ((amount > 1) ? "Schlücke!": "Schluck!") : ((amount > 1) ? "Shots!": "Shot!")),
 						    "Zu wenig verteilt",
 						    JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		buttonPane.add(okButton);
+		buttonPanel.add(okButton);
 		getRootPane().setDefaultButton(okButton);
 	}
 	
@@ -235,13 +239,13 @@ public class DistributionDialog extends JDialog
 		if(drinks)
 		{
 			int distributeDrinks[] = engine.getRoundDrinksDistribute();
-			distributeDrinks[engine.getCurrentPlayerID()] -= amount;
+			distributeDrinks[playerID] -= amount;
 			engine.setRoundDrinksDistribute(distributeDrinks);
 		}
 		else//Shots
 		{
 			int distributeShots[] = engine.getRoundShotsDistribute();
-			distributeShots[engine.getCurrentPlayerID()] -= amount;
+			distributeShots[playerID] -= amount;
 			engine.setRoundShotsDistribute(distributeShots);
 		}
 		

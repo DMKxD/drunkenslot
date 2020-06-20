@@ -1293,4 +1293,9 @@ public class Engine implements GameModel
 	{
 		this.roundShotsDistribute = roundShotsDistribute;
 	}
+	
+	public void setRule(String rule)
+	{
+		this.rule = rule;
+	}
 }
