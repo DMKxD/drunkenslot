@@ -1268,4 +1268,29 @@ public class Engine implements GameModel
 	{
 		return symbolOffset;
 	}
+	
+	public void setRoundShots(int[] roundShots)
+	{
+		this.roundShots = roundShots;
+	}
+	
+	public void setRoundDrinks(int[] roundDrinks)
+	{
+		this.roundDrinks = roundDrinks;
+	}
+	
+	public void setRoundRules(int[] roundRules)
+	{
+		this.roundRules = roundRules;
+	}
+	
+	public void setRoundDrinksDistribute(int[] roundDrinksDistribute)
+	{
+		this.roundDrinksDistribute = roundDrinksDistribute;
+	}
+	
+	public void setRoundShotsDistribute(int[] roundShotsDistribute)
+	{
+		this.roundShotsDistribute = roundShotsDistribute;
+	}
 }
