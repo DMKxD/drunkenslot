@@ -69,7 +69,7 @@ public class GameScreen extends JFrame
 			{
 				try 
 				{
-					GameScreen frame = new GameScreen();
+					GameScreen frame = new GameScreen(new Engine(null));
 					frame.setVisible(true);
 				} 
 				catch (Exception e) 
@@ -87,12 +87,25 @@ public class GameScreen extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
+				spinButton.setEnabled(false);
+				surrenderButton.setEnabled(false);
 				engine.roll();
 				//spinButton.setEnabled(false);
 				//surrenderButton.setEnabled(false);
 				fillSlotmachine();
 				engine.printSlot(engine.getCurrentSlotImage());
 				updateWinTextArea();
+				showDialogs();
+			}
+		});
+		//TODO Continue Button & Surrender Button
+		continueButton.addActionListener(new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				spinButton.setEnabled(true);
+				surrenderButton.setEnabled(true);
 			}
 		});
 	}
@@ -109,14 +122,9 @@ public class GameScreen extends JFrame
 		slotPanel.repaint();
 	}
 	
-	public void createDemoEngine()
+	public void setEngine(Engine engine)
 	{
-		GameConfig config = new GameConfig();
-		config.createPlayer(Engine.getID(), "Dominik", null);
-		config.createPlayer(Engine.getID(), "Jonas", null);
-		
-		engine = new Engine(config);
-		engine.createGame();
+		this.engine = engine;
 	}
 	
 	public void createFreeGamesPanel()
@@ -218,14 +226,12 @@ public class GameScreen extends JFrame
 	/**
 	 * Create the frame.
 	 */
-	public GameScreen() 
+	public GameScreen(Engine engine) 
 	{
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1000, 750);
+		this.engine = engine;
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		createDemoEngine();
 		
 		try 
 		{
@@ -299,12 +305,17 @@ public class GameScreen extends JFrame
 			{
 				if(engine.getRoundRules()[i] != 0)
 				{
-					DistributionDialog distDialog = new DistributionDialog(this, engine, false, engine.getRoundShotsDistribute()[i], i);
-					distDialog.setVisible(true);
+					RuleDialog ruleDialog = new RuleDialog(this, engine, engine.getRoundRules()[i]);
+					ruleDialog.setVisible(true);
 					dialogShown = true;
 					break;
 				}
 			}
+		}
+		
+		if(engine.allRoundArraysClear())
+		{
+			continueButton.setEnabled(true);
 		}
 	}
 	

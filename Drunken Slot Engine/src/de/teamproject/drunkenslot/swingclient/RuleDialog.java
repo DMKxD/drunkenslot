@@ -35,6 +35,7 @@ public class RuleDialog extends JDialog
 	private Engine engine;
 	private final int playerID;
 	private JButton okButton;
+	private GameScreen parentGUI;
 	
 	/**
 	 * Launch the application.
@@ -60,7 +61,7 @@ public class RuleDialog extends JDialog
 			int roundRules[] = {0, 0, 1, 0, 0, 0, 0, 0, 0, 0,};
 			engine.setRoundRules(roundRules);
 			
-			RuleDialog dialog = new RuleDialog(new DrunkenSlotGUI(), engine, 0);
+			RuleDialog dialog = new RuleDialog(new GameScreen(engine), engine, 0);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} 
@@ -73,8 +74,9 @@ public class RuleDialog extends JDialog
 	/**
 	 * Create the dialog.
 	 */
-	public RuleDialog(DrunkenSlotGUI parentGUI, Engine engine, int playerID) 
+	public RuleDialog(GameScreen parentGUI, Engine engine, int playerID) 
 	{
+		this.parentGUI = parentGUI;
 		this.engine = engine;
 		this.playerID = playerID;
 		setBounds(100, 100, 500, 130);
@@ -139,6 +141,7 @@ public class RuleDialog extends JDialog
 				{
 					String rule = textField.getText();
 					updateRule(rule);
+					parentGUI.showDialogs();
 					ref.dispose();
 				}
 				else

@@ -1298,4 +1298,18 @@ public class Engine implements GameModel
 	{
 		this.rule = rule;
 	}
+	
+	public boolean allRoundArraysClear()
+	{
+		int sum = 0;
+		for (int i = 0; i < roundDrinksDistribute.length; i ++)
+		{
+			sum += roundDrinksDistribute[i]+roundShotsDistribute[i]+roundRules[i];
+		}
+		if(sum == 0)
+		{
+			return true;
+		}
+		return false;
+	}
 }

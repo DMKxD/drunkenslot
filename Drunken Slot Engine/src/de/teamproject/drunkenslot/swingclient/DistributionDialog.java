@@ -68,7 +68,7 @@ public class DistributionDialog extends JDialog
 			
 			int testAmount = 15;
 			
-			DistributionDialog dialog = new DistributionDialog(new GameScreen(), engine, true, testAmount, 0);
+			DistributionDialog dialog = new DistributionDialog(new GameScreen(null), engine, true, testAmount, 0);
 			dialog.setVisible(true);
 		} 
 		catch (Exception e) 
@@ -199,6 +199,7 @@ public class DistributionDialog extends JDialog
 				if(sum == amount)
 				{
 					calculateRoundArrays();
+					parentGUI.showDialogs();
 					ref.dispose();
 				}
 				else
