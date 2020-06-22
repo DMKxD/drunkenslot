@@ -16,6 +16,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
@@ -59,6 +60,8 @@ public class GameScreen extends JFrame
 	private Component rigidArea_1;
 	private Component rigidArea_2;
 	
+	private boolean freeGamesStartetThisRound = false;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -87,8 +90,16 @@ public class GameScreen extends JFrame
 		playerLabel.setText(engine.getPlayerList().get(engine.getCurrentPlayerID()).getName());
 		freeGamesLabel.setText(engine.getFreeSpinsLeft()+"/"+engine.getFreeSpinsTotal());
 		spinButton.setEnabled(true);
-		surrenderButton.setEnabled(true);
+		if(engine.isFreeGameEnabled())
+		{
+			surrenderButton.setEnabled(false);
+		}
+		else
+		{
+			surrenderButton.setEnabled(true);
+		}
 		continueButton.setEnabled(false);
+		winTextArea.setText("");
 	}
 	
 	public void createButtons()
@@ -101,31 +112,54 @@ public class GameScreen extends JFrame
 				spinButton.setEnabled(false);
 				surrenderButton.setEnabled(false);
 				engine.roll();
-				//spinButton.setEnabled(false);
-				//surrenderButton.setEnabled(false);
 				fillSlotmachine();
-				engine.printSlot(engine.getCurrentSlotImage());
+				//engine.printSlot(engine.getCurrentSlotImage());
 				updateWinTextArea();
 				showDialogs();
 			}
 		});
-		//TODO Continue Button & Surrender Button
 		continueButton.addActionListener(new ActionListener() 
 		{
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				//spinButton.setEnabled(true);
-				//surrenderButton.setEnabled(true);
 				engine.finalizeRound();
-				//clearAndUpdateScreen();
 				if(engine.isMoreThanOnePlayerActive())
 				{
 					drunkenSlotGUI.switchToStandingsScreen();
 				}
 				else
 				{
-					//switchToEndScreen
+					drunkenSlotGUI.switchToEndScreen();
+				}
+			}
+		});
+		
+		surrenderButton.addActionListener(new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				Object[] options = {"Ja","Nein"};
+				int n = JOptionPane.showOptionDialog(drunkenSlotGUI.getMainFrame(),
+					    "Wirklich aufgeben?",
+					    "Spieler "+engine.getPlayerList().get(engine.getCurrentPlayerID()).getName()+" will aufgeben.",
+					    JOptionPane.YES_NO_OPTION,
+					    JOptionPane.QUESTION_MESSAGE,
+					    null,//TODO Icon
+					    options,
+					    options[1]);
+				if(n == JOptionPane.YES_OPTION)
+				{
+					engine.getPlayerList().get(engine.getCurrentPlayerID()).setActive(false);
+					if(engine.isMoreThanOnePlayerActive())
+					{
+						drunkenSlotGUI.switchToStandingsScreen();
+					}
+					else
+					{
+						drunkenSlotGUI.switchToEndScreen();
+					}
 				}
 			}
 		});
@@ -259,6 +293,7 @@ public class GameScreen extends JFrame
 			{
 				engine.checkFreeGames(engine.getCurrentSlotImage());
 				winTextArea.append(engine.getFreeSpinsAmount()+" Freispiele gewonnen!");
+				freeGamesStartetThisRound = true;
 			}
 		}
 	}
@@ -351,7 +386,7 @@ public class GameScreen extends JFrame
 			{
 				if(engine.getRoundRules()[i] != 0)
 				{
-					RuleDialog ruleDialog = new RuleDialog(this, engine, engine.getRoundRules()[i]);
+					RuleDialog ruleDialog = new RuleDialog(this, engine, i);
 					ruleDialog.setVisible(true);
 					dialogShown = true;
 					break;
@@ -362,6 +397,21 @@ public class GameScreen extends JFrame
 		if(engine.allRoundArraysClear())
 		{
 			continueButton.setEnabled(true);
+			if(!engine.isFreeGameEnabled())
+			{
+				engine.updateCurrentPlayer();
+			}
+			else
+			{
+				if(!freeGamesStartetThisRound)
+				{
+					engine.updateFreeGames();
+				}
+				else
+				{
+					freeGamesStartetThisRound = false;
+				}
+			}
 		}
 	}
 	

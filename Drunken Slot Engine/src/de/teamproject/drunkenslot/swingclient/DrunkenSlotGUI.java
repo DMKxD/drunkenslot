@@ -14,6 +14,7 @@ public class DrunkenSlotGUI
 	private JPanel contentPane;
 	private GameScreen gameScreen;
 	private StandingsScreen standingsScreen;
+	private EndScreen endScreen;
 	private Engine engine;
 	
 	public DrunkenSlotGUI()
@@ -27,6 +28,7 @@ public class DrunkenSlotGUI
 	{
 		gameScreen = new GameScreen(this);
 		standingsScreen = new StandingsScreen(this);
+		endScreen = new EndScreen(this);
 	}
 	
 	public void createDemoEngine()
@@ -75,6 +77,16 @@ public class DrunkenSlotGUI
 	{
 		standingsScreen.updateTable();
 		contentPane = standingsScreen.getScreen();
+		mainFrame.setContentPane(contentPane);
+		mainFrame.revalidate();
+		mainFrame.repaint();
+	}
+	
+	public void switchToEndScreen()
+	{
+		endScreen.updateTable();
+		endScreen.setWinner(engine.getWinner().getName());
+		contentPane = endScreen.getScreen();
 		mainFrame.setContentPane(contentPane);
 		mainFrame.revalidate();
 		mainFrame.repaint();

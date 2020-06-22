@@ -28,7 +28,7 @@ import javax.swing.JButton;
 import javax.swing.Box;
 import java.awt.Dimension;
 
-public class StandingsScreen extends JFrame 
+public class EndScreen extends JFrame 
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -41,15 +41,16 @@ public class StandingsScreen extends JFrame
 	private JPanel topPanel;
 	private JLabel ruleDescLabel;
 	private JLabel ruleLabel;
+	private JLabel winnerLabel;
 	private JButton continueButton;
 	
 	private Engine engine;
 	private DrunkenSlotGUI drunkenSlotGUI;
-	private Component rigidArea;
+	private Component rigidArea1, rigidArea2;
 	/**
 	 * Create the frame.
 	 */
-	public StandingsScreen(DrunkenSlotGUI drunkenSlotGUI) 
+	public EndScreen(DrunkenSlotGUI drunkenSlotGUI) 
 	{
 		this.drunkenSlotGUI = drunkenSlotGUI;
 		engine = drunkenSlotGUI.getEngine();
@@ -73,15 +74,28 @@ public class StandingsScreen extends JFrame
 		createSouthPanel();
 	}
 	
+	public void setWinner(String winner)
+	{
+		winnerLabel.setText(winnerLabel.getText() + winner);
+	}
+	
 	public void createTopPanel()
 	{
 		topPanel = new JPanel();
 		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
 		topPanel.add(mainImageLabel);
 		contentPane.add(topPanel, BorderLayout.NORTH);
+		rigidArea1 = Box.createRigidArea(new Dimension(20, 5));
+		topPanel.add(rigidArea1);
 		
-		rigidArea = Box.createRigidArea(new Dimension(20, 20));
-		topPanel.add(rigidArea);
+		winnerLabel = new JLabel("Gewinner: ");
+		winnerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		topPanel.add(winnerLabel);
+		
+		rigidArea2 = Box.createRigidArea(new Dimension(20, 20));
+		topPanel.add(rigidArea2);
+		
 	}
 	
 	public void updateTable()
@@ -166,7 +180,7 @@ public class StandingsScreen extends JFrame
 		buttonPanel = new JPanel();
 		FlowLayout flowLayout_1 = (FlowLayout) buttonPanel.getLayout();
 		flowLayout_1.setAlignment(FlowLayout.RIGHT);
-		continueButton = new JButton("Weiter");
+		continueButton = new JButton("Hauptmenü");
 		continueButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		
 		continueButton.addActionListener(new ActionListener() 
@@ -174,7 +188,7 @@ public class StandingsScreen extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				drunkenSlotGUI.switchToGameScreen();
+				//drunkenSlotGUI.switchToGameScreen(); TODO Switch to main Screen
 			}
 		});
 		

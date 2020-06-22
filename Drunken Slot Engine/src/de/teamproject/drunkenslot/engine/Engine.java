@@ -717,10 +717,10 @@ public class Engine implements GameModel
 	{
 		WinLine line = new WinLine(currentPlayerSymbol, 1, symbolOffset);
 		line.setSymbol(2);
-		line.setSymbol(9);
-		line.setSymbol(9);
-		line.setSymbol(7);
 		line.setSymbol(6);
+		line.setSymbol(2);
+		line.setSymbol(11);
+		line.setSymbol(7);
 		System.out.print(line.winLineText());
 	}
 	

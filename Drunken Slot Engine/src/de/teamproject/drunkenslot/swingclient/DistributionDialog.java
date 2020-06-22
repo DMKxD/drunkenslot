@@ -191,7 +191,7 @@ public class DistributionDialog extends JDialog
 					catch (NumberFormatException x)
 					{
 						JOptionPane.showMessageDialog(ref,
-							    "Bitte gib in Feld"+i+"eine Zahl ein!",
+							    "Bitte gib in Feld "+i+" eine Zahl ein!",
 							    "Keine Zahl",
 							    JOptionPane.ERROR_MESSAGE);
 					}

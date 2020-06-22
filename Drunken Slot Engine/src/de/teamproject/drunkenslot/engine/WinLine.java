@@ -65,10 +65,6 @@ public class WinLine
 					isBroken = true;
 				}
 			}
-			if(symbol == 7 && !isBroken)//Symbol = allPlayerWild
-			{
-				allPlayer = true;
-			}
 			else if(this.symbol == 6 || this.symbol == 7 || this.symbol >= 11)//Override current Symbol, if it is a Wild or allPlayerWild or player Symbol 
 			{
 				this.symbol = symbol;
@@ -87,6 +83,10 @@ public class WinLine
 			else if(this.symbol >= 8 && this.symbol <= 10)//Niete, somit brechen
 			{
 				isBroken = true;
+			}
+			if(symbol == 7 && !isBroken)//Symbol = allPlayerWild
+			{
+				allPlayer = true;
 			}
 			if(!isBroken)
 			{
