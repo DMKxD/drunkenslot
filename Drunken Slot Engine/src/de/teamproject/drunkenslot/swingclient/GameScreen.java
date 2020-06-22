@@ -54,6 +54,7 @@ public class GameScreen extends JFrame
 	private JTextArea winTextArea;
 	
 	private Engine engine;
+	private DrunkenSlotGUI drunkenSlotGUI;
 	private Component rigidArea;
 	private Component rigidArea_1;
 	private Component rigidArea_2;
@@ -69,7 +70,7 @@ public class GameScreen extends JFrame
 			{
 				try 
 				{
-					GameScreen frame = new GameScreen(new Engine(null));
+					GameScreen frame = new GameScreen(new DrunkenSlotGUI());
 					frame.setVisible(true);
 				} 
 				catch (Exception e) 
@@ -78,6 +79,16 @@ public class GameScreen extends JFrame
 				}
 			}
 		});
+	}
+	
+	public void clearAndUpdateScreen()
+	{
+		resetSlotmachine();
+		playerLabel.setText(engine.getPlayerList().get(engine.getCurrentPlayerID()).getName());
+		freeGamesLabel.setText(engine.getFreeSpinsLeft()+"/"+engine.getFreeSpinsTotal());
+		spinButton.setEnabled(true);
+		surrenderButton.setEnabled(true);
+		continueButton.setEnabled(false);
 	}
 	
 	public void createButtons()
@@ -104,8 +115,18 @@ public class GameScreen extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				spinButton.setEnabled(true);
-				surrenderButton.setEnabled(true);
+				//spinButton.setEnabled(true);
+				//surrenderButton.setEnabled(true);
+				engine.finalizeRound();
+				//clearAndUpdateScreen();
+				if(engine.isMoreThanOnePlayerActive())
+				{
+					drunkenSlotGUI.switchToStandingsScreen();
+				}
+				else
+				{
+					//switchToEndScreen
+				}
 			}
 		});
 	}
@@ -120,6 +141,17 @@ public class GameScreen extends JFrame
 			}
 		}
 		slotPanel.repaint();
+	}
+	
+	public void resetSlotmachine()
+	{
+		for(int i = 0; i < 3; i ++)
+		{
+			for(int j = 0; j < 5; j ++)
+			{
+				slotLabels[j][i].setIcon(new ImageIcon(slotPlaceHolderImage));
+			}
+		}
 	}
 	
 	public void setEngine(Engine engine)
@@ -216,6 +248,19 @@ public class GameScreen extends JFrame
 				winTextArea.append("Line "+(i+1)+": "+engine.getCurrentWinLines()[i].getWinLineText(engine.getPlayerList()));
 			}
 		}
+		if(engine.isFreeGames(engine.getCurrentSlotImage()))
+		{
+			if(engine.isFreeGameEnabled())
+			{
+				engine.checkFreeGames(engine.getCurrentSlotImage());
+				winTextArea.append(engine.getFreeSpinsAmount()+" weitere Freispiele hinzugefügt!");
+			}
+			else
+			{
+				engine.checkFreeGames(engine.getCurrentSlotImage());
+				winTextArea.append(engine.getFreeSpinsAmount()+" Freispiele gewonnen!");
+			}
+		}
 	}
 	
 	public void highlightWinLines()
@@ -226,9 +271,10 @@ public class GameScreen extends JFrame
 	/**
 	 * Create the frame.
 	 */
-	public GameScreen(Engine engine) 
+	public GameScreen(DrunkenSlotGUI drunkenSlotGUI) 
 	{
-		this.engine = engine;
+		this.drunkenSlotGUI = drunkenSlotGUI;
+		this.engine = drunkenSlotGUI.getEngine();
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

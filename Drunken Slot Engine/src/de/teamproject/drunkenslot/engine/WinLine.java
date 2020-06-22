@@ -50,11 +50,7 @@ public class WinLine
 		//System.out.println("This:"+this.symbol+" Input:"+symbol);//Debug
 		if(!isBroken)
 		{
-			if(symbol == 7)//Symbol = allPlayerWild
-			{
-				allPlayer = true;
-			}
-			if(symbol > 10)//If PlayerSymbol then check if match, else broken, override currentsymbol, if its the first time
+			if(symbol > 10 || symbol == 7)//If PlayerSymbol then check if match, else broken, override currentsymbol, if its the first time
 			{
 				if(playerSymbol == -1)
 				{
@@ -68,6 +64,10 @@ public class WinLine
 				{
 					isBroken = true;
 				}
+			}
+			if(symbol == 7 && !isBroken)//Symbol = allPlayerWild
+			{
+				allPlayer = true;
 			}
 			else if(this.symbol == 6 || this.symbol == 7 || this.symbol >= 11)//Override current Symbol, if it is a Wild or allPlayerWild or player Symbol 
 			{

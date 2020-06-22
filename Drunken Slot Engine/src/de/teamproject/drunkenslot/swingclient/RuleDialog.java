@@ -61,7 +61,7 @@ public class RuleDialog extends JDialog
 			int roundRules[] = {0, 0, 1, 0, 0, 0, 0, 0, 0, 0,};
 			engine.setRoundRules(roundRules);
 			
-			RuleDialog dialog = new RuleDialog(new GameScreen(engine), engine, 0);
+			RuleDialog dialog = new RuleDialog(new GameScreen(null), engine, 0);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} 

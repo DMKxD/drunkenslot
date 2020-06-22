@@ -12,7 +12,8 @@ public class DrunkenSlotGUI
 {
 	private JFrame mainFrame;
 	private JPanel contentPane;
-	private GameScreen gamescreen;
+	private GameScreen gameScreen;
+	private StandingsScreen standingsScreen;
 	private Engine engine;
 	
 	public DrunkenSlotGUI()
@@ -24,7 +25,8 @@ public class DrunkenSlotGUI
 	
 	public void createScreens()
 	{
-		gamescreen = new GameScreen(engine);
+		gameScreen = new GameScreen(this);
+		standingsScreen = new StandingsScreen(this);
 	}
 	
 	public void createDemoEngine()
@@ -42,13 +44,12 @@ public class DrunkenSlotGUI
 		mainFrame = new JFrame("Drunken Slot");
 		mainFrame.setBounds(100, 100, 1000, 750);
 		contentPane = new JPanel();
-		contentPane = gamescreen.getScreen();
-		mainFrame.setContentPane(contentPane);
+		switchToGameScreen();
 	}
 	
 	public GameScreen getGameScreen()
 	{
-		return gamescreen;
+		return gameScreen;
 	}
 	
 	public Engine getEngine()
@@ -59,6 +60,24 @@ public class DrunkenSlotGUI
 	public JFrame getMainFrame()
 	{
 		return mainFrame;
+	}
+	
+	public void switchToGameScreen()
+	{
+		gameScreen.clearAndUpdateScreen();
+		contentPane = gameScreen.getScreen();
+		mainFrame.setContentPane(contentPane);
+		mainFrame.revalidate();
+		mainFrame.repaint();
+	}
+	
+	public void switchToStandingsScreen()
+	{
+		standingsScreen.updateTable();
+		contentPane = standingsScreen.getScreen();
+		mainFrame.setContentPane(contentPane);
+		mainFrame.revalidate();
+		mainFrame.repaint();
 	}
 
 	public static void main(String[] args) 

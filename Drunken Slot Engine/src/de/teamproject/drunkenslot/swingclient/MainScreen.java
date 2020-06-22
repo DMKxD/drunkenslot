@@ -94,5 +94,4 @@ public class MainScreen extends JFrame
 		mainImageLabel = new JLabel(new ImageIcon(wPic));
 		mainImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 	}
-
 }
