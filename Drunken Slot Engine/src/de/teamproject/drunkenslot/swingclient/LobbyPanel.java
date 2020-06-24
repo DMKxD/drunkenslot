@@ -46,9 +46,7 @@ public class LobbyPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				ref.validate();
 				parent.remove(ref);
-				ref.repaint();
 			}
 		});
 		add(removeButton);

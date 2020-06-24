@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -70,6 +72,24 @@ public class LobbyScreen extends JFrame
 		playerPanel = new JPanel();
 		playerPanel.setLayout(new BoxLayout(playerPanel, BoxLayout.Y_AXIS));
 		playerPanel.add(new LobbyPanel(playerPanel));
+		
+		playerPanel.addContainerListener(new ContainerListener() {
+			
+			@Override
+			public void componentRemoved(ContainerEvent e) 
+			{
+				playerPanel.revalidate();
+				playerPanel.repaint();
+			}
+			
+			@Override
+			public void componentAdded(ContainerEvent e) 
+			{
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		addPlayerButton = new JButton("+");
 		addPlayerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		addPlayerButton.addActionListener(new ActionListener()
