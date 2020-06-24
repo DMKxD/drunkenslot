@@ -188,7 +188,7 @@ public class EndScreen extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				//drunkenSlotGUI.switchToGameScreen(); TODO Switch to main Screen
+				drunkenSlotGUI.switchToMainScreen();
 			}
 		});
 		
@@ -204,6 +204,11 @@ public class EndScreen extends JFrame
 		BufferedImage wPic = ImageIO.read(this.getClass().getResource("/TitleImagePlaceholder.png"));
 		mainImageLabel = new JLabel(new ImageIcon(wPic));
 		mainImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+	}
+	
+	public void updateEngine()
+	{
+		this.engine = drunkenSlotGUI.getEngine();
 	}
 	
 	public JPanel getScreen()

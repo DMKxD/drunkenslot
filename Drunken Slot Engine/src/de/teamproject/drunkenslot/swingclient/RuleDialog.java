@@ -2,6 +2,7 @@ package de.teamproject.drunkenslot.swingclient;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -11,7 +12,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import de.teamproject.drunkenslot.engine.Engine;
-import de.teamproject.drunkenslot.engine.GameConfig;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -38,40 +38,6 @@ public class RuleDialog extends JDialog
 	private GameScreen parentGUI;
 	
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) 
-	{
-		try 
-		{
-			GameConfig config = new GameConfig();
-			config.createPlayer(Engine.getID(), "Dominik", null);
-			config.createPlayer(Engine.getID(), "Jonas", null);
-			config.createPlayer(Engine.getID(), "Test2", null);
-			config.createPlayer(Engine.getID(), "Test3", null);
-			config.createPlayer(Engine.getID(), "Test4", null);
-			config.createPlayer(Engine.getID(), "Test5", null);
-			config.createPlayer(Engine.getID(), "Test6", null);
-			config.createPlayer(Engine.getID(), "Test7", null);
-			config.createPlayer(Engine.getID(), "Test8", null);
-			config.createPlayer(Engine.getID(), "Test9", null);
-			
-			Engine engine = new Engine(config);
-			engine.createGame();
-			int roundRules[] = {0, 0, 1, 0, 0, 0, 0, 0, 0, 0,};
-			engine.setRoundRules(roundRules);
-			
-			RuleDialog dialog = new RuleDialog(new GameScreen(null), engine, 0);
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Create the dialog.
 	 */
 	public RuleDialog(GameScreen parentGUI, Engine engine, int playerID) 
@@ -92,6 +58,8 @@ public class RuleDialog extends JDialog
 		
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+		
+		positionieren(this, 0, 0);
 	}
 	
 	public void createRulePanel()
@@ -167,4 +135,11 @@ public class RuleDialog extends JDialog
 		}
 		engine.setRoundRules(roundRules);
 	}
+	
+	public void positionieren(Component component, int x, int y)
+    {
+        double lXKoordinate = Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2.0 - component.getWidth() / 2.0;
+        double lYKoordinate = Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2.0 - component.getHeight() / 2.0;
+        component.setLocation((int)lXKoordinate + x, (int)lYKoordinate + y);
+    }
 }

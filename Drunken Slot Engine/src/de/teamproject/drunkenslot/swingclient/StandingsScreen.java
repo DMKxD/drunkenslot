@@ -192,6 +192,11 @@ public class StandingsScreen extends JFrame
 		mainImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 	}
 	
+	public void updateEngine()
+	{
+		this.engine = drunkenSlotGUI.getEngine();
+	}
+	
 	public JPanel getScreen()
 	{
 		return contentPane;

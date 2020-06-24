@@ -1,12 +1,10 @@
 package de.teamproject.drunkenslot.swingclient;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.GridLayout;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.Component;
@@ -14,67 +12,37 @@ import java.awt.Component;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import javax.swing.JLabel;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.awt.GridLayout;
+import javax.swing.SwingConstants;
 
-public class MainScreen extends JFrame 
+public class MainScreen
 {
-	
 	private JPanel contentPane;
 	private JLabel mainImageLabel;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) 
-	{
-		EventQueue.invokeLater(new Runnable()
-		{
-			public void run() {
-				try {
-					MainScreen frame = new MainScreen();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private JPanel buttonPanel;
+	private JButton buttonOnline;
+	private JButton buttonOffline;
+	private JButton buttonRule;
+	
+	private DrunkenSlotGUI drunkenSlotGUI;
 
 	/**
 	 * Create the frame.
 	 */
-	public MainScreen() 
+	public MainScreen(DrunkenSlotGUI drunkenSlotGUI) 
 	{
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 800, 600);
+		this.drunkenSlotGUI = drunkenSlotGUI;
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-		
-		Component rigidArea = Box.createRigidArea(new Dimension(0, 70));
-		buttonPanel.add(rigidArea);
-		
-		JButton buttonOnline = new JButton("Online");
-		buttonOnline.setAlignmentX(Component.CENTER_ALIGNMENT);
-		buttonPanel.add(buttonOnline);
-		
-		Component rigidButtonArea = Box.createRigidArea(new Dimension(20, 20));
-		buttonPanel.add(rigidButtonArea);
-		
-		JButton buttonOffline = new JButton("Offline");
-		buttonOffline.setAlignmentX(Component.CENTER_ALIGNMENT);
-		buttonPanel.add(buttonOffline);
-		contentPane.add(buttonPanel, BorderLayout.CENTER);
+		createButtonPanel();
+		createButtons();
 		
 		try 
 		{
@@ -88,11 +56,69 @@ public class MainScreen extends JFrame
 		contentPane.add(mainImageLabel, BorderLayout.NORTH);
 	}
 	
+	public void createButtons()
+	{
+		buttonOnline.setEnabled(false);
+		buttonOffline.addActionListener(new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				drunkenSlotGUI.switchToLobbyScreen();
+			}
+		});
+		buttonRule.addActionListener(new ActionListener() 
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				//TODO
+			}
+		});
+	}
+	
+	public void createButtonPanel()
+	{
+		buttonPanel = new JPanel();
+		buttonPanel.setLayout(new GridLayout(4, 1));
+		
+		Component rigidArea = Box.createRigidArea(new Dimension(0, 70));
+		buttonPanel.add(rigidArea);
+		
+		buttonOnline = new JButton("Online");
+		buttonOnline.setVerticalAlignment(SwingConstants.BOTTOM);
+		buttonOnline.setAlignmentX(Component.CENTER_ALIGNMENT);
+		JPanel testPanel = new JPanel();
+		//FlowLayout flowLayout = (FlowLayout) testPanel.getLayout();
+		testPanel.add(buttonOnline);
+		buttonPanel.add(testPanel);
+		
+		buttonOffline = new JButton("Offline");
+		buttonOffline.setAlignmentX(Component.CENTER_ALIGNMENT);
+		JPanel testPanel2 = new JPanel();
+		//FlowLayout flowLayout_1 = (FlowLayout) testPanel2.getLayout();
+		testPanel2.add(buttonOffline);
+		buttonPanel.add(testPanel2);
+		
+		buttonRule = new JButton("Regeln");
+		buttonRule.setAlignmentX(Component.CENTER_ALIGNMENT);
+		JPanel testPanel3 = new JPanel();
+		testPanel3.add(buttonRule);
+		buttonPanel.add(testPanel3);
+		
+		contentPane.add(buttonPanel, BorderLayout.CENTER);
+	}
+	
 	public void loadImage() throws IOException
 	{
 		BufferedImage wPic = ImageIO.read(this.getClass().getResource("/TitleImagePlaceholder.png"));
 		mainImageLabel = new JLabel(new ImageIcon(wPic));
 		mainImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 	}
-
+	
+	public JPanel getScreen()
+	{
+		return contentPane;
+	}
 }

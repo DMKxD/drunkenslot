@@ -5,7 +5,6 @@ import java.awt.FlowLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -17,10 +16,10 @@ import javax.swing.JOptionPane;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import de.teamproject.drunkenslot.engine.*;
 
@@ -41,41 +40,6 @@ public class DistributionDialog extends JDialog
 	private final int amount, playerID;
 	private Engine engine;
 	private boolean drinks;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) 
-	{
-		try 
-		{
-			GameConfig config = new GameConfig();
-			config.createPlayer(Engine.getID(), "Dominik", null);
-			config.createPlayer(Engine.getID(), "Jonas", null);
-			config.createPlayer(Engine.getID(), "Test2", null);
-			config.createPlayer(Engine.getID(), "Test3", null);
-			config.createPlayer(Engine.getID(), "Test4", null);
-			config.createPlayer(Engine.getID(), "Test5", null);
-			config.createPlayer(Engine.getID(), "Test6", null);
-			config.createPlayer(Engine.getID(), "Test7", null);
-			config.createPlayer(Engine.getID(), "Test8", null);
-			config.createPlayer(Engine.getID(), "Test9", null);
-			
-			Engine engine = new Engine(config);
-			engine.createGame();
-			engine.setPlayerInactive(4);
-			int roundDrinksDistribute[] = {15, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
-			engine.setRoundDrinksDistribute(roundDrinksDistribute);
-			
-			int testAmount = 15;
-			
-			DistributionDialog dialog = new DistributionDialog(new GameScreen(null), engine, true, testAmount, 0);
-			dialog.setVisible(true);
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}
-	}
 	
 	public DistributionDialog(GameScreen parentGUI, Engine engine, boolean drinks, int amount, int playerID) 
 	{
@@ -99,6 +63,7 @@ public class DistributionDialog extends JDialog
 		
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+		positionieren(this, 0, 0);
 	}
 	
 	private void createTitle() 
@@ -258,4 +223,11 @@ public class DistributionDialog extends JDialog
 		//System.out.println("Round Rules:"+Arrays.toString(engine.getRoundRules()));
 		//TODO parent methode wieder aufrufen
 	}
+	
+	public void positionieren(Component component, int x, int y)
+    {
+        double lXKoordinate = Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2.0 - component.getWidth() / 2.0;
+        double lYKoordinate = Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2.0 - component.getHeight() / 2.0;
+        component.setLocation((int)lXKoordinate + x, (int)lYKoordinate + y);
+    }
 }

@@ -415,6 +415,11 @@ public class GameScreen extends JFrame
 		}
 	}
 	
+	public void updateEngine()
+	{
+		this.engine = drunkenSlotGUI.getEngine();
+	}
+	
 	public JPanel getScreen()
 	{
 		return contentPane;
