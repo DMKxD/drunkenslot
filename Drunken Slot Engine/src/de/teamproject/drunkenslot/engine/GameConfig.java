@@ -9,11 +9,29 @@ import java.util.ArrayList;
  *
  */
 
-public class GameConfig//TODO Der Engine übergeben sobald das spiel startet mit playerdaten, schwierigekeit
+public class GameConfig
 {
 
 	private ArrayList<Player> playerList = new ArrayList<Player>();
+	private int difficulty;
+	private boolean logging;
 	
+	public GameConfig(int difficulty, boolean logging)
+	{
+		this.difficulty = difficulty;
+		this.logging = logging;
+	}
+	
+	public int getDifficulty()
+	{
+		return difficulty;
+	}
+	
+	public boolean isLogging()
+	{
+		return logging;
+	}
+
 	public void createPlayer(int id, String name, Image image) 
 	{
 		playerList.add(new Player(id, name, image));

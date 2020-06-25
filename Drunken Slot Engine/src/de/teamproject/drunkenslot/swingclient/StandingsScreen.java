@@ -17,10 +17,12 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 import de.teamproject.drunkenslot.engine.Engine;
 
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -116,6 +118,10 @@ public class StandingsScreen extends JFrame
 		table.setShowVerticalLines(false);
 		table.setShowHorizontalLines(false);
 		table.setShowGrid(false);
+		table.setFont(new Font(null, Font.BOLD, 15));
+		JTableHeader header = table.getTableHeader();
+		//DSTableHeaderRenderer renderer = new DSTableHeaderRenderer(table);
+		header.setDefaultRenderer(new DSTableHeaderRenderer(table));
 		table.setModel(new DefaultTableModel
 				(
 			new Object[][] 

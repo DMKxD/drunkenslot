@@ -10,9 +10,12 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -33,10 +36,18 @@ public class LobbyScreen extends JFrame
 	private JPanel contentPane;
 	private JPanel playerPanel;
 	private JPanel buttonPanel;
+	private JPanel bottomPanel;
+	private JPanel settingsPanel;
+	private JPanel difficultyPanel;
+	private JPanel dialogSettingsPanel;
 	private JButton addPlayerButton;
 	private JButton backButton;
 	private JButton startButton;
 	private JLabel mainImageLabel;
+	private JLabel diffucultyLabel;
+	private JLabel dialogLabel;
+	private JCheckBox dialogCheckBox;
+	private JComboBox<String> difficultyComboBox;
 	
 	private DrunkenSlotGUI drunkenSlotGUI;
 	/**
@@ -64,7 +75,41 @@ public class LobbyScreen extends JFrame
 		contentPane.add(mainImageLabel, BorderLayout.NORTH);
 		createPlayerPanel();
 		createButtonpanel();
+		createSettingsPanel();
+		createBottomPanel();
 		createButtons();
+	}
+	
+	public void createSettingsPanel()
+	{
+		settingsPanel = new JPanel();
+		settingsPanel.setLayout(new BoxLayout(settingsPanel, BoxLayout.X_AXIS));
+		
+		difficultyPanel = new JPanel();
+		diffucultyLabel = new JLabel("Schwierigkeit: ");
+		String[] difficultyOptions = {"Alkoholiker", "Kneipengänger", "Abendtrinker"}; 
+		difficultyComboBox = new JComboBox<String>(difficultyOptions);
+		difficultyPanel.add(diffucultyLabel);
+		difficultyPanel.add(difficultyComboBox);
+		
+		dialogSettingsPanel = new JPanel();
+		dialogLabel = new JLabel("Logging aktivieren: ");
+		dialogCheckBox = new JCheckBox();
+		dialogSettingsPanel.add(dialogLabel);
+		dialogSettingsPanel.add(dialogCheckBox);
+		
+		settingsPanel.add(difficultyPanel);
+		settingsPanel.add(dialogSettingsPanel);
+		settingsPanel.setBorder(BorderFactory.createTitledBorder("Einstellungen"));
+	}
+	
+	public void createBottomPanel()
+	{
+		bottomPanel = new JPanel();
+		bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+		bottomPanel.add(settingsPanel);
+		bottomPanel.add(buttonPanel);
+		contentPane.add(bottomPanel, BorderLayout.SOUTH);
 	}
 	
 	public void createPlayerPanel()
@@ -122,12 +167,11 @@ public class LobbyScreen extends JFrame
 	{
 		buttonPanel = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) buttonPanel.getLayout();
-		flowLayout.setAlignment(FlowLayout.RIGHT);
+		flowLayout.setAlignment(FlowLayout.CENTER);
 		backButton = new JButton("Zurück");
 		startButton = new JButton("Start");
 		buttonPanel.add(startButton);
 		buttonPanel.add(backButton);
-		contentPane.add(buttonPanel, BorderLayout.SOUTH);
 	}
 	
 	public void createButtons()
@@ -168,7 +212,9 @@ public class LobbyScreen extends JFrame
 				
 				if(count <= 10 && !broken && count >= 2)
 				{
-					GameConfig config = new GameConfig();
+					int difficulty = difficultyComboBox.getSelectedIndex();
+					boolean logging = dialogCheckBox.isSelected();
+					GameConfig config = new GameConfig(difficulty, logging);
 					for(int i = 0; i < playerPanel.getComponentCount(); i ++)
 					{
 						if(playerPanel.getComponent(i) instanceof LobbyPanel)

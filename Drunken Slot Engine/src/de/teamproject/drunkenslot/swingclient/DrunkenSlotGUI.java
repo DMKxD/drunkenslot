@@ -52,17 +52,17 @@ public class DrunkenSlotGUI
 	
 	public void createDemoEngine()
 	{
-		GameConfig config = new GameConfig();
+		GameConfig config = new GameConfig(0, true);
 		config.createPlayer(Engine.getID(), "Dominik", null);
 		config.createPlayer(Engine.getID(), "Jonas", null);
-		config.createPlayer(Engine.getID(), "Peter", null);
+		/*config.createPlayer(Engine.getID(), "Peter", null);
 		config.createPlayer(Engine.getID(), "Wilhelm", null);
 		config.createPlayer(Engine.getID(), "Dagobert", null);
 		config.createPlayer(Engine.getID(), "Alina", null);
 		config.createPlayer(Engine.getID(), "Sophie", null);
 		config.createPlayer(Engine.getID(), "Bruno", null);
 		config.createPlayer(Engine.getID(), "Nike", null);
-		config.createPlayer(Engine.getID(), "Nino", null);
+		config.createPlayer(Engine.getID(), "Nino", null);*/
 		
 		engine = new Engine(config);
 		engine.createGame();
@@ -76,8 +76,9 @@ public class DrunkenSlotGUI
 		positionieren(mainFrame, 0, 0);
 		setWindowListener();
 		contentPane = new JPanel();
-		switchToGameScreen();
+		//switchToGameScreen();
 		//switchToMainScreen();
+		switchToLobbyScreen();
 	}
 	
 	public void positionieren(Component component, int x, int y)

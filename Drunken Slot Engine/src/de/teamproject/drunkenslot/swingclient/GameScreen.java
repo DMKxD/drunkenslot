@@ -26,6 +26,7 @@ import javax.swing.border.EmptyBorder;
 import de.teamproject.drunkenslot.engine.*;
 import java.awt.FlowLayout;
 import javax.swing.Box;
+import javax.swing.SwingConstants;
 
 public class GameScreen
 {
@@ -383,10 +384,14 @@ public class GameScreen
 	public void createPlayerPanel()
 	{
 		playerPanel = new JPanel();
-		playerPanel.setLayout(new BoxLayout(playerPanel, BoxLayout.X_AXIS));
+		FlowLayout flowLayout = (FlowLayout) playerPanel.getLayout();
+		flowLayout.setAlignment(FlowLayout.RIGHT);
+		//playerPanel.setLayout(new BoxLayout(playerPanel, BoxLayout.X_AXIS));
 		playerDescLabel = new JLabel("Spieler: ");
+		playerDescLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		playerPanel.add(playerDescLabel);
 		playerLabel = new JLabel("PlayerX");
+		playerLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		playerPanel.add(playerLabel);
 	}
 
