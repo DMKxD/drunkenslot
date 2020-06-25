@@ -1076,7 +1076,7 @@ public class Engine implements GameModel
 			}
 			if(playerList.get(i).isActive())
 			{
-				nextPlayer = playerList.get(i).getId();
+				return nextPlayer = playerList.get(i).getId();
 			}
 		}
 		if(nextPlayer >= 0)
@@ -1087,7 +1087,7 @@ public class Engine implements GameModel
 		{
 			if(playerList.get(i).isActive())
 			{
-				nextPlayer = playerList.get(i).getId();
+				return nextPlayer = playerList.get(i).getId();
 			}
 		}
 		return nextPlayer;

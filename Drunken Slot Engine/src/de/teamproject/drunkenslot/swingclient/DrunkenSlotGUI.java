@@ -5,8 +5,13 @@ import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -24,10 +29,14 @@ public class DrunkenSlotGUI
 	private StandingsScreen standingsScreen;
 	private EndScreen endScreen;
 	private Engine engine;
+	private JLabel mainImageLabel;
+	private BufferedImage slotPlaceHolderImage;
+	private BufferedImage slotImages[];
 	
 	public DrunkenSlotGUI()
 	{
 		createDemoEngine();
+		
 		createScreens();
 		createMainFrame();
 	}
@@ -46,6 +55,14 @@ public class DrunkenSlotGUI
 		GameConfig config = new GameConfig();
 		config.createPlayer(Engine.getID(), "Dominik", null);
 		config.createPlayer(Engine.getID(), "Jonas", null);
+		config.createPlayer(Engine.getID(), "Peter", null);
+		config.createPlayer(Engine.getID(), "Wilhelm", null);
+		config.createPlayer(Engine.getID(), "Dagobert", null);
+		config.createPlayer(Engine.getID(), "Alina", null);
+		config.createPlayer(Engine.getID(), "Sophie", null);
+		config.createPlayer(Engine.getID(), "Bruno", null);
+		config.createPlayer(Engine.getID(), "Nike", null);
+		config.createPlayer(Engine.getID(), "Nino", null);
 		
 		engine = new Engine(config);
 		engine.createGame();
@@ -171,6 +188,36 @@ public class DrunkenSlotGUI
 		gameScreen.updateEngine();
 		standingsScreen.updateEngine();
 		endScreen.updateEngine();
+	}
+	
+	public void loadImage() throws IOException
+	{
+		BufferedImage placeholder = ImageIO.read(this.getClass().getResource("/TitleImagePlaceholder.png"));
+		mainImageLabel = new JLabel(new ImageIcon(placeholder));
+		mainImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		slotPlaceHolderImage = ImageIO.read(this.getClass().getResource("/SlotImagePlaceholder.png"));
+		
+		slotImages = new BufferedImage[engine.getSymbolOffset() + engine.getPlayerList().size()];
+		for(int i = 0; i < (engine.getSymbolOffset() + engine.getPlayerList().size()); i ++)
+		{
+			slotImages[i] = ImageIO.read(this.getClass().getResource("/slotImages/slotSymbol"+i+".png"));
+		}
+	}
+	
+	public BufferedImage[] getSlotImages()
+	{
+		return slotImages;
+	}
+	
+	public BufferedImage getSlotPlaceHolderImage()
+	{
+		return slotPlaceHolderImage;
+	}
+	
+	public JLabel getMainImageLabel()
+	{
+		return mainImageLabel;
 	}
 
 	public static void main(String[] args) 

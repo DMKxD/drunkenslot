@@ -52,6 +52,7 @@ public class DistributionDialog extends JDialog
 		
 		setBounds(100, 100, 600, 200);
 		setResizable(false);
+		setAlwaysOnTop(true);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout());
 		

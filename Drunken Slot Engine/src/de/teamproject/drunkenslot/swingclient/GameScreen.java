@@ -88,6 +88,7 @@ public class GameScreen
 		{
 			e.printStackTrace();
 		}
+		
 		createFreeGamesPanel();
 		createPlayerPanel();
 		createSlotPanel();
@@ -306,8 +307,10 @@ public class GameScreen
 				if(n == JOptionPane.YES_OPTION)
 				{
 					engine.getPlayerList().get(engine.getCurrentPlayerID()).setActive(false);
+					engine.finalizeRound();
 					highLightTimer.stop();
 					clearHighlights();
+					engine.updateCurrentPlayer();
 					if(engine.isMoreThanOnePlayerActive())
 					{
 						drunkenSlotGUI.switchToStandingsScreen();
@@ -777,21 +780,6 @@ public class GameScreen
 		}
 	}
 	
-	public void loadImage() throws IOException
-	{
-		BufferedImage placeholder = ImageIO.read(this.getClass().getResource("/TitleImagePlaceholder.png"));
-		mainImageLabel = new JLabel(new ImageIcon(placeholder));
-		mainImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		
-		slotPlaceHolderImage = ImageIO.read(this.getClass().getResource("/SlotImagePlaceholder.png"));
-		
-		slotImages = new BufferedImage[engine.getSymbolOffset() + engine.getPlayerList().size()];
-		for(int i = 0; i < (engine.getSymbolOffset() + engine.getPlayerList().size()); i ++)
-		{
-			slotImages[i] = ImageIO.read(this.getClass().getResource("/slotImages/slotSymbol"+i+".png"));
-		}
-	}
-	
 	public void showDialogs()
 	{
 		boolean dialogShown = false;
@@ -853,9 +841,32 @@ public class GameScreen
 		}
 	}
 	
+	public void loadImage() throws IOException
+	{
+		BufferedImage placeholder = ImageIO.read(this.getClass().getResource("/TitleImagePlaceholder.png"));
+		mainImageLabel = new JLabel(new ImageIcon(placeholder));
+		mainImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		slotPlaceHolderImage = ImageIO.read(this.getClass().getResource("/SlotImagePlaceholder.png"));
+		
+		slotImages = new BufferedImage[engine.getSymbolOffset() + engine.getPlayerList().size()];
+		for(int i = 0; i < (engine.getSymbolOffset() + engine.getPlayerList().size()); i ++)
+		{
+			slotImages[i] = ImageIO.read(this.getClass().getResource("/slotImages/slotSymbol"+i+".png"));
+		}
+	}
+	
 	public void updateEngine()
 	{
 		this.engine = drunkenSlotGUI.getEngine();
+		try 
+		{
+			loadImage();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public boolean isAllStopped()
