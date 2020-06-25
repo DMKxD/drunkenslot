@@ -60,7 +60,7 @@ public class GameScreen
 	
 	private boolean freeGamesStartetThisRound = false;
 
-	private final int slotLineDelay = 15;
+	private final int slotLineDelay = 8;
 	private final int minRollCounter = 20;
 	private Timer rollTimer;
 	private int rollCounter;
@@ -125,6 +125,10 @@ public class GameScreen
 	{
 		rollCounter = minRollCounter + ThreadLocalRandom.current().nextInt(0, 10 + 1);
 		slotLineDelayTimer = slotLineDelay;
+		for(int i = 0; i < stopped.length; i ++)
+		{
+			stopped[i] = false;
+		}
 	}
 	
 	public void createTimer()
@@ -232,6 +236,15 @@ public class GameScreen
 					}
 					rollCounter --;
 				}
+			}
+		});
+		
+		highLightTimer = new Timer(500, new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				
 			}
 		});
 	}
