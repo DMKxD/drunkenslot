@@ -159,6 +159,8 @@ public class GameScreen
 					rollTimer.stop();
 					highLightTimer.start();
 					spinButton.setText("Drehen");
+					spinButton.removeActionListener(stopActionListener);
+					spinButton.addActionListener(spinActionListener);
 					spinButton.setEnabled(false);
 				}
 				if(rollCounter == 0)
@@ -291,6 +293,7 @@ public class GameScreen
 				showDialogs();
 				rollTimer.stop();
 				highLightTimer.start();
+				fillSlotmachine();
 				spinButton.removeActionListener(this);
 			}
 		};
