@@ -145,6 +145,11 @@ public class WinLine
 		return line;
 	}
 	
+	public int getLength()
+	{
+		return length;
+	}
+	
 	/**
 	 * Sets WinLine to All Player Win
 	 */

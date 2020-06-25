@@ -1,5 +1,6 @@
 package de.teamproject.drunkenslot.swingclient;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -35,6 +36,7 @@ public class GameScreen
 	private JPanel slotPanel;
 	private JPanel buttonPanel;
 	private JPanel topPanel;
+	private JPanel outerSlotPanel;
 	
 	private JLabel mainImageLabel;
 	private JLabel freeGamesDescLabel;
@@ -68,7 +70,9 @@ public class GameScreen
 	private int slotLineDelayTimer;
 	
 	private boolean[] stopped = new boolean[5];
-	
+	private boolean hasShownHighlight = false;
+	private int lastHighlight = 0;
+	private int borderThickness = 3;
 	
 	public GameScreen(DrunkenSlotGUI drunkenSlotGUI) 
 	{
@@ -94,11 +98,13 @@ public class GameScreen
 		resetTimer();
 		createTimer();
 		createButtons();
-		
+		clearHighlights();
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 		contentPane.add(mainImageLabel);
 		contentPane.add(topPanel);
-		contentPane.add(slotPanel);
+		outerSlotPanel = new JPanel();
+		outerSlotPanel.add(slotPanel);
+		contentPane.add(outerSlotPanel);
 		contentPane.add(winTextArea);
 		contentPane.add(buttonPanel);
 	}
@@ -125,6 +131,7 @@ public class GameScreen
 	{
 		rollCounter = minRollCounter + ThreadLocalRandom.current().nextInt(0, 10 + 1);
 		slotLineDelayTimer = slotLineDelay;
+		hasShownHighlight = false;
 		for(int i = 0; i < stopped.length; i ++)
 		{
 			stopped[i] = false;
@@ -133,6 +140,7 @@ public class GameScreen
 	
 	public void createTimer()
 	{
+		//TODO Slow start and Stop, 2 different Timers that get triggert from this one
 		rollTimer = new Timer(80, new ActionListener()//TODO übergang zu den richtigen symbolen mit sloweren speed, anderen Timer starten, custom action listener;
 		{
 			
@@ -146,6 +154,7 @@ public class GameScreen
 					updateWinTextArea();
 					showDialogs();
 					rollTimer.stop();
+					highLightTimer.start();
 				}
 				if(rollCounter == 0)
 				{
@@ -244,7 +253,7 @@ public class GameScreen
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				
+				highlightNextWinLine();
 			}
 		});
 	}
@@ -268,6 +277,8 @@ public class GameScreen
 			public void actionPerformed(ActionEvent e) 
 			{
 				engine.finalizeRound();
+				highLightTimer.stop();
+				clearHighlights();
 				if(engine.isMoreThanOnePlayerActive())
 				{
 					drunkenSlotGUI.switchToStandingsScreen();
@@ -296,6 +307,8 @@ public class GameScreen
 				if(n == JOptionPane.YES_OPTION)
 				{
 					engine.getPlayerList().get(engine.getCurrentPlayerID()).setActive(false);
+					highLightTimer.stop();
+					clearHighlights();
 					if(engine.isMoreThanOnePlayerActive())
 					{
 						drunkenSlotGUI.switchToStandingsScreen();
@@ -461,12 +474,299 @@ public class GameScreen
 	
 	public void clearHighlights()
 	{
-		
+		for(int i = 0; i < 3; i ++)
+		{
+			for(int j = 0; j < 5; j ++)
+			{
+				slotLabels[j][i].setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255) , borderThickness, false));
+			}
+		}
 	}
 	
 	public void highlightNextWinLine()
 	{
-		
+		if(engine.hasWin() || engine.isFreeGames(engine.getCurrentSlotImage()))
+		{
+			if((!engine.hasWin() && engine.isFreeGames(engine.getCurrentSlotImage())) || engine.getWinCount() == 1)
+			{
+				if(hasShownHighlight)
+				{
+					clearHighlights();
+					hasShownHighlight = !hasShownHighlight;
+					slotPanel.revalidate();
+					slotPanel.repaint();
+				}
+				else
+				{
+					switch(getNextHighlight())
+					{
+						case 0:
+							highlightWinLine1(engine.getCurrentWinLines()[0].getLength());
+							break;
+						case 1:
+							highlightWinLine2(engine.getCurrentWinLines()[1].getLength());
+							break;
+						case 2:
+							highlightWinLine3(engine.getCurrentWinLines()[2].getLength());
+							break;
+						case 3:
+							highlightWinLine4(engine.getCurrentWinLines()[3].getLength());
+							break;
+						case 4:
+							highlightWinLine5(engine.getCurrentWinLines()[4].getLength());
+							break;
+						case 5:
+							highlightWinLine6(engine.getCurrentWinLines()[5].getLength());
+							break;
+						case 6:
+							highlightWinLine7(engine.getCurrentWinLines()[6].getLength());
+							break;
+						case 7:
+							highlightWinLine8(engine.getCurrentWinLines()[7].getLength());
+							break;
+						case 8:
+							highlightWinLine9(engine.getCurrentWinLines()[8].getLength());
+							break;
+						case 9:
+							highlightScatter();
+							break;
+						default:
+							clearHighlights();
+							break;
+					}
+					slotPanel.revalidate();
+					slotPanel.repaint();
+					hasShownHighlight = !hasShownHighlight;
+				}
+			}
+			else if(engine.hasWin())
+			{
+				int i = getNextHighlight();
+				System.out.println(i);
+				clearHighlights();
+				switch(i)
+				{
+					case 0:
+						highlightWinLine1(engine.getCurrentWinLines()[0].getLength());
+						break;
+					case 1:
+						highlightWinLine2(engine.getCurrentWinLines()[1].getLength());
+						break;
+					case 2:
+						highlightWinLine3(engine.getCurrentWinLines()[2].getLength());
+						break;
+					case 3:
+						highlightWinLine4(engine.getCurrentWinLines()[3].getLength());
+						break;
+					case 4:
+						highlightWinLine5(engine.getCurrentWinLines()[4].getLength());
+						break;
+					case 5:
+						highlightWinLine6(engine.getCurrentWinLines()[5].getLength());
+						break;
+					case 6:
+						highlightWinLine7(engine.getCurrentWinLines()[6].getLength());
+						break;
+					case 7:
+						highlightWinLine8(engine.getCurrentWinLines()[7].getLength());
+						break;
+					case 8:
+						highlightWinLine9(engine.getCurrentWinLines()[8].getLength());
+						break;
+					case 9:
+						highlightScatter();
+						break;
+					default:
+						clearHighlights();
+						break;
+				}
+				slotPanel.revalidate();
+				slotPanel.repaint();
+			}
+		}
+		else
+		{
+			highLightTimer.stop();
+		}
+	}
+	
+	public int getNextHighlight()
+	{
+		if((lastHighlight + 1) >= engine.getCurrentWinLines().length)
+		{
+			lastHighlight = 0;
+		}
+		for(int i = lastHighlight + 1; i < engine.getCurrentWinLines().length; i ++)
+		{
+			if(engine.getCurrentWinLines()[i].isWin())
+			{
+				lastHighlight = i;
+				return i;
+			}
+		}
+		if(engine.isFreeGames(engine.getCurrentSlotImage()))
+		{
+			lastHighlight = 9;
+			return 9;
+		}
+		for(int i = 0; i < lastHighlight; i ++)
+		{
+			if(engine.getCurrentWinLines()[i].isWin())
+			{
+				lastHighlight = i;
+				return i;
+			}
+		}
+		return lastHighlight;
+	}
+	
+	public void highlightWinLine1(int length)//Hellblau
+	{
+		int y = 0;
+		for(int x = 0; x < length; x ++)
+		{
+			slotLabels[x][y].setBorder(BorderFactory.createLineBorder(new Color(0, 126, 255) , borderThickness, false));
+		}
+	}
+	
+	public void highlightWinLine2(int length)//Rot
+	{
+		int y = 1;
+		for(int x = 0; x < length; x ++)
+		{
+			slotLabels[x][y].setBorder(BorderFactory.createLineBorder(new Color(255, 0, 0) , borderThickness, false));
+		}
+	}
+	
+	public void highlightWinLine3(int length)//Grün
+	{
+		int y = 2;
+		for(int x = 0; x < length; x ++)
+		{
+			slotLabels[x][y].setBorder(BorderFactory.createLineBorder(new Color(0, 255, 0) , borderThickness, false));
+		}
+	}
+	
+	public void highlightWinLine4(int length)
+	{
+		if(length >= 3)
+		{
+			slotLabels[0][1].setBorder(BorderFactory.createLineBorder(new Color(255, 255, 0) , borderThickness, false));
+			slotLabels[1][0].setBorder(BorderFactory.createLineBorder(new Color(255, 255, 0) , borderThickness, false));
+			slotLabels[2][0].setBorder(BorderFactory.createLineBorder(new Color(255, 255, 0) , borderThickness, false));
+		}
+		if(length >= 4)
+		{
+			slotLabels[3][0].setBorder(BorderFactory.createLineBorder(new Color(255, 255, 0) , borderThickness, false));
+		}
+		if(length == 5)
+		{
+			slotLabels[4][1].setBorder(BorderFactory.createLineBorder(new Color(255, 255, 0) , borderThickness, false));
+		}
+	}
+	
+	public void highlightWinLine5(int length)
+	{
+		if(length >= 3)
+		{
+			slotLabels[0][1].setBorder(BorderFactory.createLineBorder(new Color(255, 0, 255) , borderThickness, false));
+			slotLabels[1][2].setBorder(BorderFactory.createLineBorder(new Color(255, 0, 255) , borderThickness, false));
+			slotLabels[2][2].setBorder(BorderFactory.createLineBorder(new Color(255, 0, 255) , borderThickness, false));
+		}
+		if(length >= 4)
+		{
+			slotLabels[3][2].setBorder(BorderFactory.createLineBorder(new Color(255, 0, 255) , borderThickness, false));
+		}
+		if(length == 5)
+		{
+			slotLabels[4][1].setBorder(BorderFactory.createLineBorder(new Color(255, 0, 255) , borderThickness, false));
+		}
+	}
+	
+	public void highlightWinLine6(int length)
+	{
+		if(length >= 3)
+		{
+			slotLabels[0][0].setBorder(BorderFactory.createLineBorder(new Color(128, 255, 0) , borderThickness, false));
+			slotLabels[1][1].setBorder(BorderFactory.createLineBorder(new Color(128, 255, 0) , borderThickness, false));
+			slotLabels[2][2].setBorder(BorderFactory.createLineBorder(new Color(128, 255, 0) , borderThickness, false));
+		}
+		if(length >= 4)
+		{
+			slotLabels[3][1].setBorder(BorderFactory.createLineBorder(new Color(128, 255, 0) , borderThickness, false));
+		}
+		if(length == 5)
+		{
+			slotLabels[4][0].setBorder(BorderFactory.createLineBorder(new Color(128, 255, 0) , borderThickness, false));
+		}
+	}
+	
+	public void highlightWinLine7(int length)
+	{
+		if(length >= 3)
+		{
+			slotLabels[0][2].setBorder(BorderFactory.createLineBorder(new Color(255, 128, 0) , borderThickness, false));
+			slotLabels[1][1].setBorder(BorderFactory.createLineBorder(new Color(255, 128, 0) , borderThickness, false));
+			slotLabels[2][0].setBorder(BorderFactory.createLineBorder(new Color(255, 128, 0) , borderThickness, false));
+		}
+		if(length >= 4)
+		{
+			slotLabels[3][1].setBorder(BorderFactory.createLineBorder(new Color(255, 128, 0) , borderThickness, false));
+		}
+		if(length == 5)
+		{
+			slotLabels[4][2].setBorder(BorderFactory.createLineBorder(new Color(255, 128, 0) , borderThickness, false));
+		}
+	}
+	
+	public void highlightWinLine8(int length)
+	{
+		if(length >= 3)
+		{
+			slotLabels[0][0].setBorder(BorderFactory.createLineBorder(new Color(0, 128, 255) , borderThickness, false));
+			slotLabels[1][0].setBorder(BorderFactory.createLineBorder(new Color(0, 128, 255) , borderThickness, false));
+			slotLabels[2][1].setBorder(BorderFactory.createLineBorder(new Color(0, 128, 255) , borderThickness, false));
+		}
+		if(length >= 4)
+		{
+			slotLabels[3][2].setBorder(BorderFactory.createLineBorder(new Color(0, 128, 255) , borderThickness, false));
+		}
+		if(length == 5)
+		{
+			slotLabels[4][2].setBorder(BorderFactory.createLineBorder(new Color(0, 128, 255) , borderThickness, false));
+		}
+	}
+	
+	public void highlightWinLine9(int length)
+	{
+		if(length >= 3)
+		{
+			slotLabels[0][2].setBorder(BorderFactory.createLineBorder(new Color(128, 0, 255) , borderThickness, false));
+			slotLabels[1][2].setBorder(BorderFactory.createLineBorder(new Color(128, 0, 255) , borderThickness, false));
+			slotLabels[2][1].setBorder(BorderFactory.createLineBorder(new Color(128, 0, 255) , borderThickness, false));
+		}
+		if(length >= 4)
+		{
+			slotLabels[3][0].setBorder(BorderFactory.createLineBorder(new Color(128, 0, 255) , borderThickness, false));
+		}
+		if(length == 5)
+		{
+			slotLabels[4][0].setBorder(BorderFactory.createLineBorder(new Color(128, 0, 255) , borderThickness, false));
+		}
+	}
+	
+	public void highlightScatter()
+	{
+		for(int i = 0; i < 5; i ++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				if(engine.getCurrentSlotImage().get(i, j) == 5)
+				{
+					slotLabels[i][j].setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0) , borderThickness, false));
+				}
+			}
+		}
 	}
 	
 	public void loadImage() throws IOException

@@ -1312,4 +1312,29 @@ public class Engine implements GameModel
 		}
 		return false;
 	}
+	
+	public boolean hasWin()
+	{
+		for(int i = 0; i < currentWinLines.length; i ++)
+		{
+			if(currentWinLines[i].isWin())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public int getWinCount()
+	{
+		int count = 0;
+		for(int i = 0; i < currentWinLines.length; i ++)
+		{
+			if(currentWinLines[i].isWin())
+			{
+				count ++;
+			}
+		}
+		return count;
+	}
 }
