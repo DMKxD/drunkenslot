@@ -225,7 +225,15 @@ public class LobbyScreen extends JFrame
 					}
 					drunkenSlotGUI.setEngine(new Engine(config));
 					drunkenSlotGUI.getEngine().createGame();
-					drunkenSlotGUI.switchToStandingsScreen();
+					
+					if(drunkenSlotGUI.getEngine().isLogging())
+					{
+						drunkenSlotGUI.switchToStandingsScreen();
+					}
+					else
+					{
+						drunkenSlotGUI.switchToGameScreen();
+					}
 					
 				}
 				else if(count <= 2 && !broken)

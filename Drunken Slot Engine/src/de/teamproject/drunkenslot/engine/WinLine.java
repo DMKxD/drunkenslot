@@ -15,18 +15,22 @@ public class WinLine
 	private int symbol;
 	private int line;
 	private int playerOffset;
+	private int difficulty;
 	private boolean allPlayer;
 	private boolean isBroken;
+	private ArrayList<Player> playerList;
 	
 	/**
 	 * Constructor for the WinLine class
-	 * @param currentPlayer id of the current player
+	 * @param currentPlayer Symbol of the current player not the id
 	 * @param line number of the WinLine
 	 */
-	public WinLine(int currentPlayer, int line, int playerOffset)
+	public WinLine(int currentPlayerSymbol, int line, int playerOffset, int difficulty, ArrayList<Player> playerList)
 	{
-		this.currentPlayer = currentPlayer;
+		this.currentPlayer = currentPlayerSymbol;
 		this.line = line;
+		this.difficulty = difficulty;
+		this.playerList = playerList;
 		allPlayer = false;
 		isBroken = false;
 		symbol = -1;
@@ -102,21 +106,44 @@ public class WinLine
 	 */
 	public boolean isWin()
 	{
-		if(this.symbol >= 8 && this.symbol <= 10 || this.symbol == 5)//Niete oder Scatter
+		int player = getPlayer() - playerOffset;
+		if(player < 0)
 		{
-			return false;
-		}
-		if(length >= 3)
-		{
-			if(symbol == 4 && length == 5) //IF Rule
-			{
-				return true;
-			}
-			else if(symbol == 4 && length < 5)
+			if(this.symbol >= 8 && this.symbol <= 10 || this.symbol == 5)//Niete oder Scatter
 			{
 				return false;
 			}
-			return true;
+			if(length >= 3 + difficulty)
+			{
+				if(symbol == 4 && length == 5) //IF Rule
+				{
+					return true;
+				}
+				else if(symbol == 4 && length < 5)
+				{
+					return false;
+				}
+				return true;
+			}
+		}
+		else if(player > 0 && playerList.get(player).isActive())
+		{
+			if(this.symbol >= 8 && this.symbol <= 10 || this.symbol == 5)//Niete oder Scatter
+			{
+				return false;
+			}
+			if(length >= 3 + difficulty)
+			{
+				if(symbol == 4 && length == 5) //IF Rule
+				{
+					return true;
+				}
+				else if(symbol == 4 && length < 5)
+				{
+					return false;
+				}
+				return true;
+			}
 		}
 		return false;
 	}

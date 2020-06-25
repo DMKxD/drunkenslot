@@ -74,6 +74,8 @@ public class GameScreen
 	private int lastHighlight = 0;
 	private int borderThickness = 5;
 	
+	private ActionListener spinActionListener, stopActionListener;
+	
 	public GameScreen(DrunkenSlotGUI drunkenSlotGUI) 
 	{
 		this.drunkenSlotGUI = drunkenSlotGUI;
@@ -156,6 +158,8 @@ public class GameScreen
 					showDialogs();
 					rollTimer.stop();
 					highLightTimer.start();
+					spinButton.setText("Drehen");
+					spinButton.setEnabled(false);
 				}
 				if(rollCounter == 0)
 				{
@@ -261,17 +265,37 @@ public class GameScreen
 	
 	public void createButtons()
 	{
-		spinButton.addActionListener(new ActionListener() 
+		spinActionListener = new ActionListener() 
 		{
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				spinButton.setEnabled(false);
+				spinButton.setText("Stop");
+				spinButton.addActionListener(stopActionListener);
 				surrenderButton.setEnabled(false);
 				engine.roll();
 				rollTimer.start();
+				spinButton.removeActionListener(this);
 			}
-		});
+		};
+		
+		stopActionListener = new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				spinButton.setText("Drehen");
+				spinButton.addActionListener(spinActionListener);
+				spinButton.setEnabled(false);
+				updateWinTextArea();
+				showDialogs();
+				rollTimer.stop();
+				highLightTimer.start();
+				spinButton.removeActionListener(this);
+			}
+		};
+		
+		spinButton.addActionListener(spinActionListener);
 		continueButton.addActionListener(new ActionListener() 
 		{
 			@Override
@@ -282,11 +306,38 @@ public class GameScreen
 				clearHighlights();
 				if(engine.isMoreThanOnePlayerActive())
 				{
-					drunkenSlotGUI.switchToStandingsScreen();
+					if(engine.isLogging())
+					{
+						drunkenSlotGUI.switchToStandingsScreen();
+					}
+					else
+					{
+						engine.clearRoundArrays();
+						drunkenSlotGUI.switchToGameScreen();
+					}
 				}
 				else
 				{
-					drunkenSlotGUI.switchToEndScreen();
+					if(engine.isLogging())
+					{
+						drunkenSlotGUI.switchToEndScreen();
+					}
+					else
+					{
+						Object[] options = {"Beenden"};
+						int n = JOptionPane.showOptionDialog(drunkenSlotGUI.getMainFrame(),
+							    "Gewinner",
+							    "Spieler "+engine.getWinner().getName()+" hat gewonnen",
+							    JOptionPane.YES_OPTION,
+							    JOptionPane.QUESTION_MESSAGE,
+							    null,//TODO Icon
+							    options,
+							    options[1]);
+						if(n == JOptionPane.YES_OPTION || n == JOptionPane.CLOSED_OPTION)
+						{
+							drunkenSlotGUI.switchToLobbyScreen();
+						}
+					}
 				}
 			}
 		});
@@ -296,16 +347,35 @@ public class GameScreen
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				Object[] options = {"Ja","Nein"};
-				int n = JOptionPane.showOptionDialog(drunkenSlotGUI.getMainFrame(),
-					    "Wirklich aufgeben?",
-					    "Spieler "+engine.getPlayerList().get(engine.getCurrentPlayerID()).getName()+" will aufgeben.",
-					    JOptionPane.YES_NO_OPTION,
-					    JOptionPane.QUESTION_MESSAGE,
-					    null,//TODO Icon
-					    options,
-					    options[1]);
-				if(n == JOptionPane.YES_OPTION)
+				if(engine.isLogging())
+				{
+					Object[] options = {"Ja","Nein"};
+					int n = JOptionPane.showOptionDialog(drunkenSlotGUI.getMainFrame(),
+						    "Wirklich aufgeben?",
+						    "Spieler "+engine.getPlayerList().get(engine.getCurrentPlayerID()).getName()+" will aufgeben.",
+						    JOptionPane.YES_NO_OPTION,
+						    JOptionPane.QUESTION_MESSAGE,
+						    null,//TODO Icon
+						    options,
+						    options[1]);
+					if(n == JOptionPane.YES_OPTION)
+					{
+						engine.getPlayerList().get(engine.getCurrentPlayerID()).setActive(false);
+						engine.finalizeRound();
+						highLightTimer.stop();
+						clearHighlights();
+						engine.updateCurrentPlayer();
+						if(engine.isMoreThanOnePlayerActive())
+						{
+							drunkenSlotGUI.switchToStandingsScreen();
+						}
+						else
+						{
+							drunkenSlotGUI.switchToEndScreen();
+						}
+					}
+				}
+				else
 				{
 					engine.getPlayerList().get(engine.getCurrentPlayerID()).setActive(false);
 					engine.finalizeRound();
@@ -314,11 +384,23 @@ public class GameScreen
 					engine.updateCurrentPlayer();
 					if(engine.isMoreThanOnePlayerActive())
 					{
-						drunkenSlotGUI.switchToStandingsScreen();
+						drunkenSlotGUI.switchToGameScreen();
 					}
 					else
 					{
-						drunkenSlotGUI.switchToEndScreen();
+						Object[] options = {"Beenden"};
+						int n = JOptionPane.showOptionDialog(drunkenSlotGUI.getMainFrame(),
+							    "Spieler "+engine.getWinner().getName()+" hat gewonnen",
+							    "Gewinner",
+							    JOptionPane.YES_OPTION,
+							    JOptionPane.QUESTION_MESSAGE,
+							    null,//TODO Icon
+							    options,
+							    options[0]);
+						if(n == JOptionPane.YES_OPTION || n == JOptionPane.CLOSED_OPTION)
+						{
+							drunkenSlotGUI.switchToLobbyScreen();
+						}
 					}
 				}
 			}
@@ -787,42 +869,49 @@ public class GameScreen
 	
 	public void showDialogs()
 	{
-		boolean dialogShown = false;
-		for(int i = 0; i < engine.getRoundDrinksDistribute().length; i++)
+		if(engine.isLogging())
 		{
-			if(engine.getRoundDrinksDistribute()[i] != 0)
+			boolean dialogShown = false;
+			for(int i = 0; i < engine.getRoundDrinksDistribute().length; i++)
 			{
-				DistributionDialog distDialog = new DistributionDialog(drunkenSlotGUI, engine, true, engine.getRoundDrinksDistribute()[i], i);
-				distDialog.setVisible(true);
-				dialogShown = true;
-				break;
-			}
-		}
-		if(!dialogShown)
-		{
-			for(int i = 0; i < engine.getRoundShotsDistribute().length; i++)
-			{
-				if(engine.getRoundShotsDistribute()[i] != 0)
+				if(engine.getRoundDrinksDistribute()[i] != 0)
 				{
-					DistributionDialog distDialog = new DistributionDialog(drunkenSlotGUI, engine, false, engine.getRoundShotsDistribute()[i], i);
+					DistributionDialog distDialog = new DistributionDialog(drunkenSlotGUI, engine, true, engine.getRoundDrinksDistribute()[i], i);
 					distDialog.setVisible(true);
 					dialogShown = true;
 					break;
 				}
 			}
-		}
-		if(!dialogShown)
-		{
-			for(int i = 0; i < engine.getRoundRules().length; i++)
+			if(!dialogShown)
 			{
-				if(engine.getRoundRules()[i] != 0)
+				for(int i = 0; i < engine.getRoundShotsDistribute().length; i++)
 				{
-					RuleDialog ruleDialog = new RuleDialog(drunkenSlotGUI, engine, i);
-					ruleDialog.setVisible(true);
-					dialogShown = true;
-					break;
+					if(engine.getRoundShotsDistribute()[i] != 0)
+					{
+						DistributionDialog distDialog = new DistributionDialog(drunkenSlotGUI, engine, false, engine.getRoundShotsDistribute()[i], i);
+						distDialog.setVisible(true);
+						dialogShown = true;
+						break;
+					}
 				}
 			}
+			if(!dialogShown)
+			{
+				for(int i = 0; i < engine.getRoundRules().length; i++)
+				{
+					if(engine.getRoundRules()[i] != 0)
+					{
+						RuleDialog ruleDialog = new RuleDialog(drunkenSlotGUI, engine, i);
+						ruleDialog.setVisible(true);
+						dialogShown = true;
+						break;
+					}
+				}
+			}
+		}
+		else
+		{
+			engine.clearRoundArrays();
 		}
 		
 		if(engine.allRoundArraysClear())

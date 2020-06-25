@@ -13,7 +13,7 @@ public class DSEngineMain
 	 */
 	public static void main(String[] args) 
 	{
-		GameConfig config = new GameConfig();
+		GameConfig config = new GameConfig(0, true);
 		config.createPlayer(Engine.getID(), "Dominik", null);
 		config.createPlayer(Engine.getID(), "Jonas", null);
 		
