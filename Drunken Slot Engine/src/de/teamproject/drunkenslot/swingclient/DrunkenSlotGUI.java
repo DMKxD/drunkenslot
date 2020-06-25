@@ -59,8 +59,8 @@ public class DrunkenSlotGUI
 		positionieren(mainFrame, 0, 0);
 		setWindowListener();
 		contentPane = new JPanel();
-		//switchToGameScreen();
-		switchToMainScreen();
+		switchToGameScreen();
+		//switchToMainScreen();
 	}
 	
 	public void positionieren(Component component, int x, int y)
@@ -98,6 +98,7 @@ public class DrunkenSlotGUI
 	public void switchToGameScreen()
 	{
 		gameScreen.clearAndUpdateScreen();
+		gameScreen.resetTimer();
 		contentPane = gameScreen.getScreen();
 		mainFrame.setContentPane(contentPane);
 		mainFrame.revalidate();

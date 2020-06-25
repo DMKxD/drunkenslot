@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -19,18 +20,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import de.teamproject.drunkenslot.engine.*;
 import java.awt.FlowLayout;
 import javax.swing.Box;
 
-public class GameScreen extends JFrame 
+public class GameScreen
 {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JPanel freeGamesPanel;
 	private JPanel playerPanel;
@@ -61,27 +59,48 @@ public class GameScreen extends JFrame
 	private Component rigidArea_2;
 	
 	private boolean freeGamesStartetThisRound = false;
+
+	private final int slotLineDelay = 15;
+	private final int minRollCounter = 20;
+	private Timer rollTimer;
+	private int rollCounter;
+	private Timer highLightTimer;
+	private int slotLineDelayTimer;
 	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) 
+	private boolean[] stopped = new boolean[5];
+	
+	
+	public GameScreen(DrunkenSlotGUI drunkenSlotGUI) 
 	{
-		EventQueue.invokeLater(new Runnable() 
+		this.drunkenSlotGUI = drunkenSlotGUI;
+		this.engine = drunkenSlotGUI.getEngine();
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		
+		try 
 		{
-			public void run() 
-			{
-				try 
-				{
-					GameScreen frame = new GameScreen(new DrunkenSlotGUI());
-					frame.setVisible(true);
-				} 
-				catch (Exception e) 
-				{
-					e.printStackTrace();
-				}
-			}
-		});
+			loadImage();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		createFreeGamesPanel();
+		createPlayerPanel();
+		createSlotPanel();
+		createButtonPanel();
+		createWinTextArea();
+		createTopPanel();
+		resetTimer();
+		createTimer();
+		createButtons();
+		
+		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+		contentPane.add(mainImageLabel);
+		contentPane.add(topPanel);
+		contentPane.add(slotPanel);
+		contentPane.add(winTextArea);
+		contentPane.add(buttonPanel);
 	}
 	
 	public void clearAndUpdateScreen()
@@ -102,6 +121,121 @@ public class GameScreen extends JFrame
 		winTextArea.setText("");
 	}
 	
+	public void resetTimer()
+	{
+		rollCounter = minRollCounter + ThreadLocalRandom.current().nextInt(0, 10 + 1);
+		slotLineDelayTimer = slotLineDelay;
+	}
+	
+	public void createTimer()
+	{
+		rollTimer = new Timer(80, new ActionListener()//TODO übergang zu den richtigen symbolen mit sloweren speed, anderen Timer starten, custom action listener;
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				if(isAllStopped())
+				{
+					//fillSlotmachine();
+					//engine.printSlot(engine.getCurrentSlotImage());
+					updateWinTextArea();
+					showDialogs();
+					rollTimer.stop();
+				}
+				if(rollCounter == 0)
+				{
+					if(slotLineDelayTimer == 0)
+					{
+						slotLineDelayTimer = slotLineDelay;
+						boolean stoppedOne = false;
+						if(!stopped[0] && !stoppedOne)
+						{
+							stopped[0] = true;
+							stoppedOne = true;
+							fillSlotmachineLine(0);
+						}
+						
+						if(!stopped[1] && !stoppedOne)
+						{
+							stopped[1] = true;
+							stoppedOne = true;
+							fillSlotmachineLine(1);
+						}
+						
+						if(!stopped[2] && !stoppedOne)
+						{
+							stopped[2] = true;
+							stoppedOne = true;
+							fillSlotmachineLine(2);
+						}
+						
+						if(!stopped[3] && !stoppedOne)
+						{
+							stopped[3] = true;
+							stoppedOne = true;
+							fillSlotmachineLine(3);
+						}
+						
+						if(!stopped[4] && !stoppedOne)
+						{
+							stopped[4] = true;
+							stoppedOne = true;
+							fillSlotmachineLine(4);
+						}
+					}
+					
+					if(!stopped[0])
+					{
+						fillSlotmachineRandom(0);
+					}
+					if(!stopped[1])
+					{
+						fillSlotmachineRandom(1);
+					}
+					if(!stopped[2])
+					{
+						fillSlotmachineRandom(2);
+					}
+					if(!stopped[3])
+					{
+						fillSlotmachineRandom(3);
+					}
+					if(!stopped[4])
+					{
+						fillSlotmachineRandom(4);
+					}
+					
+					slotLineDelayTimer --;
+				}
+				else
+				{
+					if(!stopped[0])
+					{
+						fillSlotmachineRandom(0);
+					}
+					if(!stopped[1])
+					{
+						fillSlotmachineRandom(1);
+					}
+					if(!stopped[2])
+					{
+						fillSlotmachineRandom(2);
+					}
+					if(!stopped[3])
+					{
+						fillSlotmachineRandom(3);
+					}
+					if(!stopped[4])
+					{
+						fillSlotmachineRandom(4);
+					}
+					rollCounter --;
+				}
+			}
+		});
+	}
+	
 	public void createButtons()
 	{
 		spinButton.addActionListener(new ActionListener() 
@@ -112,10 +246,7 @@ public class GameScreen extends JFrame
 				spinButton.setEnabled(false);
 				surrenderButton.setEnabled(false);
 				engine.roll();
-				fillSlotmachine();
-				//engine.printSlot(engine.getCurrentSlotImage());
-				updateWinTextArea();
-				showDialogs();
+				rollTimer.start();
 			}
 		});
 		continueButton.addActionListener(new ActionListener() 
@@ -177,6 +308,23 @@ public class GameScreen extends JFrame
 		slotPanel.repaint();
 	}
 	
+	public void fillSlotmachineLine(int x)
+	{
+		for(int y = 0; y < 3; y ++)
+		{
+			slotLabels[x][y].setIcon(new ImageIcon(slotImages[engine.getCurrentSlotImage().get(x, y)]));
+			slotPanel.repaint();
+		}
+	}
+	
+	public void fillSlotmachineRandom(int x)//TODO Debug bei 10 Spielern
+	{
+		slotLabels[x][2].setIcon(slotLabels[x][1].getIcon());
+		slotLabels[x][1].setIcon(slotLabels[x][0].getIcon());
+		slotLabels[x][0].setIcon(new ImageIcon(slotImages[ThreadLocalRandom.current().nextInt(0, engine.getSymbolOffset() + engine.getPlayerList().size())]));
+		slotPanel.repaint();
+	}
+	
 	public void resetSlotmachine()
 	{
 		for(int i = 0; i < 3; i ++)
@@ -219,7 +367,7 @@ public class GameScreen extends JFrame
 		topPanel = new JPanel();
 		topPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
-		freeGamesPanel.setAlignmentX(LEFT_ALIGNMENT);
+		freeGamesPanel.setAlignmentX(JFrame.LEFT_ALIGNMENT);
 		topPanel.add(freeGamesPanel);
 		
 		rigidArea_2 = Box.createRigidArea(new Dimension(200, 20));
@@ -298,45 +446,14 @@ public class GameScreen extends JFrame
 		}
 	}
 	
-	public void highlightWinLines()
+	public void clearHighlights()
 	{
 		
 	}
-
-	/**
-	 * Create the frame.
-	 */
-	public GameScreen(DrunkenSlotGUI drunkenSlotGUI) 
+	
+	public void highlightNextWinLine()
 	{
-		this.drunkenSlotGUI = drunkenSlotGUI;
-		this.engine = drunkenSlotGUI.getEngine();
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
 		
-		try 
-		{
-			loadImage();
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
-		createFreeGamesPanel();
-		createPlayerPanel();
-		createSlotPanel();
-		createButtonPanel();
-		createWinTextArea();
-		createTopPanel();
-		
-		createButtons();
-		
-		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-		contentPane.add(mainImageLabel);
-		contentPane.add(topPanel);
-		contentPane.add(slotPanel);
-		contentPane.add(winTextArea);
-		contentPane.add(buttonPanel);
 	}
 	
 	public void loadImage() throws IOException
@@ -418,6 +535,16 @@ public class GameScreen extends JFrame
 	public void updateEngine()
 	{
 		this.engine = drunkenSlotGUI.getEngine();
+	}
+	
+	public boolean isAllStopped()
+	{
+		boolean isStopped = true;
+		for(int i = 0; i < stopped.length; i ++)
+		{
+			isStopped = stopped[i];
+		}
+		return isStopped;
 	}
 	
 	public JPanel getScreen()
