@@ -41,7 +41,7 @@ public class DrunkenSlotGUI
 		endScreen = new EndScreen(this);
 	}
 	
-	public void createDemoEngine()//TODO Replace by lobby screen
+	public void createDemoEngine()
 	{
 		GameConfig config = new GameConfig();
 		config.createPlayer(Engine.getID(), "Dominik", null);
@@ -159,6 +159,7 @@ public class DrunkenSlotGUI
 				if(submit == JOptionPane.YES_OPTION)
 				{
 					mainFrame.dispose();
+					System.exit(0);
 				}
 			}
 		});

@@ -35,14 +35,15 @@ public class RuleDialog extends JDialog
 	private Engine engine;
 	private final int playerID;
 	private JButton okButton;
-	private GameScreen parentGUI;
+	private DrunkenSlotGUI drunkenSlotGUI;
 	
 	/**
 	 * Create the dialog.
 	 */
-	public RuleDialog(GameScreen parentGUI, Engine engine, int playerID) 
+	public RuleDialog(DrunkenSlotGUI drunkenSlotGUI, Engine engine, int playerID) 
 	{
-		this.parentGUI = parentGUI;
+		super(drunkenSlotGUI.getMainFrame());
+		this.drunkenSlotGUI = drunkenSlotGUI;
 		this.engine = engine;
 		this.playerID = playerID;
 		setBounds(100, 100, 500, 130);
@@ -109,7 +110,7 @@ public class RuleDialog extends JDialog
 				{
 					String rule = textField.getText();
 					updateRule(rule);
-					parentGUI.showDialogs();
+					drunkenSlotGUI.getGameScreen().showDialogs();
 					ref.dispose();
 				}
 				else

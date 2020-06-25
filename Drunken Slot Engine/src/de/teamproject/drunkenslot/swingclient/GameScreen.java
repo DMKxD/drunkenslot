@@ -3,7 +3,6 @@ package de.teamproject.drunkenslot.swingclient;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -72,7 +71,7 @@ public class GameScreen
 	private boolean[] stopped = new boolean[5];
 	private boolean hasShownHighlight = false;
 	private int lastHighlight = 0;
-	private int borderThickness = 3;
+	private int borderThickness = 5;
 	
 	public GameScreen(DrunkenSlotGUI drunkenSlotGUI) 
 	{
@@ -248,7 +247,7 @@ public class GameScreen
 			}
 		});
 		
-		highLightTimer = new Timer(500, new ActionListener() 
+		highLightTimer = new Timer(800, new ActionListener() 
 		{
 			@Override
 			public void actionPerformed(ActionEvent e) 
@@ -541,44 +540,53 @@ public class GameScreen
 			}
 			else if(engine.hasWin())
 			{
-				int i = getNextHighlight();
-				System.out.println(i);
-				clearHighlights();
-				switch(i)
+				if(hasShownHighlight)
 				{
-					case 0:
-						highlightWinLine1(engine.getCurrentWinLines()[0].getLength());
-						break;
-					case 1:
-						highlightWinLine2(engine.getCurrentWinLines()[1].getLength());
-						break;
-					case 2:
-						highlightWinLine3(engine.getCurrentWinLines()[2].getLength());
-						break;
-					case 3:
-						highlightWinLine4(engine.getCurrentWinLines()[3].getLength());
-						break;
-					case 4:
-						highlightWinLine5(engine.getCurrentWinLines()[4].getLength());
-						break;
-					case 5:
-						highlightWinLine6(engine.getCurrentWinLines()[5].getLength());
-						break;
-					case 6:
-						highlightWinLine7(engine.getCurrentWinLines()[6].getLength());
-						break;
-					case 7:
-						highlightWinLine8(engine.getCurrentWinLines()[7].getLength());
-						break;
-					case 8:
-						highlightWinLine9(engine.getCurrentWinLines()[8].getLength());
-						break;
-					case 9:
-						highlightScatter();
-						break;
-					default:
-						clearHighlights();
-						break;
+					clearHighlights();
+					hasShownHighlight = !hasShownHighlight;
+					slotPanel.revalidate();
+					slotPanel.repaint();
+				}
+				else
+				{
+					int i = getNextHighlight();
+					switch(i)
+					{
+						case 0:
+							highlightWinLine1(engine.getCurrentWinLines()[0].getLength());
+							break;
+						case 1:
+							highlightWinLine2(engine.getCurrentWinLines()[1].getLength());
+							break;
+						case 2:
+							highlightWinLine3(engine.getCurrentWinLines()[2].getLength());
+							break;
+						case 3:
+							highlightWinLine4(engine.getCurrentWinLines()[3].getLength());
+							break;
+						case 4:
+							highlightWinLine5(engine.getCurrentWinLines()[4].getLength());
+							break;
+						case 5:
+							highlightWinLine6(engine.getCurrentWinLines()[5].getLength());
+							break;
+						case 6:
+							highlightWinLine7(engine.getCurrentWinLines()[6].getLength());
+							break;
+						case 7:
+							highlightWinLine8(engine.getCurrentWinLines()[7].getLength());
+							break;
+						case 8:
+							highlightWinLine9(engine.getCurrentWinLines()[8].getLength());
+							break;
+						case 9:
+							highlightScatter();
+							break;
+						default:
+							clearHighlights();
+							break;
+					}
+					hasShownHighlight = !hasShownHighlight;
 				}
 				slotPanel.revalidate();
 				slotPanel.repaint();
@@ -625,7 +633,7 @@ public class GameScreen
 		int y = 0;
 		for(int x = 0; x < length; x ++)
 		{
-			slotLabels[x][y].setBorder(BorderFactory.createLineBorder(new Color(0, 126, 255) , borderThickness, false));
+			slotLabels[x][y].setBorder(BorderFactory.createLineBorder(new Color(0, 0, 255) , borderThickness, false));
 		}
 	}
 	
@@ -791,7 +799,7 @@ public class GameScreen
 		{
 			if(engine.getRoundDrinksDistribute()[i] != 0)
 			{
-				DistributionDialog distDialog = new DistributionDialog(this, engine, true, engine.getRoundDrinksDistribute()[i], i);
+				DistributionDialog distDialog = new DistributionDialog(drunkenSlotGUI, engine, true, engine.getRoundDrinksDistribute()[i], i);
 				distDialog.setVisible(true);
 				dialogShown = true;
 				break;
@@ -803,7 +811,7 @@ public class GameScreen
 			{
 				if(engine.getRoundShotsDistribute()[i] != 0)
 				{
-					DistributionDialog distDialog = new DistributionDialog(this, engine, false, engine.getRoundShotsDistribute()[i], i);
+					DistributionDialog distDialog = new DistributionDialog(drunkenSlotGUI, engine, false, engine.getRoundShotsDistribute()[i], i);
 					distDialog.setVisible(true);
 					dialogShown = true;
 					break;
@@ -816,7 +824,7 @@ public class GameScreen
 			{
 				if(engine.getRoundRules()[i] != 0)
 				{
-					RuleDialog ruleDialog = new RuleDialog(this, engine, i);
+					RuleDialog ruleDialog = new RuleDialog(drunkenSlotGUI, engine, i);
 					ruleDialog.setVisible(true);
 					dialogShown = true;
 					break;

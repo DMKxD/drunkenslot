@@ -36,15 +36,16 @@ public class DistributionDialog extends JDialog
 	private JLabel headerLaber;
 	private JTextField[] amountTextFields;
 	private JButton okButton = new JButton("Best\u00E4tigen");
-	private GameScreen parentGUI;
+	private DrunkenSlotGUI drunkenSlotGUI;
 	private final int amount, playerID;
 	private Engine engine;
 	private boolean drinks;
 	
-	public DistributionDialog(GameScreen parentGUI, Engine engine, boolean drinks, int amount, int playerID) 
+	public DistributionDialog(DrunkenSlotGUI drunkenSlotGUI, Engine engine, boolean drinks, int amount, int playerID) 
 	{
+		super(drunkenSlotGUI.getMainFrame());
 		this.amount = amount;
-		this.parentGUI = parentGUI;
+		this.drunkenSlotGUI = drunkenSlotGUI;
 		this.engine = engine;
 		this.drinks = drinks;
 		this.playerID = playerID;
@@ -164,7 +165,7 @@ public class DistributionDialog extends JDialog
 				if(sum == amount)
 				{
 					calculateRoundArrays();
-					parentGUI.showDialogs();
+					drunkenSlotGUI.getGameScreen().showDialogs();
 					ref.dispose();
 				}
 				else
@@ -214,14 +215,6 @@ public class DistributionDialog extends JDialog
 			distributeShots[playerID] -= amount;
 			engine.setRoundShotsDistribute(distributeShots);
 		}
-		
-		//Debug
-		//System.out.println("Round Shots:"+Arrays.toString(engine.getRoundShots()));
-		//System.out.println("Round Shots Distribute:"+Arrays.toString(engine.getRoundShotsDistribute()));
-		//System.out.println("Round Drinks:"+Arrays.toString(engine.getRoundDrinks()));
-		//System.out.println("Round Drinks Distribute:"+Arrays.toString(engine.getRoundDrinksDistribute()));
-		//System.out.println("Round Rules:"+Arrays.toString(engine.getRoundRules()));
-		//TODO parent methode wieder aufrufen
 	}
 	
 	public void positionieren(Component component, int x, int y)
