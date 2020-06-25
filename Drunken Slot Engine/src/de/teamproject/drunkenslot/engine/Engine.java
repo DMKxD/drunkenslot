@@ -23,6 +23,8 @@ public class Engine implements GameModel
 	private int freeSpinsLeft = 0;
 	private int freeSpinsAmount = 5;
 	private int freeSpinsTotal = 0;
+	private int difficulty = 0;
+	private boolean logging = false;
 	
 	private String rule = "";
 	private SlotImage currentSlotImage;
@@ -42,6 +44,8 @@ public class Engine implements GameModel
 		{
 			createPlayer(config.getPlayerList().get(i));
 		}
+		difficulty = config.getDifficulty();
+		logging = config.isLogging();
 		updateAlternativeSymbolList();
 	}
 	
@@ -1336,5 +1340,15 @@ public class Engine implements GameModel
 			}
 		}
 		return count;
+	}
+	
+	public boolean isLogging()
+	{
+		return logging;
+	}
+	
+	public int getDifficulty()
+	{
+		return difficulty;
 	}
 }
