@@ -393,7 +393,7 @@ public class Engine implements GameModel
 		line.setSymbol(2);
 		line.setSymbol(11);
 		line.setSymbol(7);
-		System.out.print(line.winLineText());
+		System.out.print(line.getWinLineText(playerList));
 	}
 	
 	/**

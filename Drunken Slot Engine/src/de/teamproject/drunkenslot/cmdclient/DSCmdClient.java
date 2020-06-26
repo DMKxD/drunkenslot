@@ -10,7 +10,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import de.teamproject.drunkenslot.engine.Engine;
 import de.teamproject.drunkenslot.engine.GameConfig;
-import de.teamproject.drunkenslot.engine.SlotImage;
 
 public class DSCmdClient 
 {
@@ -24,27 +23,52 @@ public class DSCmdClient
 	private Thread highLightThread;
 	private int slotLineDelayTimer;
 	
+	private Thread stopHighLightThread;
+	
 	private boolean[] stopped = new boolean[5];
 	private boolean hasShownHighlight = false;
+	private boolean playersSet, difficultySet, loggingSet;
 	private boolean isHighLighting;
+	private boolean isLogging;
+	private int difficulty;
 	private int lastHighlight = 0;
+	private int id;
 	
 	private String[][] slotSymbols;
 	
 	private boolean[][] isHighlighted;
 	
+	private GameConfig config;
+	
 	public DSCmdClient()
 	{
+		sc = new Scanner(System.in);
 		slotSymbols = new String[5][3];
 		isHighlighted = new boolean[5][3];
 		resetThreads();
 		resetSlotSymbols();
+		//preGameLoop();
 		createDemoEngine();
-		createRollThread();
-		createHightLightThread();
-		isHighLighting = true;
-		engine.roll();
-		rollThread.start();
+		gameRound();
+	}
+	
+	public void createStopHighLightThread()
+	{
+		stopHighLightThread = new Thread(new Runnable() 
+		{
+			@Override
+			public void run() 
+			{
+				if(isHighLighting)
+				{
+					synchronized (sc) 
+					{
+						sc.nextLine();
+						isHighLighting = false;
+					}	
+				}
+			}
+		});
 	}
 	
 	public void createHightLightThread()
@@ -55,20 +79,47 @@ public class DSCmdClient
 			@Override
 			public void run() 
 			{
-				while(isHighLighting)//TODO
+				while(isHighLighting)
 				{
-					try 
+					try
 					{
 						Thread.sleep(800);
-					} 
-					catch (InterruptedException e) 
-					{
-						//TODO
 					}
+					catch (InterruptedException e)
+					{}
 					if(isHighLighting)
 					{
 						highlightNextWinLine();
+						System.out.println("Bitte drücke Eingabe zum fortsetzen...");
 					}
+				}
+				synchronized (sc) 
+				{
+					clearHighlights();
+					clearScreen();
+					printSlot();
+					if(engine.isLogging())
+					{
+						distributeRoundShots();
+						distributeRoundDrinks();
+						checkChangeRule();
+						try 
+						{
+							Thread.sleep(200);
+						} 
+						catch (InterruptedException e) 
+						{
+							e.printStackTrace();
+						}
+					}
+					engine.finalizeRound();
+					if(engine.isLogging())
+					{
+						showStandingsScreen();
+						waitForEnter();
+					}
+					engine.updateCurrentPlayer();
+					gameRound();
 				}
 			}
 		});
@@ -89,9 +140,7 @@ public class DSCmdClient
 						Thread.sleep(80);
 					} 
 					catch (InterruptedException e) 
-					{
-						//TODO
-					}
+					{}
 					if(rollCounter == 0)
 					{
 						if(slotLineDelayTimer == 0)
@@ -186,13 +235,7 @@ public class DSCmdClient
 				}
 				if(isAllStopped())
 				{
-					/*//fillSlotmachine();
-					//engine.printSlot(engine.getCurrentSlotImage());
-					updateWinTextArea();
-					showDialogs();
-					Thread.
-					highLightTimer.start();*/
-					highLightThread.start();
+					afterRoll();
 				}
 			}
 		});
@@ -232,15 +275,234 @@ public class DSCmdClient
 		rollCounter = minRollCounter + ThreadLocalRandom.current().nextInt(0, 10 + 1);
 		slotLineDelayTimer = slotLineDelay;
 		hasShownHighlight = false;
+		isHighLighting = true;
 		for(int i = 0; i < stopped.length; i ++)
 		{
 			stopped[i] = false;
 		}
 	}
 	
+	public void printDrunkenSlotLogoDelay()
+	{
+		String drunkenSlotLogo1 = " _____                   _                 _____ _       _   \n";
+		String drunkenSlotLogo2 = "|  __ \\                 | |               / ____| |     | |  \n";
+		String drunkenSlotLogo3 = "| |  | |_ __ _   _ _ __ | | _____ _ __   | (___ | | ___ | |_ \n";
+		String drunkenSlotLogo4 = "| |  | | '__| | | | '_ \\| |/ / _ \\ '_ \\   \\___ \\| |/ _ \\| __|\n";
+		String drunkenSlotLogo5 = "| |__| | |  | |_| | | | |   <  __/ | | |  ____) | | (_) | |_ \n";
+		String drunkenSlotLogo6 = "|_____/|_|   \\__,_|_| |_|_|\\_\\___|_| |_| |_____/|_|\\___/ \\__|\n";
+		  
+		System.out.print(drunkenSlotLogo1);
+		try 
+		{
+			Thread.sleep(500);
+		} 
+		catch (InterruptedException e) {}
+		System.out.print(drunkenSlotLogo2);
+		try 
+		{
+			Thread.sleep(500);
+		} 
+		catch (InterruptedException e) {}
+		System.out.print(drunkenSlotLogo3);
+		try 
+		{
+			Thread.sleep(500);
+		} 
+		catch (InterruptedException e) {}
+		System.out.print(drunkenSlotLogo4);
+		try 
+		{
+			Thread.sleep(500);
+		} 
+		catch (InterruptedException e) {}
+		System.out.print(drunkenSlotLogo5);
+		try 
+		{
+			Thread.sleep(500);
+		} 
+		catch (InterruptedException e) {}
+		System.out.print(drunkenSlotLogo6);
+		try 
+		{
+			Thread.sleep(500);
+		} 
+		catch (InterruptedException e) {}
+		System.out.println("Teamproject im Sommersemester 2020 von Dominik Haacke");
+	}
+	
+	public void printDrunkenSlotLogo()
+	{
+		String drunkenSlotLogo1 = " _____                   _                 _____ _       _   \n";
+		String drunkenSlotLogo2 = "|  __ \\                 | |               / ____| |     | |  \n";
+		String drunkenSlotLogo3 = "| |  | |_ __ _   _ _ __ | | _____ _ __   | (___ | | ___ | |_ \n";
+		String drunkenSlotLogo4 = "| |  | | '__| | | | '_ \\| |/ / _ \\ '_ \\   \\___ \\| |/ _ \\| __|\n";
+		String drunkenSlotLogo5 = "| |__| | |  | |_| | | | |   <  __/ | | |  ____) | | (_) | |_ \n";
+		String drunkenSlotLogo6 = "|_____/|_|   \\__,_|_| |_|_|\\_\\___|_| |_| |_____/|_|\\___/ \\__|\n";
+		
+		System.out.print(drunkenSlotLogo1);
+		System.out.print(drunkenSlotLogo2);
+		System.out.print(drunkenSlotLogo3);
+		System.out.print(drunkenSlotLogo4);
+		System.out.print(drunkenSlotLogo5);
+		System.out.print(drunkenSlotLogo6);
+		System.out.println("Teamproject im Sommersemester 2020 von Dominik Haacke");
+	}
+	
 	public void preGameLoop()
 	{
-		
+		printDrunkenSlotLogoDelay();
+		waitForEnter();
+		setDifficulty();
+		activateLogging();
+		config = new GameConfig(difficulty, isLogging);
+		registerPlayer();
+		initEngine(config);
+		gameRound();
+	}
+
+	public void setDifficulty()
+	{
+		while(!difficultySet)
+		{
+			clearScreen();
+			printDrunkenSlotLogo();
+			System.out.println("----------------------------------------------------");
+			System.out.println("Schwierigkeitsgrade:");
+			System.out.println("Alkoholiker(schwer): Gewinne ab 3 Symbolen");
+			System.out.println("Kneipengänger(mittel): Gewinne ab 4 Symbolen");
+			System.out.println("Abendtrinker(leicht): Gewinne ab 5 Symbolen");
+			System.out.println("Bitte gib den Schwierigkeitsgrad ein: ");
+			String difficultyString = "";
+			
+			try
+			{
+				difficultyString = sc.nextLine();
+			}
+			catch(NoSuchElementException e)
+			{
+				continue;
+			}
+			if(difficultyString.equalsIgnoreCase("Alkoholiker"))
+			{
+				difficulty = 0;
+				difficultySet = true;
+				System.out.println("Schwierigkeit Alkoholiker gesetzt!");
+				waitForEnter();
+			}
+			else if(difficultyString.equalsIgnoreCase("Kneipengänger"))
+			{
+				difficulty = 1;
+				difficultySet = true;
+				System.out.println("Schwierigkeit Kneipengänger gesetzt!");
+				waitForEnter();
+			}
+			else if(difficultyString.equalsIgnoreCase("Abendtrinker"))
+			{
+				difficulty = 2;
+				difficultySet = true;
+				System.out.println("Schwierigkeit Abentrinker gesetzt!");
+				waitForEnter();
+			}
+			else
+			{
+				System.out.println("Falsche Eingabe!");
+				waitForEnter();
+			}
+		}
+	}
+	
+	public void activateLogging()
+	{
+		while(!loggingSet)
+		{
+			clearScreen();
+			printDrunkenSlotLogo();
+			System.out.println("----------------------------------------------------");
+			System.out.println("Speichern der Schlücke/Shots aktivieren oder nur");
+			System.out.println("ein schnelles Spiel ohne Zwischenstände usw.?");
+			System.out.println("Zwischenstände aktivieren? [Ja/Nein]:");
+			
+			String logginString = "";
+			
+			try
+			{
+				logginString = sc.nextLine();
+			}
+			catch(NoSuchElementException e)
+			{
+				continue;
+			}
+			if(logginString.equalsIgnoreCase("Ja"))
+			{
+				isLogging = true;
+				loggingSet = true;
+				System.out.println("Spiel mit Zwischenständen.");
+				waitForEnter();
+			}
+			else if(logginString.equalsIgnoreCase("Nein"))
+			{
+				isLogging = false;
+				loggingSet = true;
+				System.out.println("Schnelles Spiel.");
+				waitForEnter();
+			}
+			else
+			{
+				System.out.println("Falsche Eingabe!");
+				waitForEnter();
+			}
+		}
+	}
+	
+	public void registerPlayer()
+	{
+		while(!playersSet)
+		{
+			clearScreen();
+			printDrunkenSlotLogo();
+			System.out.println("----------------------------------------------------");
+			System.out.println("Spielernamen für Spieler "+(config.getPlayerList().size()+1)+" eingeben.");
+			System.out.println("Maximum sind 10 Spieler, minimum sind 2.");
+			System.out.println("Wenn alle Spieler eingeben sind ENDE eingeben.");
+			System.out.println("Spielername: ");
+			
+			String playerString = "";
+			
+			try
+			{
+				playerString = sc.nextLine();
+			}
+			catch(NoSuchElementException e)
+			{
+				continue;
+			}
+			if(playerString.equalsIgnoreCase("ENDE"))
+			{
+				if(config.getPlayerList().size() >= 2)
+				{
+					playersSet = true;
+					System.out.println("Alle Spieler registriert.");
+					waitForEnter();
+				}
+				else
+				{
+					System.out.println("Bitte registriere mindestens 2 Spieler.");
+					waitForEnter();
+				}
+			}
+			else if(!playerString.trim().equalsIgnoreCase("") && !playerString.equalsIgnoreCase(null))
+			{
+				config.createPlayer(id, playerString, null);
+				id++;
+				System.out.println("Spieler "+playerString+" registriert.");
+				waitForEnter();
+			}
+			else
+			{
+				System.out.println("Falsche Eingabe!");
+				waitForEnter();
+			}
+		}
 	}
 	
 	public void initEngine(GameConfig config)
@@ -249,52 +511,58 @@ public class DSCmdClient
 		engine.createGame();
 	}
 	
+	public void afterRoll()
+	{
+		createHightLightThread();
+		createStopHighLightThread();
+		highLightThread.start();
+		stopHighLightThread.start();
+		sc.reset();
+	}
+	
 	/**
 	 * Demo GameLoop for testing the engine in CMD
 	 * will be reused for offline client and server
 	 * game loop.
 	 */
-	public void gameLoop()
+	public void gameRound()
 	{
-		sc = new Scanner(System.in);
-		while(engine.isMoreThanOnePlayerActive())
+		if(engine.isMoreThanOnePlayerActive())
 		{
+			clearScreen();
+			resetThreads();
+			clearHighlights();
 			if(!engine.isFreeGameEnabled())
 			{
+				printSlot();
 				if(!askPlayerForTurn())
 				{
 					engine.setPlayerInactive(engine.getCurrentPlayerID());
-					showStandingsScreen();
+					System.out.println("Spieler "+engine.getPlayerList().get(engine.getCurrentPlayerID()).getName()+" hat aufgegeben.");
+					waitForEnter();
+					if(engine.isLogging())
+					{
+						showStandingsScreen();
+					}
 					engine.updateCurrentPlayer();
-					continue;
+					gameRound();
+					return;
 				}
 			}
 			else
 			{
-				System.out.println("Freispiel "+engine.getFreeSpinsLeft()+"/"+engine.getFreeSpinsTotal());
 				engine.updateFreeGames();
-				waitForEnter();
 			}
-			SlotImage si = engine.roll();
-			printSlot();
-			engine.scanWinLines(si);
-			printWinLines();
-			distributeRoundShots();
-			distributeRoundDrinks();
-			checkChangeRule();
-			
-			engine.finalizeRound();
-			showStandingsScreen();
-			try 
-			{
-				Thread.sleep(1000);
-			} 
-			catch (InterruptedException e) {}
-			waitForEnter();
-			engine.updateCurrentPlayer();
+			engine.roll();
+			createRollThread();
+			rollThread.start();
 		}
-		showResultScreen();
-		sc.close();
+		else
+		{
+			clearScreen();
+			showResultScreen();
+			sc.close();
+		}
 	}
 	
 	/**
@@ -302,15 +570,16 @@ public class DSCmdClient
 	 */
 	public void showStandingsScreen()
 	{
-		System.out.println("----------------------------------------------------");
-		System.out.println("Spieler			Shots			Drinks			Aktiv");
+		System.out.println("-----------------------------------------------------");
+		System.out.println("Spieler		Symbol		Shots		Drinks		Aktiv");
 		for(int i = 0; i < engine.getPlayerList().size(); i ++)
 		{
-			System.out.println(engine.getPlayerList().get(i).getName()+"			"+engine.getPlayerList().get(i).getShots()+
-								"			"+engine.getPlayerList().get(i).getDrinks()+"			"+engine.getPlayerList().get(i).isActive());
+			System.out.println(engine.getPlayerList().get(i).getName()+"		"+slotSymbolConverter(engine.getPlayerList().get(i).getPlayerSymbol())
+			+"		"+engine.getPlayerList().get(i).getShots()+"		"+engine.getPlayerList().get(i).getDrinks()
+			+"		"+(engine.getPlayerList().get(i).isActive() ? "Ja" : "Nein"));
 		}
 		System.out.println("Regel: "+engine.getRule());
-		System.out.println("----------------------------------------------------");
+		System.out.println("-----------------------------------------------------");
 	}
 	
 	/**
@@ -318,15 +587,16 @@ public class DSCmdClient
 	 */
 	public void showResultScreen()
 	{
-		System.out.println("----------------------------------------------------");
+		System.out.println("-----------------------------------------------------");
 		System.out.println();
 		System.out.println("Gewinner: "+engine.getWinner().getName());
 		System.out.println();
-		System.out.println("Spieler			Shots			Drinks			Aktiv");
+		System.out.println("Spieler		Symbol		Shots		Drinks		Aktiv");
 		for(int i = 0; i < engine.getPlayerList().size(); i ++)
 		{
-			System.out.println(engine.getPlayerList().get(i).getName()+"			"+engine.getPlayerList().get(i).getShots()+
-								"			"+engine.getPlayerList().get(i).getDrinks()+"			"+engine.getPlayerList().get(i).isActive());
+			System.out.println(engine.getPlayerList().get(i).getName()+"		"+slotSymbolConverter(engine.getPlayerList().get(i).getPlayerSymbol())
+			+"		"+engine.getPlayerList().get(i).getShots()+"		"+engine.getPlayerList().get(i).getDrinks()
+			+"		"+(engine.getPlayerList().get(i).isActive() ? "Ja" : "Nein"));
 		}
 		System.out.println("Regel: "+engine.getRule());
 		System.out.println("----------------------------------------------------");
@@ -336,7 +606,7 @@ public class DSCmdClient
 	{
 		for(int i = 0; i < engine.getCurrentWinLines().length; i ++)
 		{
-			System.out.print(engine.getCurrentWinLines()[i].winLineText());
+			System.out.print(engine.getCurrentWinLines()[i].getWinLineText(engine.getPlayerList()));
 		}
 	}
 	
@@ -362,12 +632,21 @@ public class DSCmdClient
 	 * let the player distribute the Shots to the other players.
 	 * @param playerID Id from the Player that can distribute Shots
 	 */
-	public void distributeRoundShotsLoop(int playerID)//TODO für Client-Server anpassen
+	public void distributeRoundShotsLoop(int playerID)
 	{
 		System.out.println("----------------------------------------------------");
 		while(engine.getRoundShotsDistribute()[playerID] != 0)
 		{
-			System.out.println("Spieler "+engine.getPlayerList().get(playerID).getName()+" verteile noch "+engine.getRoundShotsDistribute()[playerID]+" Shot(s).");
+			String messageString = engine.getPlayerList().get(playerID).getName()+" verteile noch "+engine.getRoundShotsDistribute()[playerID];
+			if(engine.getRoundShotsDistribute()[playerID] > 1)
+			{
+				messageString += " Shots.";
+			}
+			else
+			{
+				messageString += " Shot.";
+			}
+			System.out.println(messageString);
 			System.out.print("Bitte gib den Spielernamen ein: ");
 			String name;
 			try
@@ -394,7 +673,7 @@ public class DSCmdClient
 			}
 			if(playerNameFound)
 			{
-				System.out.print("Bitte gib die Anzahl an Shots ein [1-"+ engine.getRoundShotsDistribute()[playerID]+"]: ");
+				System.out.print("Bitte gib die Anzahl ein [1-"+ engine.getRoundShotsDistribute()[playerID]+"]: ");
 				int amount = 0;
 				try
 				{
@@ -450,12 +729,21 @@ public class DSCmdClient
 	 * let the player distribute the Drinks to the other players.
 	 * @param playerID Id from the Player that can distribute Drinks
 	 */
-	public void distributeRoundDrinksLoop(int playerID)//TODO für Client-Server anpassen
+	public void distributeRoundDrinksLoop(int playerID)
 	{
 		System.out.println("----------------------------------------------------");
 		while(engine.getRoundDrinksDistribute()[playerID] != 0)
 		{
-			System.out.println("Spieler "+engine.getPlayerList().get(playerID).getName()+" verteile noch "+engine.getRoundDrinksDistribute()[playerID]+" Schlücke.");
+			String messageString = engine.getPlayerList().get(playerID).getName()+" verteile noch "+engine.getRoundDrinksDistribute()[playerID];
+			if(engine.getRoundDrinksDistribute()[playerID] > 1)
+			{
+				messageString += " Schlücke.";
+			}
+			else
+			{
+				messageString += " Schluck.";
+			}
+			System.out.println(messageString);
 			System.out.print("Bitte gib den Spielernamen ein: ");
 			String name = "";
 			try
@@ -483,7 +771,7 @@ public class DSCmdClient
 			}
 			if(playerNameFound)
 			{
-				System.out.print("Bitte gib die Anzahl an Schlücken ein [1-"+ engine.getRoundDrinksDistribute()[playerID]+"]: ");
+				System.out.print("Bitte gib die Anzahl ein [1-"+ engine.getRoundDrinksDistribute()[playerID]+"]: ");
 				int amount = 0;
 				try
 				{
@@ -546,7 +834,6 @@ public class DSCmdClient
 				{
 					ids.remove(nextRuleID);
 				}
-				System.out.println("RULE");//TODO Debug
 			}
 			
 		}
@@ -558,7 +845,7 @@ public class DSCmdClient
 		{
 			for(int i = 0; i < engine.getRoundRules().length; i ++)
 			{
-				if(engine.getRoundRules().length != 0)
+				if(engine.getRoundRules()[i] != 0)
 				{
 					if(engine.getPlayerList().get(i).isActive())
 					{
@@ -637,7 +924,7 @@ public class DSCmdClient
 	{
 		System.out.println(" Freispiele "+engine.getFreeSpinsLeft()+"/"+engine.getFreeSpinsTotal()+"     "
 							+"Spieler: "+engine.getPlayerList().get(engine.getCurrentPlayerID()).getName());
-		System.out.println("---------------------------------------");
+		System.out.println("--------------------------------------");
 		for(int y = 0; y < 3; y ++)
 		{
 			String line = "| (";
@@ -669,7 +956,7 @@ public class DSCmdClient
 			line +=") |";
 			System.out.println(line);
 		}
-		System.out.println("---------------------------------------");
+		System.out.println("--------------------------------------");
 	}
 	
 	public void fillSlotmachineLine(int column)
@@ -702,110 +989,56 @@ public class DSCmdClient
 	{
 		if(engine.hasWin() || engine.isFreeGames(engine.getCurrentSlotImage()))
 		{
-			if((!engine.hasWin() && engine.isFreeGames(engine.getCurrentSlotImage())) || engine.getWinCount() == 1)
+			if(hasShownHighlight)
 			{
-				if(hasShownHighlight)
-				{
-					clearHighlights();
-					hasShownHighlight = !hasShownHighlight;
-					clearScreen();
-					printSlot();//TODO print winlines
-				}
-				else
-				{
-					switch(getNextHighlight())
-					{
-						case 0:
-							highlightWinLine1(engine.getCurrentWinLines()[0].getLength());
-							break;
-						case 1:
-							highlightWinLine2(engine.getCurrentWinLines()[1].getLength());
-							break;
-						case 2:
-							highlightWinLine3(engine.getCurrentWinLines()[2].getLength());
-							break;
-						case 3:
-							highlightWinLine4(engine.getCurrentWinLines()[3].getLength());
-							break;
-						case 4:
-							highlightWinLine5(engine.getCurrentWinLines()[4].getLength());
-							break;
-						case 5:
-							highlightWinLine6(engine.getCurrentWinLines()[5].getLength());
-							break;
-						case 6:
-							highlightWinLine7(engine.getCurrentWinLines()[6].getLength());
-							break;
-						case 7:
-							highlightWinLine8(engine.getCurrentWinLines()[7].getLength());
-							break;
-						case 8:
-							highlightWinLine9(engine.getCurrentWinLines()[8].getLength());
-							break;
-						case 9:
-							highlightScatter();
-							break;
-						default:
-							clearHighlights();
-							break;
-					}
-					clearScreen();
-					printSlot();//TODO print winlines
-					hasShownHighlight = !hasShownHighlight;
-				}
+				clearHighlights();
+				hasShownHighlight = !hasShownHighlight;
+				clearScreen();
+				printSlot();
+				printWinLines();
 			}
-			else if(engine.hasWin())
+			else
 			{
-				if(hasShownHighlight)
+				switch(getNextHighlight())
 				{
-					clearHighlights();
-					hasShownHighlight = !hasShownHighlight;
-					clearScreen();
-					printSlot();//TODO print winlines
-				}
-				else
-				{
-					int i = getNextHighlight();
-					switch(i)
-					{
-						case 0:
-							highlightWinLine1(engine.getCurrentWinLines()[0].getLength());
-							break;
-						case 1:
-							highlightWinLine2(engine.getCurrentWinLines()[1].getLength());
-							break;
-						case 2:
-							highlightWinLine3(engine.getCurrentWinLines()[2].getLength());
-							break;
-						case 3:
-							highlightWinLine4(engine.getCurrentWinLines()[3].getLength());
-							break;
-						case 4:
-							highlightWinLine5(engine.getCurrentWinLines()[4].getLength());
-							break;
-						case 5:
-							highlightWinLine6(engine.getCurrentWinLines()[5].getLength());
-							break;
-						case 6:
-							highlightWinLine7(engine.getCurrentWinLines()[6].getLength());
-							break;
-						case 7:
-							highlightWinLine8(engine.getCurrentWinLines()[7].getLength());
-							break;
-						case 8:
-							highlightWinLine9(engine.getCurrentWinLines()[8].getLength());
-							break;
-						case 9:
-							highlightScatter();
-							break;
-						default:
-							clearHighlights();
-							break;
-					}
-					hasShownHighlight = !hasShownHighlight;
+					case 0:
+						highlightWinLine1(engine.getCurrentWinLines()[0].getLength());
+						break;
+					case 1:
+						highlightWinLine2(engine.getCurrentWinLines()[1].getLength());
+						break;
+					case 2:
+						highlightWinLine3(engine.getCurrentWinLines()[2].getLength());
+						break;
+					case 3:
+						highlightWinLine4(engine.getCurrentWinLines()[3].getLength());
+						break;
+					case 4:
+						highlightWinLine5(engine.getCurrentWinLines()[4].getLength());
+						break;
+					case 5:
+						highlightWinLine6(engine.getCurrentWinLines()[5].getLength());
+						break;
+					case 6:
+						highlightWinLine7(engine.getCurrentWinLines()[6].getLength());
+						break;
+					case 7:
+						highlightWinLine8(engine.getCurrentWinLines()[7].getLength());
+						break;
+					case 8:
+						highlightWinLine9(engine.getCurrentWinLines()[8].getLength());
+						break;
+					case 9:
+						highlightScatter();
+						break;
+					default:
+						clearHighlights();
+						break;
 				}
 				clearScreen();
-				printSlot();//TODO print winlines
+				printSlot();
+				printWinLines();
+				hasShownHighlight = !hasShownHighlight;
 			}
 		}
 		else
@@ -816,11 +1049,19 @@ public class DSCmdClient
 	
 	public int getNextHighlight()
 	{
+		boolean resetHighlight = false;
 		if((lastHighlight + 1) >= engine.getCurrentWinLines().length)
 		{
 			lastHighlight = 0;
+			resetHighlight = true;
+			
 		}
-		for(int i = lastHighlight + 1; i < engine.getCurrentWinLines().length; i ++)
+		int nextHighLight = lastHighlight;
+		if(!resetHighlight)
+		{
+			nextHighLight ++;
+		}
+		for(int i = nextHighLight; i < engine.getCurrentWinLines().length; i ++)
 		{
 			if(engine.getCurrentWinLines()[i].isWin())
 			{
@@ -844,7 +1085,7 @@ public class DSCmdClient
 		return lastHighlight;
 	}
 	
-	public void highlightWinLine1(int length)//Hellblau
+	public void highlightWinLine1(int length)
 	{
 		int y = 0;
 		for(int x = 0; x < length; x ++)
@@ -853,7 +1094,7 @@ public class DSCmdClient
 		}
 	}
 	
-	public void highlightWinLine2(int length)//Rot
+	public void highlightWinLine2(int length)
 	{
 		int y = 1;
 		for(int x = 0; x < length; x ++)
@@ -862,7 +1103,7 @@ public class DSCmdClient
 		}
 	}
 	
-	public void highlightWinLine3(int length)//Grün
+	public void highlightWinLine3(int length)
 	{
 		int y = 2;
 		for(int x = 0; x < length; x ++)
@@ -993,9 +1234,9 @@ public class DSCmdClient
 		}
 	}
 	
-	public String slotSymbolConverter(int i)
+	public String slotSymbolConverter(int symbol)
 	{
-		switch(i)
+		switch(symbol)
 		{
 			case 0:
 				return "DS";
@@ -1049,9 +1290,14 @@ public class DSCmdClient
 	public void waitForEnter()
 	{
 		System.out.println("Bitte drücke Eingabe zum fortsetzen...");
+		try 
+		{
+			Thread.sleep(100);
+		} 
+		catch (InterruptedException e) {}
 		try
 		{
-			System.in.read();
+			sc.nextLine();
 		}
 		catch(Exception e){}
 	}

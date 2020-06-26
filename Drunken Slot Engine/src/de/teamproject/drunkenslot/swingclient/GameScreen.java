@@ -579,111 +579,56 @@ public class GameScreen
 	{
 		if(engine.hasWin() || engine.isFreeGames(engine.getCurrentSlotImage()))
 		{
-			if((!engine.hasWin() && engine.isFreeGames(engine.getCurrentSlotImage())) || engine.getWinCount() == 1)
+			if(hasShownHighlight)
 			{
-				if(hasShownHighlight)
-				{
-					clearHighlights();
-					hasShownHighlight = !hasShownHighlight;
-					slotPanel.revalidate();
-					slotPanel.repaint();
-				}
-				else
-				{
-					switch(getNextHighlight())
-					{
-						case 0:
-							highlightWinLine1(engine.getCurrentWinLines()[0].getLength());
-							break;
-						case 1:
-							highlightWinLine2(engine.getCurrentWinLines()[1].getLength());
-							break;
-						case 2:
-							highlightWinLine3(engine.getCurrentWinLines()[2].getLength());
-							break;
-						case 3:
-							highlightWinLine4(engine.getCurrentWinLines()[3].getLength());
-							break;
-						case 4:
-							highlightWinLine5(engine.getCurrentWinLines()[4].getLength());
-							break;
-						case 5:
-							highlightWinLine6(engine.getCurrentWinLines()[5].getLength());
-							break;
-						case 6:
-							highlightWinLine7(engine.getCurrentWinLines()[6].getLength());
-							break;
-						case 7:
-							highlightWinLine8(engine.getCurrentWinLines()[7].getLength());
-							break;
-						case 8:
-							highlightWinLine9(engine.getCurrentWinLines()[8].getLength());
-							break;
-						case 9:
-							highlightScatter();
-							break;
-						default:
-							clearHighlights();
-							break;
-					}
-					slotPanel.revalidate();
-					slotPanel.repaint();
-					hasShownHighlight = !hasShownHighlight;
-				}
-			}
-			else if(engine.hasWin())
-			{
-				if(hasShownHighlight)
-				{
-					clearHighlights();
-					hasShownHighlight = !hasShownHighlight;
-					slotPanel.revalidate();
-					slotPanel.repaint();
-				}
-				else
-				{
-					int i = getNextHighlight();
-					switch(i)
-					{
-						case 0:
-							highlightWinLine1(engine.getCurrentWinLines()[0].getLength());
-							break;
-						case 1:
-							highlightWinLine2(engine.getCurrentWinLines()[1].getLength());
-							break;
-						case 2:
-							highlightWinLine3(engine.getCurrentWinLines()[2].getLength());
-							break;
-						case 3:
-							highlightWinLine4(engine.getCurrentWinLines()[3].getLength());
-							break;
-						case 4:
-							highlightWinLine5(engine.getCurrentWinLines()[4].getLength());
-							break;
-						case 5:
-							highlightWinLine6(engine.getCurrentWinLines()[5].getLength());
-							break;
-						case 6:
-							highlightWinLine7(engine.getCurrentWinLines()[6].getLength());
-							break;
-						case 7:
-							highlightWinLine8(engine.getCurrentWinLines()[7].getLength());
-							break;
-						case 8:
-							highlightWinLine9(engine.getCurrentWinLines()[8].getLength());
-							break;
-						case 9:
-							highlightScatter();
-							break;
-						default:
-							clearHighlights();
-							break;
-					}
-					hasShownHighlight = !hasShownHighlight;
-				}
+				clearHighlights();
+				hasShownHighlight = !hasShownHighlight;
 				slotPanel.revalidate();
 				slotPanel.repaint();
 			}
+			else
+			{
+				int i = getNextHighlight();
+				switch(i)
+				{
+					case 0:
+						highlightWinLine1(engine.getCurrentWinLines()[0].getLength());
+						break;
+					case 1:
+						highlightWinLine2(engine.getCurrentWinLines()[1].getLength());
+						break;
+					case 2:
+						highlightWinLine3(engine.getCurrentWinLines()[2].getLength());
+						break;
+					case 3:
+						highlightWinLine4(engine.getCurrentWinLines()[3].getLength());
+						break;
+					case 4:
+						highlightWinLine5(engine.getCurrentWinLines()[4].getLength());
+						break;
+					case 5:
+						highlightWinLine6(engine.getCurrentWinLines()[5].getLength());
+						break;
+					case 6:
+						highlightWinLine7(engine.getCurrentWinLines()[6].getLength());
+						break;
+					case 7:
+						highlightWinLine8(engine.getCurrentWinLines()[7].getLength());
+						break;
+					case 8:
+						highlightWinLine9(engine.getCurrentWinLines()[8].getLength());
+						break;
+					case 9:
+						highlightScatter();
+						break;
+					default:
+						clearHighlights();
+						break;
+				}
+				hasShownHighlight = !hasShownHighlight;
+			}
+			slotPanel.revalidate();
+			slotPanel.repaint();
 		}
 		else
 		{
@@ -693,11 +638,19 @@ public class GameScreen
 	
 	public int getNextHighlight()
 	{
+		boolean resetHighlight = false;
 		if((lastHighlight + 1) >= engine.getCurrentWinLines().length)
 		{
 			lastHighlight = 0;
+			resetHighlight = true;
+			
 		}
-		for(int i = lastHighlight + 1; i < engine.getCurrentWinLines().length; i ++)
+		int nextHighLight = lastHighlight;
+		if(!resetHighlight)
+		{
+			nextHighLight ++;
+		}
+		for(int i = nextHighLight; i < engine.getCurrentWinLines().length; i ++)
 		{
 			if(engine.getCurrentWinLines()[i].isWin())
 			{
