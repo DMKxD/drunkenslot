@@ -2,10 +2,6 @@ package de.teamproject.drunkenslot.engine;
 
 import java.awt.Image;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.InputMismatchException;
-import java.util.NoSuchElementException;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -89,7 +85,7 @@ public class Engine implements GameModel
 	}
 
 	@Override
-	public void createGame() //TODO mit Schwierigkeiten
+	public void createGame()
 	{
 		roundShots = new int[playerList.size()];
 		roundDrinks = new int[playerList.size()];

@@ -115,6 +115,7 @@ public class DSCmdClient
 					engine.finalizeRound();
 					if(engine.isLogging())
 					{
+						clearScreen();
 						showStandingsScreen();
 						waitForEnter();
 					}
@@ -542,6 +543,7 @@ public class DSCmdClient
 					waitForEnter();
 					if(engine.isLogging())
 					{
+						clearScreen();
 						showStandingsScreen();
 					}
 					engine.updateCurrentPlayer();
@@ -570,16 +572,16 @@ public class DSCmdClient
 	 */
 	public void showStandingsScreen()
 	{
-		System.out.println("-----------------------------------------------------");
-		System.out.println("Spieler		Symbol		Shots		Drinks		Aktiv");
+		System.out.println("---------------------------------------------");
+		System.out.println("Spieler		Symbol	Shots	Drinks	Aktiv");
 		for(int i = 0; i < engine.getPlayerList().size(); i ++)
 		{
 			System.out.println(engine.getPlayerList().get(i).getName()+"		"+slotSymbolConverter(engine.getPlayerList().get(i).getPlayerSymbol())
-			+"		"+engine.getPlayerList().get(i).getShots()+"		"+engine.getPlayerList().get(i).getDrinks()
-			+"		"+(engine.getPlayerList().get(i).isActive() ? "Ja" : "Nein"));
+			+"	"+engine.getPlayerList().get(i).getShots()+"	"+engine.getPlayerList().get(i).getDrinks()
+			+"	"+(engine.getPlayerList().get(i).isActive() ? "Ja" : "Nein"));
 		}
 		System.out.println("Regel: "+engine.getRule());
-		System.out.println("-----------------------------------------------------");
+		System.out.println("---------------------------------------------");
 	}
 	
 	/**
@@ -587,19 +589,19 @@ public class DSCmdClient
 	 */
 	public void showResultScreen()
 	{
-		System.out.println("-----------------------------------------------------");
+		System.out.println("---------------------------------------------");
 		System.out.println();
 		System.out.println("Gewinner: "+engine.getWinner().getName());
 		System.out.println();
-		System.out.println("Spieler		Symbol		Shots		Drinks		Aktiv");
+		System.out.println("Spieler		Symbol	Shots	Drinks	Aktiv");
 		for(int i = 0; i < engine.getPlayerList().size(); i ++)
 		{
 			System.out.println(engine.getPlayerList().get(i).getName()+"		"+slotSymbolConverter(engine.getPlayerList().get(i).getPlayerSymbol())
-			+"		"+engine.getPlayerList().get(i).getShots()+"		"+engine.getPlayerList().get(i).getDrinks()
-			+"		"+(engine.getPlayerList().get(i).isActive() ? "Ja" : "Nein"));
+			+"	"+engine.getPlayerList().get(i).getShots()+"	"+engine.getPlayerList().get(i).getDrinks()
+			+"	"+(engine.getPlayerList().get(i).isActive() ? "Ja" : "Nein"));
 		}
 		System.out.println("Regel: "+engine.getRule());
-		System.out.println("----------------------------------------------------");
+		System.out.println("---------------------------------------------");
 	}
 	
 	public void printWinLines()
@@ -607,6 +609,17 @@ public class DSCmdClient
 		for(int i = 0; i < engine.getCurrentWinLines().length; i ++)
 		{
 			System.out.print(engine.getCurrentWinLines()[i].getWinLineText(engine.getPlayerList()));
+		}
+		if(engine.isFreeGames(engine.getCurrentSlotImage()))
+		{
+			if(engine.isFreeGameEnabled())
+			{
+				System.out.print(engine.getFreeSpinsAmount()+" weitere Freispiele hinzugefügt!");
+			}
+			else
+			{
+				System.out.print(engine.getFreeSpinsAmount()+" Freispiele gewonnen!");
+			}
 		}
 	}
 	
@@ -704,6 +717,7 @@ public class DSCmdClient
 				System.out.println("Angegebener Spieler nicht vorhanden oder inaktiv!");
 			}
 		}
+		sc.reset();
 		System.out.println("----------------------------------------------------");
 	}
 	
@@ -802,6 +816,7 @@ public class DSCmdClient
 				System.out.println("Angegebener Spieler nicht vorhanden oder inaktiv!");
 			}
 		}
+		sc.reset();
 		System.out.println("----------------------------------------------------");
 	}
 	
@@ -875,8 +890,9 @@ public class DSCmdClient
 			}
 			engine.setRule(ruleInput);
 			nextRuleSet = true;
-			System.out.println("----------------------------------------------------");
 		}
+		System.out.println("----------------------------------------------------");
+		sc.reset();
 	}
 	
 	/**
@@ -1302,23 +1318,31 @@ public class DSCmdClient
 		catch(Exception e){}
 	}
 	
-    public void clearScreen()//TODO Windows specific
+    public void clearScreen()
     {  
-    	 final String os = System.getProperty("os.name");
-         if (os.contains("Windows"))
-			try {
-				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-			} catch (InterruptedException | IOException e) {
-				// TODO Auto-generated catch block
+    	final String os = System.getProperty("os.name");
+        if (os.contains("Windows"))
+        {
+        	try 
+        	{
+        		new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+			} 
+        	catch (InterruptedException | IOException e) 
+        	{
 				e.printStackTrace();
 			}
+        }
 		else
-			try {
+		{
+			try 
+			{
 				Runtime.getRuntime().exec("clear");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+			} 
+			catch (IOException e) 
+			{
 				e.printStackTrace();
 			}
+		}
         System.out.print("\n");
     }
     
