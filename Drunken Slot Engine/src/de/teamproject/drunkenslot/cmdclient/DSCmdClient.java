@@ -1,10 +1,13 @@
 package de.teamproject.drunkenslot.cmdclient;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
+
+import javax.swing.ImageIcon;
 
 import de.teamproject.drunkenslot.engine.Engine;
 import de.teamproject.drunkenslot.engine.GameConfig;
@@ -33,7 +36,155 @@ public class DSCmdClient
 		slotSymbols = new String[5][3];
 		resetThreads();
 		resetSlotSymbols();
-		printSlot();
+		createDemoEngine();
+		createRollThread();
+		engine.roll();
+		rollThread.start();
+	}
+	
+	public void createRollThread()
+	{
+		rollThread = new Thread(new Runnable() 
+		{
+			
+			@Override
+			public void run() 
+			{
+				while(!isAllStopped())
+				{
+					try 
+					{
+						Thread.sleep(80);
+					} 
+					catch (InterruptedException e) 
+					{
+						//TODO
+					}
+					if(rollCounter == 0)
+					{
+						if(slotLineDelayTimer == 0)
+						{
+							slotLineDelayTimer = slotLineDelay;
+							boolean stoppedOne = false;
+							if(!stopped[0] && !stoppedOne)
+							{
+								stopped[0] = true;
+								stoppedOne = true;
+								fillSlotmachineLine(0);
+							}
+							
+							if(!stopped[1] && !stoppedOne)
+							{
+								stopped[1] = true;
+								stoppedOne = true;
+								fillSlotmachineLine(1);
+							}
+							
+							if(!stopped[2] && !stoppedOne)
+							{
+								stopped[2] = true;
+								stoppedOne = true;
+								fillSlotmachineLine(2);
+							}
+							
+							if(!stopped[3] && !stoppedOne)
+							{
+								stopped[3] = true;
+								stoppedOne = true;
+								fillSlotmachineLine(3);
+							}
+							
+							if(!stopped[4] && !stoppedOne)
+							{
+								stopped[4] = true;
+								stoppedOne = true;
+								fillSlotmachineLine(4);
+							}
+						}
+						
+						if(!stopped[0])
+						{
+							fillSlotmachineRandom(0);
+						}
+						if(!stopped[1])
+						{
+							fillSlotmachineRandom(1);
+						}
+						if(!stopped[2])
+						{
+							fillSlotmachineRandom(2);
+						}
+						if(!stopped[3])
+						{
+							fillSlotmachineRandom(3);
+						}
+						if(!stopped[4])
+						{
+							fillSlotmachineRandom(4);
+						}
+						
+						slotLineDelayTimer --;
+					}
+					else
+					{
+						if(!stopped[0])
+						{
+							fillSlotmachineRandom(0);
+						}
+						if(!stopped[1])
+						{
+							fillSlotmachineRandom(1);
+						}
+						if(!stopped[2])
+						{
+							fillSlotmachineRandom(2);
+						}
+						if(!stopped[3])
+						{
+							fillSlotmachineRandom(3);
+						}
+						if(!stopped[4])
+						{
+							fillSlotmachineRandom(4);
+						}
+						rollCounter --;
+					}
+					clearScreen();
+					printSlot();
+				}
+				/*if(isAllStopped())
+				{
+					//fillSlotmachine();
+					//engine.printSlot(engine.getCurrentSlotImage());
+					updateWinTextArea();
+					showDialogs();
+					Thread.
+					highLightTimer.start();
+					spinButton.setText("Drehen");
+					spinButton.removeActionListener(stopActionListener);
+					spinButton.addActionListener(spinActionListener);
+					spinButton.setEnabled(false);
+				}*/
+			}
+		});
+	}
+	
+	public void createDemoEngine()
+	{
+		GameConfig config = new GameConfig(0, true);
+		config.createPlayer(Engine.getID(), "Dominik", null);
+		config.createPlayer(Engine.getID(), "Jonas", null);
+		/*config.createPlayer(Engine.getID(), "Peter", null);
+		config.createPlayer(Engine.getID(), "Wilhelm", null);
+		config.createPlayer(Engine.getID(), "Dagobert", null);
+		config.createPlayer(Engine.getID(), "Alina", null);
+		config.createPlayer(Engine.getID(), "Sophie", null);
+		config.createPlayer(Engine.getID(), "Bruno", null);
+		config.createPlayer(Engine.getID(), "Nike", null);
+		config.createPlayer(Engine.getID(), "Nino", null);*/
+		
+		engine = new Engine(config);
+		engine.createGame();
 	}
 	
 	public void resetSlotSymbols()
@@ -65,7 +216,8 @@ public class DSCmdClient
 	
 	public void initEngine(GameConfig config)
 	{
-		
+		engine = new Engine(config);
+		engine.createGame();
 	}
 	
 	/**
@@ -454,23 +606,42 @@ public class DSCmdClient
 	 */
 	public void printSlot()
 	{
+		System.out.println(" Freispiele "+engine.getFreeSpinsLeft()+"/"+engine.getFreeSpinsTotal()+"     "
+							+"Spieler: "+engine.getPlayerList().get(engine.getCurrentPlayerID()).getName());
+		System.out.println("---------------------------------------");
 		for(int y = 0; y < 3; y ++)
 		{
-			String line = "(";
+			String line = "| (";
 			for(int x = 0; x < 5; x ++)
 			{
 				if(x < 4)
 				{
-					line += " "+slotSymbols[x][y]+" \t";
+					line += " "+slotSymbols[x][y]+"    ";
 				}
 				else
 				{
 					line += " "+slotSymbols[x][y]+" ";
 				}
 			}
-			line +=")";
+			line +=") |";
 			System.out.println(line);
 		}
+		System.out.println("---------------------------------------");
+	}
+	
+	public void fillSlotmachineLine(int column)
+	{
+		for(int y = 0; y < 3; y ++)
+		{
+			slotSymbols[column][y] = slotSymbolConverter(engine.getCurrentSlotImage().get(column, y));
+		}
+	}
+	
+	public void fillSlotmachineRandom(int column)
+	{
+		slotSymbols[column][2] = slotSymbols[column][1];
+		slotSymbols[column][1] = slotSymbols[column][0];
+		slotSymbols[column][0] = slotSymbolConverter(ThreadLocalRandom.current().nextInt(0, engine.getSymbolOffset() + engine.getPlayerList().size()));
 	}
 	
 	public String slotSymbolConverter(int i)
@@ -538,8 +709,31 @@ public class DSCmdClient
 	
     public void clearScreen()//TODO Windows specific
     {  
-        System.out.print("\033[H\033[2J");  
-        System.out.flush();  
+    	 final String os = System.getProperty("os.name");
+         if (os.contains("Windows"))
+			try {
+				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+			} catch (InterruptedException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		else
+			try {
+				Runtime.getRuntime().exec("clear");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         System.out.print("\n");
     }
+    
+    public boolean isAllStopped()
+	{
+		boolean isStopped = true;
+		for(int i = 0; i < stopped.length; i ++)
+		{
+			isStopped = stopped[i];
+		}
+		return isStopped;
+	}
 }

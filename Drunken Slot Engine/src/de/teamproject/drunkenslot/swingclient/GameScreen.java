@@ -431,7 +431,7 @@ public class GameScreen
 		}
 	}
 	
-	public void fillSlotmachineRandom(int x)//TODO Debug bei 10 Spielern
+	public void fillSlotmachineRandom(int x)
 	{
 		slotLabels[x][2].setIcon(slotLabels[x][1].getIcon());
 		slotLabels[x][1].setIcon(slotLabels[x][0].getIcon());
