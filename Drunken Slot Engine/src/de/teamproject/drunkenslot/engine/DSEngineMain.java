@@ -23,7 +23,7 @@ public class DSEngineMain
 		Engine engine = new Engine(config);
 		engine.createGame();
 		//engine.testWinLine();
-		engine.gameLoop();
+		//engine.gameLoop();
 		//SlotImage si = engine.roll();
 		//engine.printSlot(si);
 		//engine.scanWinLines(si);

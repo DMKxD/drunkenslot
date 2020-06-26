@@ -36,7 +36,7 @@ public class Engine implements GameModel
 	private ArrayList<Integer> alternativeSymbolList = new ArrayList<Integer>();
 	
 	private int[] roundShots, roundDrinks, roundShotsDistribute, roundDrinksDistribute, roundRules;
-	
+
 	static Scanner sc;
 	
 	public Engine(GameConfig config)
@@ -100,53 +100,6 @@ public class Engine implements GameModel
 	}
 	
 	/**
-	 * Demo GameLoop for testing the engine in CMD
-	 * will be reused for offline client and server
-	 * game loop.
-	 */
-	public void gameLoop()
-	{
-		sc = new Scanner(System.in);
-		while(isMoreThanOnePlayerActive())
-		{
-			if(!isFreeGameEnabled)
-			{
-				if(!askPlayerForTurn())
-				{
-					setPlayerInactive(currentPlayerID);
-					showStandingsScreen();
-					updateCurrentPlayer();
-					continue;
-				}
-			}
-			else
-			{
-				System.out.println("Freispiel "+freeSpinsLeft+"/"+freeSpinsTotal);
-				updateFreeGames();
-				waitForEnter();
-			}
-			SlotImage si = roll();
-			printSlot(si);//DEBUG
-			scanWinLines(si);
-			distributeRoundShots();
-			distributeRoundDrinks();
-			checkChangeRule();
-			
-			finalizeRound();
-			showStandingsScreen();
-			try 
-			{
-				Thread.sleep(1000);
-			} 
-			catch (InterruptedException e) {}
-			waitForEnter();
-			updateCurrentPlayer();
-		}
-		showResultScreen();
-		sc.close();
-	}
-	
-	/**
 	 * Decrease FreeSpins Amount, if no FreeSpins remain, deactivate FreeGame Mode
 	 */
 	public void updateFreeGames()
@@ -165,54 +118,6 @@ public class Engine implements GameModel
 	{
 		currentPlayerID = getNextPlayerID();
 		currentPlayerSymbol = getPlayerByID(currentPlayerID).getPlayerSymbol();
-	}
-	
-	/**
-	 * Wait for player to press Enter, used for Demo GameLoop
-	 */
-	public void waitForEnter()
-	{
-		System.out.println("Bitte drücke Eingabe zum fortsetzen...");
-		try
-		{
-			System.in.read();
-		}
-		catch(Exception e){}
-	}
-	
-	/**
-	 * Print current standings in the Console
-	 */
-	public void showStandingsScreen()
-	{
-		System.out.println("----------------------------------------------------");
-		System.out.println("Spieler			Shots			Drinks			Aktiv");
-		for(int i = 0; i < playerList.size(); i ++)
-		{
-			System.out.println(playerList.get(i).getName()+"			"+playerList.get(i).getShots()+
-								"			"+playerList.get(i).getDrinks()+"			"+playerList.get(i).isActive());
-		}
-		System.out.println("Regel: "+rule);
-		System.out.println("----------------------------------------------------");
-	}
-	
-	/**
-	 * Print end results in the Console
-	 */
-	public void showResultScreen()
-	{
-		System.out.println("----------------------------------------------------");
-		System.out.println();
-		System.out.println("Gewinner: "+getWinner().getName());
-		System.out.println();
-		System.out.println("Spieler			Shots			Drinks			Aktiv");
-		for(int i = 0; i < playerList.size(); i ++)
-		{
-			System.out.println(playerList.get(i).getName()+"			"+playerList.get(i).getShots()+
-								"			"+playerList.get(i).getDrinks()+"			"+playerList.get(i).isActive());
-		}
-		System.out.println("Regel: "+rule);
-		System.out.println("----------------------------------------------------");
 	}
 	
 	/**
@@ -309,7 +214,7 @@ public class Engine implements GameModel
 	 * Generate a new random SlotImage, if free games are enabled replace all player symbols with normal wilds
 	 * @return generated SlotImage
 	 */
-	public SlotImage roll()//TODO Schwierigkeiten und ersetzen die Nieten durch normale Symbole bei bestimmter Spieleranzahl
+	public SlotImage roll()
 	{
 		SlotImage slotImage = slotMachine.generateRandom();
 		
@@ -363,7 +268,7 @@ public class Engine implements GameModel
 	 * Scan the 9 WinLines for wins and save them in a WinLine Array.
 	 * @param si Generated SlotImage from the Slotmachine
 	 */
-	public void scanWinLines(SlotImage si)//TODO codierung zum hin und her senden
+	public void scanWinLines(SlotImage si)
 	{
 		currentWinLines = new WinLine[9];
 		currentWinLines[0] = checkWinLine1(si);
@@ -375,11 +280,7 @@ public class Engine implements GameModel
 		currentWinLines[6] = checkWinLine7(si);
 		currentWinLines[7] = checkWinLine8(si);
 		currentWinLines[8] = checkWinLine9(si);
-		//TODO DEBUG and CMD
-		for(int i = 0; i < currentWinLines.length; i ++)
-		{
-			System.out.print(currentWinLines[i].winLineText());
-		}
+		
 		updateWinArrays(currentWinLines);
 	}
 	
@@ -472,256 +373,14 @@ public class Engine implements GameModel
 			}
 		}
 		//DEBUG
-		System.out.println("Round Shots:"+Arrays.toString(roundShots));
+		/*System.out.println("Round Shots:"+Arrays.toString(roundShots));
 		System.out.println("Round Shots Distribute:"+Arrays.toString(roundShotsDistribute));
 		System.out.println("Round Drinks:"+Arrays.toString(roundDrinks));
 		System.out.println("Round Drinks Distribute:"+Arrays.toString(roundDrinksDistribute));
-		System.out.println("Round Rules:"+Arrays.toString(roundRules));
+		System.out.println("Round Rules:"+Arrays.toString(roundRules));*/
 	}
 	
-	/**
-	 * Work through the roundShotsDistribute Array and let each player distribute the Shots to another Player.
-	 */
-	public void distributeRoundShots()
-	{
-		for(int i = 0; i < roundShotsDistribute.length; i ++)
-		{
-			if(roundShotsDistribute[i] != 0)
-			{
-				if(playerList.get(i).isActive())
-				{
-					distributeRoundShotsLoop(i);
-				}
-			}
-		}
-	}
 	
-	/**
-	 * Loop as long as the roundShotsDistribute for playerID is not empty and
-	 * let the player distribute the Shots to the other players.
-	 * @param playerID Id from the Player that can distribute Shots
-	 */
-	public void distributeRoundShotsLoop(int playerID)//TODO für Client-Server anpassen
-	{
-		System.out.println("----------------------------------------------------");
-		while(roundShotsDistribute[playerID] != 0)
-		{
-			System.out.println("Spieler "+playerList.get(playerID).getName()+" verteile noch "+roundShotsDistribute[playerID]+" Shot(s).");
-			System.out.print("Bitte gib den Spielernamen ein: ");
-			String name;
-			try
-			{
-				name = sc.nextLine();
-			}
-			catch(NoSuchElementException e)
-			{
-				continue;
-			}
-			boolean playerNameFound = false;
-			int targetPlayer = -1;
-			for(int i = 0; i < playerList.size(); i ++)
-			{
-				if(playerList.get(i).getName().equals(name))
-				{
-					if(playerList.get(i).isActive())
-					{
-						playerNameFound = true;
-						targetPlayer = i;
-						break;
-					}
-				}
-			}
-			if(playerNameFound)
-			{
-				System.out.print("Bitte gib die Anzahl an Shots ein [1-"+ roundShotsDistribute[playerID]+"]: ");
-				int amount = 0;
-				try
-				{
-					amount = sc.nextInt();
-				}
-				catch(InputMismatchException e)
-				{
-					System.out.println("Eingabe ist keine Zahl!");
-					continue;
-				}
-				;
-				if(amount <= 0 || amount > roundShotsDistribute[playerID])
-				{
-					System.out.println("Konnte angegebenen Spieler nicht finden!");
-				}
-				else
-				{
-					roundShotsDistribute[playerID] -= amount;
-					roundShots[targetPlayer] += amount;
-				}
-			}
-			else
-			{
-				System.out.println("Angegebener Spieler nicht vorhanden oder inaktiv!");
-			}
-		}
-		System.out.println("----------------------------------------------------");
-	}
-	
-	/**
-	 * Work through the roundDrinksDistribute Array and let each player distribute the Drinks to another Player.
-	 */
-	public void distributeRoundDrinks()
-	{
-		for(int i = 0; i < roundDrinksDistribute.length; i ++)
-		{
-			if(roundDrinksDistribute[i] != 0)
-			{
-				if(playerList.get(i).isActive())
-				{
-					distributeRoundDrinksLoop(i);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Loop as long as the roundDrinksDistribute for playerID is not empty and
-	 * let the player distribute the Drinks to the other players.
-	 * @param playerID Id from the Player that can distribute Drinks
-	 */
-	public void distributeRoundDrinksLoop(int playerID)//TODO für Client-Server anpassen
-	{
-		System.out.println("----------------------------------------------------");
-		while(roundDrinksDistribute[playerID] != 0)
-		{
-			System.out.println("Spieler "+playerList.get(playerID).getName()+" verteile noch "+roundDrinksDistribute[playerID]+" Schlücke.");
-			System.out.print("Bitte gib den Spielernamen ein: ");
-			String name = "";
-			try
-			{
-				name = sc.nextLine();
-			}
-			catch (NoSuchElementException e)
-			{
-				System.out.println("Dieser Spieler existiert nicht");
-				continue;
-			}
-			boolean playerNameFound = false;
-			int targetPlayer = -1;
-			for(int i = 0; i < playerList.size(); i ++)
-			{
-				if(playerList.get(i).getName().equals(name))
-				{
-					if(playerList.get(i).isActive())
-					{
-						playerNameFound = true;
-						targetPlayer = i;
-						break;
-					}
-				}
-			}
-			if(playerNameFound)
-			{
-				System.out.print("Bitte gib die Anzahl an Schlücken ein [1-"+ roundDrinksDistribute[playerID]+"]: ");
-				int amount = 0;
-				try
-				{
-					amount = sc.nextInt();
-				}
-				catch(InputMismatchException e)
-				{
-					System.out.println("Eingabe ist keine Zahl!");
-					continue;
-				}
-				;
-				if(amount <= 0 || amount > roundDrinksDistribute[playerID])
-				{
-					System.out.println("Konnte angegebenen Spieler nicht finden!");
-				}
-				else
-				{
-					roundDrinksDistribute[playerID] -= amount;
-					roundDrinks[targetPlayer] += amount;
-				}
-			}
-			else
-			{
-				System.out.println("Angegebener Spieler nicht vorhanden oder inaktiv!");
-			}
-		}
-		System.out.println("----------------------------------------------------");
-	}
-	
-	/**
-	 * Work through the roundRules Array and pick a player randomly if more than 1 player can set a rule
-	 */
-	public void checkChangeRule()
-	{
-		int ruleID = -1;
-		if(isMoreThanOneRule())
-		{
-			ArrayList<Integer> ids = new ArrayList<Integer>();
-			for(int i = 0; i < roundRules.length; i ++)
-			{
-				if(roundRules[i] != 0)
-				{
-					ids.add(i);
-				}
-			}
-			Random random = new Random();
-			while(ids.size() > 0)
-			{
-				int nextRuleID = ids.get(random.nextInt(ids.size()));
-				if(playerList.get(nextRuleID).isActive())
-				{
-					ruleID = nextRuleID;
-					break;
-				}
-				else
-				{
-					ids.remove(nextRuleID);
-				}
-				System.out.println("RULE");//TODO Debug
-			}
-			
-		}
-		if(ruleID != -1)
-		{
-			rulesLoop(ruleID);
-		}
-		else
-		{
-			for(int i = 0; i < roundRules.length; i ++)
-			{
-				if(roundRules[i] != 0)
-				{
-					if(playerList.get(i).isActive())
-					{
-						rulesLoop(i);
-					}
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Loop as long as the player has not set a new rule correctly
-	 * @param playerID Id from the Player that can set a Rule
-	 */
-	public void rulesLoop(int playerID) 
-	{
-		boolean nextRuleSet = false;
-		while(!nextRuleSet)
-		{
-			System.out.println("----------------------------------------------------");
-			System.out.print("Spieler "+playerList.get(playerID).getName()+" gib deine Regel ein: ");
-			String ruleInput = sc.nextLine();
-			if(ruleInput.trim().equals("") || ruleInput == null)
-			{
-				System.out.println("Keine Eingabe!");
-				continue;
-			}
-			rule = ruleInput;
-			nextRuleSet = true;
-			System.out.println("----------------------------------------------------");
-		}
-	}
 	
 	/**
 	 * Test a WinLine, just for DEBUG to reproduce errors
@@ -879,69 +538,6 @@ public class Engine implements GameModel
 		line.setSymbol(si.get(3, 0));
 		line.setSymbol(si.get(4, 0));
 		return line;
-	}
-	
-	/**
-	 * Ask next player if he wants to surrender or play the next round
-	 * @return boolean player plays or surrenders
-	 */
-	public boolean askPlayerForTurn()
-	{
-		boolean yesOrNo = false;
-		while(yesOrNo == false)
-		{
-			System.out.print("Spieler "+playerList.get(currentPlayerID).getName()+" möchtest du diese Runde spielen? [Ja / Nein]: ");
-			String name;
-			try
-			{
-				name = sc.nextLine();
-			}
-			catch(NoSuchElementException e)
-			{
-				continue;
-			}
-			if(name.equalsIgnoreCase("Ja"))
-			{
-				yesOrNo = true;
-				return true;
-			}
-			else if(name.equalsIgnoreCase("Nein"))
-			{
-				yesOrNo = true;
-				return false;
-			}
-			else
-			{
-				System.out.println("Falsche Eingabe!");
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Print out the generated SlotImage
-	 * @param si SlotImage generated by SlotMachine
-	 */
-	public void printSlot(SlotImage si)
-	{
-		System.out.println("\n");
-		for(int y = 0; y < si.getLengthY(); y ++)
-		{
-			String line = "[";
-			for(int x = 0; x < si.getLengthX(); x ++)
-			{
-				if(x < (si.getLengthX() - 1))
-				{
-					line += si.get(x, y)+" ";
-				}
-				else
-				{
-					line += si.get(x, y);
-				}
-			}
-			line +="]";
-			System.out.println(line);
-		}
 	}
 	
 	/**
