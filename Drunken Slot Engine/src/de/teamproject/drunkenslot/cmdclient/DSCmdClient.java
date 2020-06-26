@@ -7,7 +7,6 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.swing.ImageIcon;
 
 import de.teamproject.drunkenslot.engine.Engine;
 import de.teamproject.drunkenslot.engine.GameConfig;
@@ -27,19 +26,52 @@ public class DSCmdClient
 	
 	private boolean[] stopped = new boolean[5];
 	private boolean hasShownHighlight = false;
+	private boolean isHighLighting;
 	private int lastHighlight = 0;
 	
 	private String[][] slotSymbols;
 	
+	private boolean[][] isHighlighted;
+	
 	public DSCmdClient()
 	{
 		slotSymbols = new String[5][3];
+		isHighlighted = new boolean[5][3];
 		resetThreads();
 		resetSlotSymbols();
 		createDemoEngine();
 		createRollThread();
+		createHightLightThread();
+		isHighLighting = true;
 		engine.roll();
 		rollThread.start();
+	}
+	
+	public void createHightLightThread()
+	{
+		highLightThread = new Thread(new Runnable() 
+		{
+			
+			@Override
+			public void run() 
+			{
+				while(isHighLighting)//TODO
+				{
+					try 
+					{
+						Thread.sleep(800);
+					} 
+					catch (InterruptedException e) 
+					{
+						//TODO
+					}
+					if(isHighLighting)
+					{
+						highlightNextWinLine();
+					}
+				}
+			}
+		});
 	}
 	
 	public void createRollThread()
@@ -152,19 +184,16 @@ public class DSCmdClient
 					clearScreen();
 					printSlot();
 				}
-				/*if(isAllStopped())
+				if(isAllStopped())
 				{
-					//fillSlotmachine();
+					/*//fillSlotmachine();
 					//engine.printSlot(engine.getCurrentSlotImage());
 					updateWinTextArea();
 					showDialogs();
 					Thread.
-					highLightTimer.start();
-					spinButton.setText("Drehen");
-					spinButton.removeActionListener(stopActionListener);
-					spinButton.addActionListener(spinActionListener);
-					spinButton.setEnabled(false);
-				}*/
+					highLightTimer.start();*/
+					highLightThread.start();
+				}
 			}
 		});
 	}
@@ -616,11 +645,25 @@ public class DSCmdClient
 			{
 				if(x < 4)
 				{
-					line += " "+slotSymbols[x][y]+"    ";
+					if(isHighlighted[x][y])
+					{
+						line += "["+slotSymbols[x][y]+"]   ";
+					}
+					else
+					{
+						line += " "+slotSymbols[x][y]+"    ";
+					}
 				}
 				else
 				{
-					line += " "+slotSymbols[x][y]+" ";
+					if(isHighlighted[x][y])
+					{
+						line += "["+slotSymbols[x][y]+"]";
+					}
+					else
+					{
+						line += " "+slotSymbols[x][y]+" ";
+					}
 				}
 			}
 			line +=") |";
@@ -642,6 +685,312 @@ public class DSCmdClient
 		slotSymbols[column][2] = slotSymbols[column][1];
 		slotSymbols[column][1] = slotSymbols[column][0];
 		slotSymbols[column][0] = slotSymbolConverter(ThreadLocalRandom.current().nextInt(0, engine.getSymbolOffset() + engine.getPlayerList().size()));
+	}
+	
+	public void clearHighlights()
+	{
+		for(int i = 0; i < 3; i ++)
+		{
+			for(int j = 0; j < 5; j ++)
+			{
+				isHighlighted[j][i] = false;
+			}
+		}
+	}
+	
+	public void highlightNextWinLine()
+	{
+		if(engine.hasWin() || engine.isFreeGames(engine.getCurrentSlotImage()))
+		{
+			if((!engine.hasWin() && engine.isFreeGames(engine.getCurrentSlotImage())) || engine.getWinCount() == 1)
+			{
+				if(hasShownHighlight)
+				{
+					clearHighlights();
+					hasShownHighlight = !hasShownHighlight;
+					clearScreen();
+					printSlot();//TODO print winlines
+				}
+				else
+				{
+					switch(getNextHighlight())
+					{
+						case 0:
+							highlightWinLine1(engine.getCurrentWinLines()[0].getLength());
+							break;
+						case 1:
+							highlightWinLine2(engine.getCurrentWinLines()[1].getLength());
+							break;
+						case 2:
+							highlightWinLine3(engine.getCurrentWinLines()[2].getLength());
+							break;
+						case 3:
+							highlightWinLine4(engine.getCurrentWinLines()[3].getLength());
+							break;
+						case 4:
+							highlightWinLine5(engine.getCurrentWinLines()[4].getLength());
+							break;
+						case 5:
+							highlightWinLine6(engine.getCurrentWinLines()[5].getLength());
+							break;
+						case 6:
+							highlightWinLine7(engine.getCurrentWinLines()[6].getLength());
+							break;
+						case 7:
+							highlightWinLine8(engine.getCurrentWinLines()[7].getLength());
+							break;
+						case 8:
+							highlightWinLine9(engine.getCurrentWinLines()[8].getLength());
+							break;
+						case 9:
+							highlightScatter();
+							break;
+						default:
+							clearHighlights();
+							break;
+					}
+					clearScreen();
+					printSlot();//TODO print winlines
+					hasShownHighlight = !hasShownHighlight;
+				}
+			}
+			else if(engine.hasWin())
+			{
+				if(hasShownHighlight)
+				{
+					clearHighlights();
+					hasShownHighlight = !hasShownHighlight;
+					clearScreen();
+					printSlot();//TODO print winlines
+				}
+				else
+				{
+					int i = getNextHighlight();
+					switch(i)
+					{
+						case 0:
+							highlightWinLine1(engine.getCurrentWinLines()[0].getLength());
+							break;
+						case 1:
+							highlightWinLine2(engine.getCurrentWinLines()[1].getLength());
+							break;
+						case 2:
+							highlightWinLine3(engine.getCurrentWinLines()[2].getLength());
+							break;
+						case 3:
+							highlightWinLine4(engine.getCurrentWinLines()[3].getLength());
+							break;
+						case 4:
+							highlightWinLine5(engine.getCurrentWinLines()[4].getLength());
+							break;
+						case 5:
+							highlightWinLine6(engine.getCurrentWinLines()[5].getLength());
+							break;
+						case 6:
+							highlightWinLine7(engine.getCurrentWinLines()[6].getLength());
+							break;
+						case 7:
+							highlightWinLine8(engine.getCurrentWinLines()[7].getLength());
+							break;
+						case 8:
+							highlightWinLine9(engine.getCurrentWinLines()[8].getLength());
+							break;
+						case 9:
+							highlightScatter();
+							break;
+						default:
+							clearHighlights();
+							break;
+					}
+					hasShownHighlight = !hasShownHighlight;
+				}
+				clearScreen();
+				printSlot();//TODO print winlines
+			}
+		}
+		else
+		{
+			isHighLighting = false;
+		}
+	}
+	
+	public int getNextHighlight()
+	{
+		if((lastHighlight + 1) >= engine.getCurrentWinLines().length)
+		{
+			lastHighlight = 0;
+		}
+		for(int i = lastHighlight + 1; i < engine.getCurrentWinLines().length; i ++)
+		{
+			if(engine.getCurrentWinLines()[i].isWin())
+			{
+				lastHighlight = i;
+				return i;
+			}
+		}
+		if(engine.isFreeGames(engine.getCurrentSlotImage()))
+		{
+			lastHighlight = 9;
+			return 9;
+		}
+		for(int i = 0; i < lastHighlight; i ++)
+		{
+			if(engine.getCurrentWinLines()[i].isWin())
+			{
+				lastHighlight = i;
+				return i;
+			}
+		}
+		return lastHighlight;
+	}
+	
+	public void highlightWinLine1(int length)//Hellblau
+	{
+		int y = 0;
+		for(int x = 0; x < length; x ++)
+		{
+			isHighlighted[x][y] = true;
+		}
+	}
+	
+	public void highlightWinLine2(int length)//Rot
+	{
+		int y = 1;
+		for(int x = 0; x < length; x ++)
+		{
+			isHighlighted[x][y] = true;
+		}
+	}
+	
+	public void highlightWinLine3(int length)//Grün
+	{
+		int y = 2;
+		for(int x = 0; x < length; x ++)
+		{
+			isHighlighted[x][y] = true;
+		}
+	}
+	
+	public void highlightWinLine4(int length)
+	{
+		if(length >= 3)
+		{
+			isHighlighted[0][1] = true;
+			isHighlighted[1][0] = true;
+			isHighlighted[2][0] = true;
+		}
+		if(length >= 4)
+		{
+			isHighlighted[3][0] = true;
+		}
+		if(length == 5)
+		{
+			isHighlighted[4][1] = true;
+		}
+	}
+	
+	public void highlightWinLine5(int length)
+	{
+		if(length >= 3)
+		{
+			isHighlighted[0][1] = true;
+			isHighlighted[1][2] = true;
+			isHighlighted[2][2] = true;
+		}
+		if(length >= 4)
+		{
+			isHighlighted[3][2] = true;
+		}
+		if(length == 5)
+		{
+			isHighlighted[4][1] = true;
+		}
+	}
+	
+	public void highlightWinLine6(int length)
+	{
+		if(length >= 3)
+		{
+			isHighlighted[0][0] = true;
+			isHighlighted[1][1] = true;
+			isHighlighted[2][2] = true;
+		}
+		if(length >= 4)
+		{
+			isHighlighted[3][1] = true;
+		}
+		if(length == 5)
+		{
+			isHighlighted[4][0] = true;
+		}
+	}
+	
+	public void highlightWinLine7(int length)
+	{
+		if(length >= 3)
+		{
+			isHighlighted[0][2] = true;
+			isHighlighted[1][1] = true;
+			isHighlighted[2][0] = true;
+		}
+		if(length >= 4)
+		{
+			isHighlighted[3][1] = true;
+		}
+		if(length == 5)
+		{
+			isHighlighted[4][2] = true;
+		}
+	}
+	
+	public void highlightWinLine8(int length)
+	{
+		if(length >= 3)
+		{
+			isHighlighted[0][0] = true;
+			isHighlighted[1][0] = true;
+			isHighlighted[2][1] = true;
+		}
+		if(length >= 4)
+		{
+			isHighlighted[3][2] = true;
+		}
+		if(length == 5)
+		{
+			isHighlighted[4][2] = true;
+		}
+	}
+	
+	public void highlightWinLine9(int length)
+	{
+		if(length >= 3)
+		{
+			isHighlighted[0][2] = true;
+			isHighlighted[1][2] = true;
+			isHighlighted[2][1] = true;
+		}
+		if(length >= 4)
+		{
+			isHighlighted[3][0] = true;
+		}
+		if(length == 5)
+		{
+			isHighlighted[4][0] = true;
+		}
+	}
+	
+	public void highlightScatter()
+	{
+		for(int i = 0; i < 5; i ++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				if(engine.getCurrentSlotImage().get(i, j) == 5)
+				{
+					isHighlighted[i][j] = true;
+				}
+			}
+		}
 	}
 	
 	public String slotSymbolConverter(int i)
