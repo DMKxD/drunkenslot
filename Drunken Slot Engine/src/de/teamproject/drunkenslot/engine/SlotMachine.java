@@ -1,7 +1,7 @@
 package de.teamproject.drunkenslot.engine;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * SlotMachine class that can generate a SlotImage for the game.
@@ -26,12 +26,11 @@ public class SlotMachine
 	public SlotImage generateRandom()
 	{
 		int slotValues[][] = new int[5][3];
-		Random randomizer = new Random();
 		for(int i = 0; i < slotValues.length; i ++)
 		{
 			for (int j = 0; j < slotValues[0].length; j++)
 			{
-				slotValues[i][j] = slotSymbols.get(randomizer.nextInt((slotSymbols.size())));
+				slotValues[i][j] = slotSymbols.get(ThreadLocalRandom.current().nextInt(0, slotSymbols.size()));
 			}
 		}
 		return new SlotImage(slotValues);

@@ -7,6 +7,7 @@ import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Engine Class that runs the game and all background calculations.
@@ -311,7 +312,6 @@ public class Engine implements GameModel
 	public SlotImage roll()//TODO Schwierigkeiten und ersetzen die Nieten durch normale Symbole bei bestimmter Spieleranzahl
 	{
 		SlotImage slotImage = slotMachine.generateRandom();
-		Random randomizer = new Random();
 		
 		for(int i = 0; i < slotImage.getLengthX(); i ++)
 		{
@@ -321,19 +321,19 @@ public class Engine implements GameModel
 				{
 					if(slotImage.get(i, j) == 8)
 					{
-						slotImage.set(i, j, alternativeSymbolList.get(randomizer.nextInt(alternativeSymbolList.size())));
+						slotImage.set(i, j, alternativeSymbolList.get(ThreadLocalRandom.current().nextInt(0, alternativeSymbolList.size())));
 					}
 				}
 				else if(getActivePlayers().size() >= 6) //Niete 8 + 9 ersetzen
 				{
 					if(slotImage.get(i, j) == 8)
 					{
-						slotImage.set(i, j, alternativeSymbolList.get(randomizer.nextInt(alternativeSymbolList.size())));
+						slotImage.set(i, j, alternativeSymbolList.get(ThreadLocalRandom.current().nextInt(0, alternativeSymbolList.size())));
 					}
 					
 					if(slotImage.get(i, j) == 9)
 					{
-						slotImage.set(i, j, alternativeSymbolList.get(randomizer.nextInt(alternativeSymbolList.size())));
+						slotImage.set(i, j, alternativeSymbolList.get(ThreadLocalRandom.current().nextInt(0, alternativeSymbolList.size())));
 					}
 				}
 				if(isFreeGameEnabled)//First Iteration, alle Spieler Wilds durch normale ersetzen
@@ -341,6 +341,15 @@ public class Engine implements GameModel
 					if(slotImage.get(i, j) >= slotMachine.getSymbolOffset())
 					{
 						slotImage.set(i, j, 6);
+					}
+				}
+
+				if(slotImage.get(i,j) == 5)//Reduce scatter occurrence
+				{
+					int keepScatter = ThreadLocalRandom.current().nextInt(0, 3);
+					if(keepScatter > 0)
+					{
+						slotImage.set(i, j, alternativeSymbolList.get(ThreadLocalRandom.current().nextInt(0, alternativeSymbolList.size())));
 					}
 				}
 			}
