@@ -1,6 +1,7 @@
 package de.teamproject.drunkenslot.engine;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * WinLine class to calculate if there is a Win in the selected Line.
@@ -18,6 +19,7 @@ public class WinLine
 	private int difficulty;
 	private boolean allPlayer;
 	private boolean isBroken;
+	private boolean isLogging;
 	private ArrayList<Player> playerList;
 	
 	/**
@@ -25,12 +27,13 @@ public class WinLine
 	 * @param currentPlayer Symbol of the current player not the id
 	 * @param line number of the WinLine
 	 */
-	public WinLine(int currentPlayerSymbol, int line, int playerOffset, int difficulty, ArrayList<Player> playerList)
+	public WinLine(int currentPlayerSymbol, int line, int playerOffset, int difficulty, ArrayList<Player> playerList, boolean isLogging)
 	{
 		this.currentPlayer = currentPlayerSymbol;
 		this.line = line;
 		this.difficulty = difficulty;
 		this.playerList = playerList;
+		this.isLogging = isLogging;
 		allPlayer = false;
 		isBroken = false;
 		symbol = -1;
@@ -109,7 +112,7 @@ public class WinLine
 		int player = getPlayer() - playerOffset;
 		if(player < 0)
 		{
-			if(this.symbol >= 8 && this.symbol <= 10 || this.symbol == 5)//Niete oder Scatter
+			if((this.symbol >= 8 && this.symbol <= 10) || this.symbol == 5)//Niete oder Scatter
 			{
 				return false;
 			}
@@ -128,7 +131,7 @@ public class WinLine
 		}
 		else if(player > 0 && playerList.get(player).isActive())
 		{
-			if(this.symbol >= 8 && this.symbol <= 10 || this.symbol == 5)//Niete oder Scatter
+			if((this.symbol >= 8 && this.symbol <= 10) || this.symbol == 5)//Niete oder Scatter
 			{
 				return false;
 			}
@@ -148,11 +151,19 @@ public class WinLine
 		return false;
 	}
 	
+	/**
+	 * Returns the WinLine Symbol
+	 * @return symbol
+	 */
 	public int getSymbol()
 	{
 		return symbol;
 	}
 	
+	/**
+	 * Returns the winner from the winline
+	 * @return player
+	 */
 	public int getPlayer()
 	{
 		if(playerSymbol == -1)
@@ -162,16 +173,28 @@ public class WinLine
 		else return playerSymbol;
 	}
 	
+	/**
+	 * Returns if a allPlayer Symbol is involved in the winline
+	 * @return allPlayer
+	 */
 	public boolean isAllPlayer()
 	{
 		return allPlayer;
 	}
 	
+	/**
+	 * Returns the line number
+	 * @return line
+	 */
 	public int getLine()
 	{
 		return line;
 	}
 	
+	/**
+	 * Returns the line length
+	 * @return length
+	 */
 	public int getLength()
 	{
 		return length;
@@ -202,25 +225,25 @@ public class WinLine
 			{
 		        case 0:
 		        	win.setPlayerID(getPlayer()-playerOffset);
-		        	win.setAmount(length -2);
+		        	win.setAmount(length - 2 - difficulty);
 		        	win.setShots(true);
 		        	win.setDistribute(true);
 		            break;
 		        case 1:
 		        	win.setPlayerID(getPlayer()-playerOffset);
-		        	win.setAmount(length -2);
+		        	win.setAmount(length - 2 - difficulty);
 		        	win.setShots(false);
 		        	win.setDistribute(true);
 		            break;
 		        case 2:
 		        	win.setPlayerID(getPlayer()-playerOffset);
-		        	win.setAmount(length -2);
+		        	win.setAmount(length - 2 - difficulty);
 		        	win.setShots(true);
 		        	win.setDistribute(false);
 		            break;
 		        case 3:
 		        	win.setPlayerID(getPlayer()-playerOffset);
-		        	win.setAmount(length -2);
+		        	win.setAmount(length - 2 - difficulty);
 		        	win.setShots(false);
 		        	win.setDistribute(false);
 		            break;
@@ -230,7 +253,7 @@ public class WinLine
 		            break;
 		        default://Bei AllPlayerSymbol oder nur Wilds
 		        	win.setPlayerID(getPlayer()-playerOffset);
-		        	win.setAmount(length -2);
+		        	win.setAmount(length - 2 - difficulty);
 		        	win.setShots(true);
 		        	win.setDistribute(true);
 		            break;
@@ -240,7 +263,12 @@ public class WinLine
 		return null;
 	}
 	
-	public String getWinLineText(ArrayList<Player> spielerListe)
+	/**
+	 * Generate the WinLine text, used in CMD Client and Swing Client for displaying the results
+	 * @param playerList playerList of the engine/game
+	 * @return WinLine text String
+	 */
+	public String getWinLineText(ArrayList<Player> playerList)
 	{
 		String returnText = "";
 		if(isWin())
@@ -252,132 +280,148 @@ public class WinLine
 			switch(symbol)
 			{
 		        case 0:
-		        	if((length - 2) > 1)
+		        	if((length - 2 - difficulty) > 1)
 		        	{
 		        		if(returnText == "")
 		        		{
-		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Shots verteilen.\n";
+		        			returnText = playerList.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2 - difficulty)+" Shots verteilen.\n";
 		        		}
 		        		else
 		        		{
-			        		returnText += (length - 2)+" Shots verteilen.\n";
+			        		returnText += (length - 2 - difficulty)+" Shots verteilen.\n";
 		        		}
 		        	}
 		        	else
 		        	{
 		        		if(returnText == "")
 		        		{
-		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Shot verteilen.\n";
+		        			returnText = playerList.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2 - difficulty)+" Shot verteilen.\n";
 		        		}
 		        		else
 		        		{
-			        		returnText += (length - 2)+" Shot verteilen.\n";
+			        		returnText += (length - 2 - difficulty)+" Shot verteilen.\n";
 		        		}
 		        	}
 		            break;
 		        case 1:
-		        	if((length - 2) > 1)
+		        	if((length - 2 - difficulty) > 1)
 		        	{
 		        		if(returnText == "")
 		        		{
-		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Schlücke verteilen.\n";
+		        			returnText = playerList.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2 - difficulty)+" Schlücke verteilen.\n";
 		        		}
 		        		else
 		        		{
-		        			returnText += (length - 2)+" Schlücke verteilen.\n";
+		        			returnText += (length - 2 - difficulty)+" Schlücke verteilen.\n";
 		        		}
 		        	}
 		        	else
 		        	{
 		        		if(returnText == "")
 		        		{
-		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Schluck verteilen.\n";
+		        			returnText = playerList.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2 - difficulty)+" Schluck verteilen.\n";
 		        		}
 		        		else
 		        		{
-		        			returnText += (length - 2)+" Schluck verteilen.\n";
+		        			returnText += (length - 2 - difficulty)+" Schluck verteilen.\n";
 		        		}
 		        	}
 		            break;
 		        case 2:
-		        	if((length - 2) > 1)
+		        	if((length - 2 - difficulty) > 1)
 		        	{
 		        		if(returnText == "")
 		        		{
-		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Shots trinken.\n";
+		        			returnText = playerList.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2 - difficulty)+" Shots trinken.\n";
 		        		}
 		        		else
 		        		{
-		        			returnText += (length - 2)+" Shots trinken.\n";
+		        			returnText += (length - 2 - difficulty)+" Shots trinken.\n";
 		        		}
 		        	}
 		        	else
 		        	{
 		        		if(returnText == "")
 		        		{
-		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Shot trinken.\n";
+		        			returnText = playerList.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2 - difficulty)+" Shot trinken.\n";
 		        		}
 		        		else
 		        		{
-			        		returnText += (length - 2)+" Shot trinken.\n";
+			        		returnText += (length - 2 - difficulty)+" Shot trinken.\n";
 		        		}
 		        	}
 		            break;
 		        case 3:
-		        	if((length - 2) > 1)
+		        	if((length - 2 - difficulty) > 1)
 		        	{
 		        		if(returnText == "")
 		        		{
-		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Schlücke trinken.\n";
+		        			returnText = playerList.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2 - difficulty)+" Schlücke trinken.\n";
 		        		}
 		        		else
 		        		{
-		        			returnText += (length - 2)+" Schlücke trinken.\n";
+		        			returnText += (length - 2 - difficulty)+" Schlücke trinken.\n";
 		        		}
 		        	}
 		        	else
 		        	{
 		        		if(returnText == "")
 		        		{
-		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Schluck trinken.\n";
+		        			returnText = playerList.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2 - difficulty)+" Schluck trinken.\n";
 		        		}
 		        		else
 		        		{
-		        			returnText += (length - 2)+" Schluck trinken.\n";
+		        			returnText += (length - 2 - difficulty)+" Schluck trinken.\n";
 		        		}
 		        	}
 		            break;
 		        case 4:
 		        	if(returnText == "")
 	        		{
-	        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf sich eine Regel ausdenken.\n";
+	        			returnText = playerList.get(getPlayer()-playerOffset).getName()+" darf sich eine Regel ausdenken.\n";
 	        		}
 		        	else
 		        	{
-		        		returnText += (length - 2)+" sich eine Regel ausdenken, einer wird zufällig ausgesucht.\n";
+		        		if(isLogging)
+		        		{
+		        			returnText += "sich eine Regel ausdenken, einer wird zufällig ausgesucht.\n";
+		        		}
+		        		else//Random Spieler für Regel auslosen
+		        		{
+		        			ArrayList<Integer> ids = new ArrayList<Integer>();
+		        			for(int i = 0; i < playerList.size(); i ++)
+		        			{
+		        				if(playerList.get(i).isActive())
+		        				{
+		        					ids.add(i);
+		        				}
+		        			}
+		        			int nextRuleID = ids.get(ThreadLocalRandom.current().nextInt(0, ids.size()));
+		        			returnText += playerList.get(ids.get(nextRuleID)).getName() + " darf sich eine Regel ausdenken.\n";
+		        		}
 		        	}
 		            break;
 		        default://Bei AllPlayerSymbol oder nur Wilds
-		        	if((length - 2) > 1)
+		        	if((length - 2 - difficulty) > 1)
 		        	{
 		        		if(returnText == "")
 		        		{
-		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Shots verteilen.\n";
+		        			returnText = playerList.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2 - difficulty)+" Shots verteilen.\n";
 		        		}
 		        		else
 		        		{
-		        			returnText += (length - 2)+" Shots verteilen.\n";
+		        			returnText += (length - 2 - difficulty)+" Shots verteilen.\n";
 		        		}
 		        	}
 		        	else
 		        	{
 		        		if(returnText == "")
 		        		{
-		        			returnText = spielerListe.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2)+" Shot verteilen.\n";
+		        			returnText = playerList.get(getPlayer()-playerOffset).getName()+" darf "+(length - 2 - difficulty)+" Shot verteilen.\n";
 		        		}
 		        		else
 		        		{
-		        			returnText += (length - 2)+" Shot verteilen.\n";
+		        			returnText += (length - 2 - difficulty)+" Shot verteilen.\n";
 		        		}
 		        	}
 		            break;

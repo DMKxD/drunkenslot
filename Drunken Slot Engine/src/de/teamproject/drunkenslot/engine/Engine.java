@@ -383,7 +383,7 @@ public class Engine implements GameModel
 	 */
 	public void testWinLine()
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 1, symbolOffset, difficulty, playerList);
+		WinLine line = new WinLine(currentPlayerSymbol, 1, symbolOffset, difficulty, playerList, logging);
 		line.setSymbol(2);
 		line.setSymbol(6);
 		line.setSymbol(2);
@@ -399,7 +399,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine1(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 1, symbolOffset, difficulty, playerList);
+		WinLine line = new WinLine(currentPlayerSymbol, 1, symbolOffset, difficulty, playerList, logging);
 		int y = 0;
 		for(int x = 0; x < si.getLengthX(); x ++)
 		{
@@ -415,7 +415,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine2(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 2, symbolOffset, difficulty, playerList);
+		WinLine line = new WinLine(currentPlayerSymbol, 2, symbolOffset, difficulty, playerList, logging);
 		int y = 1;
 		for(int x = 0; x < si.getLengthX(); x ++)
 		{
@@ -431,7 +431,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine3(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 3, symbolOffset, difficulty, playerList);
+		WinLine line = new WinLine(currentPlayerSymbol, 3, symbolOffset, difficulty, playerList, logging);
 		int y = 2;
 		for(int x = 0; x < si.getLengthX(); x ++)
 		{
@@ -447,7 +447,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine4(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 4, symbolOffset, difficulty, playerList);
+		WinLine line = new WinLine(currentPlayerSymbol, 4, symbolOffset, difficulty, playerList, logging);
 		line.setSymbol(si.get(0, 1));
 		line.setSymbol(si.get(1, 0));
 		line.setSymbol(si.get(2, 0));
@@ -463,7 +463,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine5(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 5, symbolOffset, difficulty, playerList);
+		WinLine line = new WinLine(currentPlayerSymbol, 5, symbolOffset, difficulty, playerList, logging);
 		line.setSymbol(si.get(0, 1));
 		line.setSymbol(si.get(1, 2));
 		line.setSymbol(si.get(2, 2));
@@ -479,7 +479,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine6(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 6, symbolOffset, difficulty, playerList);
+		WinLine line = new WinLine(currentPlayerSymbol, 6, symbolOffset, difficulty, playerList, logging);
 		line.setSymbol(si.get(0, 0));
 		line.setSymbol(si.get(1, 1));
 		line.setSymbol(si.get(2, 2));
@@ -495,7 +495,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine7(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 7, symbolOffset, difficulty, playerList);
+		WinLine line = new WinLine(currentPlayerSymbol, 7, symbolOffset, difficulty, playerList, logging);
 		line.setSymbol(si.get(0, 2));
 		line.setSymbol(si.get(1, 1));
 		line.setSymbol(si.get(2, 0));
@@ -511,7 +511,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine8(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 8, symbolOffset, difficulty, playerList);
+		WinLine line = new WinLine(currentPlayerSymbol, 8, symbolOffset, difficulty, playerList, logging);
 		line.setSymbol(si.get(0, 0));
 		line.setSymbol(si.get(1, 0));
 		line.setSymbol(si.get(2, 1));
@@ -527,7 +527,7 @@ public class Engine implements GameModel
 	 */
 	public WinLine checkWinLine9(SlotImage si)
 	{
-		WinLine line = new WinLine(currentPlayerSymbol, 9, symbolOffset, difficulty, playerList);
+		WinLine line = new WinLine(currentPlayerSymbol, 9, symbolOffset, difficulty, playerList, logging);
 		line.setSymbol(si.get(0, 2));
 		line.setSymbol(si.get(1, 2));
 		line.setSymbol(si.get(2, 1));

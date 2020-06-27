@@ -16,8 +16,8 @@ public class DSCmdClient
 	static Scanner sc;
 	private Engine engine;
 	
-	private final int slotLineDelay = 8;
-	private final int minRollCounter = 20;
+	private final int slotLineDelay = 5;
+	private final int minRollCounter = 12;
 	private Thread rollThread;
 	private int rollCounter;
 	private Thread highLightThread;
@@ -273,7 +273,7 @@ public class DSCmdClient
 	
 	public void resetThreads()
 	{
-		rollCounter = minRollCounter + ThreadLocalRandom.current().nextInt(0, 10 + 1);
+		rollCounter = minRollCounter + ThreadLocalRandom.current().nextInt(0, 7 + 1);
 		slotLineDelayTimer = slotLineDelay;
 		hasShownHighlight = false;
 		isHighLighting = true;
