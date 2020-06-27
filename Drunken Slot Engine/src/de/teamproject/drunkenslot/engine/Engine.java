@@ -35,6 +35,10 @@ public class Engine implements GameModel
 
 	static Scanner sc;
 	
+	/**
+	 * Standard engine constructor, takes a Config object to set all game values
+	 * @param config
+	 */
 	public Engine(GameConfig config)
 	{
 		for(int i = 0; i < config.getPlayerList().size(); i++)
@@ -46,6 +50,12 @@ public class Engine implements GameModel
 		updateAlternativeSymbolList();
 	}
 	
+	/**
+	 * Set the alternative symbol list based on the player count.
+	 * if the count is less or equal 2, add 2 more blank symbols,
+	 * if the count is greater or equal 3 and less or equal 6
+	 * add only 1 more blank symbol.
+	 */
 	private void updateAlternativeSymbolList() 
 	{
 		alternativeSymbolList = new ArrayList<Integer>();
@@ -79,6 +89,10 @@ public class Engine implements GameModel
 		playerList.add(new Player(id, name, image));
 	}
 	
+	/**
+	 * Add a player object to the player List.
+	 * @param player
+	 */
 	public void createPlayer(Player player)
 	{
 		playerList.add(player);
@@ -368,15 +382,7 @@ public class Engine implements GameModel
 				}
 			}
 		}
-		//DEBUG
-		/*System.out.println("Round Shots:"+Arrays.toString(roundShots));
-		System.out.println("Round Shots Distribute:"+Arrays.toString(roundShotsDistribute));
-		System.out.println("Round Drinks:"+Arrays.toString(roundDrinks));
-		System.out.println("Round Drinks Distribute:"+Arrays.toString(roundDrinksDistribute));
-		System.out.println("Round Rules:"+Arrays.toString(roundRules));*/
 	}
-	
-	
 	
 	/**
 	 * Test a WinLine, just for DEBUG to reproduce errors
@@ -807,6 +813,32 @@ public class Engine implements GameModel
 	{
 		return currentPlayerID;
 	}
+	
+	/**
+	 * Get the win count, all wins from all winlines are added together.
+	 * @return Number of wins
+	 */
+	public int getWinCount()
+	{
+		int count = 0;
+		for(int i = 0; i < currentWinLines.length; i ++)
+		{
+			if(currentWinLines[i].isWin())
+			{
+				count ++;
+			}
+		}
+		return count;
+	}
+	
+	/**
+	 * Get the set difficulty
+	 * @return difficulty [0-2]
+	 */
+	public int getDifficulty()
+	{
+		return difficulty;
+	}
 
 	/**
 	 * Set the ID of the current Player
@@ -816,6 +848,70 @@ public class Engine implements GameModel
 	{
 		this.currentPlayerID = currentPlayerID;
 	}
+	
+	/**
+	 * Set the round shots array
+	 * @param roundShots array
+	 */
+	public void setRoundShots(int[] roundShots)
+	{
+		this.roundShots = roundShots;
+	}
+	
+	/**
+	 * Set the round drinks array
+	 * @param roundDrinks array
+	 */
+	public void setRoundDrinks(int[] roundDrinks)
+	{
+		this.roundDrinks = roundDrinks;
+	}
+	
+	/**
+	 * Set the round rules array
+	 * @param roundRules array
+	 */
+	public void setRoundRules(int[] roundRules)
+	{
+		this.roundRules = roundRules;
+	}
+	
+	/**
+	 * Set the round drinks distribute array
+	 * @param roundDrinksDistribute array
+	 */
+	public void setRoundDrinksDistribute(int[] roundDrinksDistribute)
+	{
+		this.roundDrinksDistribute = roundDrinksDistribute;
+	}
+	
+	/**
+	 * Set the round shots distribute array
+	 * @param roundShotsDistribute array
+	 */
+	public void setRoundShotsDistribute(int[] roundShotsDistribute)
+	{
+		this.roundShotsDistribute = roundShotsDistribute;
+	}
+	
+	/**
+	 * Set the round rule
+	 * @param rule String
+	 */
+	public void setRule(String rule)
+	{
+		this.rule = rule;
+	}
+	
+	/**
+	 * Disable a player, if he surrenders
+	 * @param playerId number
+	 */
+	public void setPlayerInactive(int playerId)
+	{
+		playerList.get(playerId).setActive(false);
+		updateAlternativeSymbolList();
+	}
 
 	/**
 	 * Check if free games are enabled
@@ -824,6 +920,49 @@ public class Engine implements GameModel
 	public boolean isFreeGameEnabled() 
 	{
 		return isFreeGameEnabled;
+	}
+	
+	/**
+	 * Adds all round array values together and checks if they are 0
+	 * @return all round arrays 0
+	 */
+	public boolean allRoundArraysClear()
+	{
+		int sum = 0;
+		for (int i = 0; i < roundDrinksDistribute.length; i ++)
+		{
+			sum += roundDrinksDistribute[i]+roundShotsDistribute[i]+roundRules[i];
+		}
+		if(sum == 0)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Check if atleast one winline has a win
+	 * @return current wins > 0
+	 */
+	public boolean hasWin()
+	{
+		for(int i = 0; i < currentWinLines.length; i ++)
+		{
+			if(currentWinLines[i].isWin())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns if logging was activated in the settings
+	 * @return logging
+	 */
+	public boolean isLogging()
+	{
+		return logging;
 	}
 
 	/**
@@ -853,103 +992,30 @@ public class Engine implements GameModel
 		return freeSpinsTotal;
 	}
 	
-	public SlotImage getCurrentSlotImage()
-	{
-		return currentSlotImage;
-	}
-	
-	public WinLine[] getCurrentWinLines()
-	{
-		return currentWinLines;
-	}
-	
-	public void setPlayerInactive(int playerId)
-	{
-		playerList.get(playerId).setActive(false);
-		updateAlternativeSymbolList();
-	}
-	
+	/**
+	 * Return the symbol offset for the normal symbols to the player symbols
+	 * @return symbolOffset
+	 */
 	public int getSymbolOffset()
 	{
 		return symbolOffset;
 	}
 	
-	public void setRoundShots(int[] roundShots)
+	/**
+	 * Return the current SlotImage generated by the SlotMachine
+	 * @return SlotImage
+	 */
+	public SlotImage getCurrentSlotImage()
 	{
-		this.roundShots = roundShots;
+		return currentSlotImage;
 	}
 	
-	public void setRoundDrinks(int[] roundDrinks)
+	/**
+	 * Return all WinLines in the current round
+	 * @return WinLine array
+	 */
+	public WinLine[] getCurrentWinLines()
 	{
-		this.roundDrinks = roundDrinks;
-	}
-	
-	public void setRoundRules(int[] roundRules)
-	{
-		this.roundRules = roundRules;
-	}
-	
-	public void setRoundDrinksDistribute(int[] roundDrinksDistribute)
-	{
-		this.roundDrinksDistribute = roundDrinksDistribute;
-	}
-	
-	public void setRoundShotsDistribute(int[] roundShotsDistribute)
-	{
-		this.roundShotsDistribute = roundShotsDistribute;
-	}
-	
-	public void setRule(String rule)
-	{
-		this.rule = rule;
-	}
-	
-	public boolean allRoundArraysClear()
-	{
-		int sum = 0;
-		for (int i = 0; i < roundDrinksDistribute.length; i ++)
-		{
-			sum += roundDrinksDistribute[i]+roundShotsDistribute[i]+roundRules[i];
-		}
-		if(sum == 0)
-		{
-			return true;
-		}
-		return false;
-	}
-	
-	public boolean hasWin()
-	{
-		for(int i = 0; i < currentWinLines.length; i ++)
-		{
-			if(currentWinLines[i].isWin())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public int getWinCount()
-	{
-		int count = 0;
-		for(int i = 0; i < currentWinLines.length; i ++)
-		{
-			if(currentWinLines[i].isWin())
-			{
-				count ++;
-			}
-		}
-		return count;
-	}
-	
-	public boolean isLogging()
-	{
-		return logging;
-	}
-	
-	public int getDifficulty()
-	{
-		return difficulty;
+		return currentWinLines;
 	}
 }
