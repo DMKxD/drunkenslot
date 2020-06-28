@@ -21,7 +21,6 @@ import javax.swing.table.JTableHeader;
 
 import de.teamproject.drunkenslot.engine.Engine;
 
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -170,10 +169,8 @@ public class StandingsScreen extends JFrame
 		southPanel.add(rulePanel);
 		
 		buttonPanel = new JPanel();
-		FlowLayout flowLayout_1 = (FlowLayout) buttonPanel.getLayout();
-		flowLayout_1.setAlignment(FlowLayout.RIGHT);
 		continueButton = new JButton("Weiter");
-		continueButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		continueButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
 		continueButton.addActionListener(new ActionListener() 
 		{

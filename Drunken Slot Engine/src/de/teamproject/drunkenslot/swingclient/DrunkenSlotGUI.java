@@ -1,7 +1,6 @@
 package de.teamproject.drunkenslot.swingclient;
 
 import java.awt.Component;
-import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -14,7 +13,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 import de.teamproject.drunkenslot.engine.Engine;
 import de.teamproject.drunkenslot.engine.GameConfig;
@@ -75,8 +73,8 @@ public class DrunkenSlotGUI
 		positionieren(mainFrame, 0, 0);
 		setWindowListener();
 		contentPane = new JPanel();
-		switchToGameScreen();
-		//switchToMainScreen();
+		//switchToGameScreen();
+		switchToMainScreen();
 		//switchToLobbyScreen();
 	}
 	
@@ -157,6 +155,11 @@ public class DrunkenSlotGUI
 		mainFrame.repaint();
 	}
 	
+	public void switchToRuleScreen() 
+	{
+		//TODO
+	}
+	
 	public void setWindowListener()
 	{
 		mainFrame.addWindowListener(new WindowAdapter() 
@@ -218,25 +221,5 @@ public class DrunkenSlotGUI
 	public JLabel getMainImageLabel()
 	{
 		return mainImageLabel;
-	}
-
-	public static void main(String[] args) 
-	{
-		EventQueue.invokeLater(new Runnable() 
-		{
-			public void run() 
-			{
-				try 
-				{
-					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					DrunkenSlotGUI gui = new DrunkenSlotGUI();
-					gui.getMainFrame().setVisible(true);
-				} 
-				catch (Exception e) 
-				{
-					e.printStackTrace();
-				}
-			}
-		});
 	}
 }

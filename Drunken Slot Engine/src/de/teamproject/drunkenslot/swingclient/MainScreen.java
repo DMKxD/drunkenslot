@@ -1,7 +1,6 @@
 package de.teamproject.drunkenslot.swingclient;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -29,6 +28,8 @@ public class MainScreen
 	private JButton buttonOnline;
 	private JButton buttonOffline;
 	private JButton buttonRule;
+	private JPanel bottomPanel;
+	private JLabel bottomLabel;
 	
 	private DrunkenSlotGUI drunkenSlotGUI;
 
@@ -40,10 +41,11 @@ public class MainScreen
 		this.drunkenSlotGUI = drunkenSlotGUI;
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
+		contentPane.setLayout(new BorderLayout());
 		
 		createButtonPanel();
 		createButtons();
+		createButtomPanel();
 		
 		try 
 		{
@@ -53,7 +55,6 @@ public class MainScreen
 		{
 			e.printStackTrace();
 		}
-		
 		contentPane.add(mainImageLabel, BorderLayout.NORTH);
 	}
 	
@@ -74,7 +75,7 @@ public class MainScreen
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				//TODO
+				drunkenSlotGUI.switchToRuleScreen();
 			}
 		});
 	}
@@ -111,6 +112,15 @@ public class MainScreen
 		JPanel buttonOuterPanel = new JPanel();
 		buttonOuterPanel.add(buttonPanel);
 		contentPane.add(buttonOuterPanel, BorderLayout.CENTER);
+	}
+	
+	public void createButtomPanel()
+	{
+		bottomPanel = new JPanel();
+		bottomLabel = new JLabel("DrunkenSlot Teamprojekt 2020 Dominik Haacke");
+		bottomPanel.add(bottomLabel);
+		contentPane.add(bottomPanel, BorderLayout.SOUTH);
+		
 	}
 	
 	public void loadImage() throws IOException

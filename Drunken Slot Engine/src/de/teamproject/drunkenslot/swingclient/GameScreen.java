@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -29,8 +28,6 @@ import de.teamproject.drunkenslot.engine.*;
 import java.awt.FlowLayout;
 import javax.swing.Box;
 import javax.swing.SwingConstants;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 
 public class GameScreen
 {
@@ -270,6 +267,101 @@ public class GameScreen
 		});
 	}
 	
+	public void fillSlotmachine()
+	{
+		for(int i = 0; i < 3; i ++)
+		{
+			for(int j = 0; j < 5; j ++)
+			{
+				slotLabels[j][i].setIcon(new ImageIcon(slotImages[engine.getCurrentSlotImage().get(j, i)]));
+			}
+		}
+		slotPanel.repaint();
+	}
+	
+	public void fillSlotmachineLine(int x)
+	{
+		for(int y = 0; y < 3; y ++)
+		{
+			slotLabels[x][y].setIcon(new ImageIcon(slotImages[engine.getCurrentSlotImage().get(x, y)]));
+			slotPanel.repaint();
+		}
+	}
+	
+	public void fillSlotmachineRandom(int x)
+	{
+		slotLabels[x][2].setIcon(slotLabels[x][1].getIcon());
+		slotLabels[x][1].setIcon(slotLabels[x][0].getIcon());
+		slotLabels[x][0].setIcon(new ImageIcon(slotImages[ThreadLocalRandom.current().nextInt(0, engine.getSymbolOffset() + engine.getPlayerList().size())]));
+		slotPanel.repaint();
+	}
+	
+	public void resetSlotmachine()
+	{
+		for(int i = 0; i < 3; i ++)
+		{
+			for(int j = 0; j < 5; j ++)
+			{
+				slotLabels[j][i].setIcon(new ImageIcon(slotPlaceHolderImage));
+			}
+		}
+	}
+	
+	public void createFreeGamesPanel()
+	{
+		freeGamesPanel = new JPanel();
+		freeGamesPanel.setLayout(new BoxLayout(freeGamesPanel, BoxLayout.X_AXIS));
+		freeGamesDescLabel = new JLabel("Freispiele: ");
+		freeGamesPanel.add(freeGamesDescLabel);
+		freeGamesLabel = new JLabel("0/0");
+		freeGamesPanel.add(freeGamesLabel);
+		freeGamesPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+	}
+	
+	public void createPlayerPanel()
+	{
+		playerPanel = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) playerPanel.getLayout();
+		flowLayout.setAlignment(FlowLayout.RIGHT);
+		//playerPanel.setLayout(new BoxLayout(playerPanel, BoxLayout.X_AXIS));
+		playerDescLabel = new JLabel("Spieler: ");
+		playerDescLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		playerPanel.add(playerDescLabel);
+		playerLabel = new JLabel("PlayerX");
+		playerLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		playerPanel.add(playerLabel);
+	}
+
+	public void createTopPanel()
+	{
+		topPanel = new JPanel();
+		topPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		freeGamesPanel.setAlignmentX(JFrame.LEFT_ALIGNMENT);
+		topPanel.add(freeGamesPanel);
+		
+		rigidArea_2 = Box.createRigidArea(new Dimension(200, 20));
+		topPanel.add(rigidArea_2);
+		topPanel.add(playerPanel);
+	}
+	
+	public void createSlotPanel()
+	{
+		slotPanel = new JPanel();
+		slotPanel.setLayout(new GridLayout(3, 5, 10, 10));
+		slotLabels = new JLabel[5][3];
+		for(int i = 0; i < 3; i ++)
+		{
+			for(int j = 0; j < 5; j ++)
+			{
+				slotLabels[j][i] = new JLabel(new ImageIcon(slotPlaceHolderImage));
+				slotLabels[j][i].setAlignmentX(Component.CENTER_ALIGNMENT);
+				slotPanel.add(slotLabels[j][i]);
+			}
+		}
+		slotPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+	}
+	
 	public void createButtons()
 	{
 		spinActionListener = new ActionListener() 
@@ -415,106 +507,6 @@ public class GameScreen
 		});
 	}
 	
-	public void fillSlotmachine()
-	{
-		for(int i = 0; i < 3; i ++)
-		{
-			for(int j = 0; j < 5; j ++)
-			{
-				slotLabels[j][i].setIcon(new ImageIcon(slotImages[engine.getCurrentSlotImage().get(j, i)]));
-			}
-		}
-		slotPanel.repaint();
-	}
-	
-	public void fillSlotmachineLine(int x)
-	{
-		for(int y = 0; y < 3; y ++)
-		{
-			slotLabels[x][y].setIcon(new ImageIcon(slotImages[engine.getCurrentSlotImage().get(x, y)]));
-			slotPanel.repaint();
-		}
-	}
-	
-	public void fillSlotmachineRandom(int x)
-	{
-		slotLabels[x][2].setIcon(slotLabels[x][1].getIcon());
-		slotLabels[x][1].setIcon(slotLabels[x][0].getIcon());
-		slotLabels[x][0].setIcon(new ImageIcon(slotImages[ThreadLocalRandom.current().nextInt(0, engine.getSymbolOffset() + engine.getPlayerList().size())]));
-		slotPanel.repaint();
-	}
-	
-	public void resetSlotmachine()
-	{
-		for(int i = 0; i < 3; i ++)
-		{
-			for(int j = 0; j < 5; j ++)
-			{
-				slotLabels[j][i].setIcon(new ImageIcon(slotPlaceHolderImage));
-			}
-		}
-	}
-	
-	public void setEngine(Engine engine)
-	{
-		this.engine = engine;
-	}
-	
-	public void createFreeGamesPanel()
-	{
-		freeGamesPanel = new JPanel();
-		freeGamesPanel.setLayout(new BoxLayout(freeGamesPanel, BoxLayout.X_AXIS));
-		freeGamesDescLabel = new JLabel("Freispiele: ");
-		freeGamesPanel.add(freeGamesDescLabel);
-		freeGamesLabel = new JLabel("0/0");
-		freeGamesPanel.add(freeGamesLabel);
-		freeGamesPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-	}
-	
-	public void createPlayerPanel()
-	{
-		playerPanel = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) playerPanel.getLayout();
-		flowLayout.setAlignment(FlowLayout.RIGHT);
-		//playerPanel.setLayout(new BoxLayout(playerPanel, BoxLayout.X_AXIS));
-		playerDescLabel = new JLabel("Spieler: ");
-		playerDescLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		playerPanel.add(playerDescLabel);
-		playerLabel = new JLabel("PlayerX");
-		playerLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		playerPanel.add(playerLabel);
-	}
-
-	public void createTopPanel()
-	{
-		topPanel = new JPanel();
-		topPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
-		freeGamesPanel.setAlignmentX(JFrame.LEFT_ALIGNMENT);
-		topPanel.add(freeGamesPanel);
-		
-		rigidArea_2 = Box.createRigidArea(new Dimension(200, 20));
-		topPanel.add(rigidArea_2);
-		topPanel.add(playerPanel);
-	}
-	
-	public void createSlotPanel()
-	{
-		slotPanel = new JPanel();
-		slotPanel.setLayout(new GridLayout(3, 5, 10, 10));
-		slotLabels = new JLabel[5][3];
-		for(int i = 0; i < 3; i ++)
-		{
-			for(int j = 0; j < 5; j ++)
-			{
-				slotLabels[j][i] = new JLabel(new ImageIcon(slotPlaceHolderImage));
-				slotLabels[j][i].setAlignmentX(Component.CENTER_ALIGNMENT);
-				slotPanel.add(slotLabels[j][i]);
-			}
-		}
-		slotPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-	}
-	
 	public void createButtonPanel()
 	{
 		buttonPanel = new JPanel();
@@ -641,44 +633,6 @@ public class GameScreen
 		{
 			highLightTimer.stop();
 		}
-	}
-	
-	public int getNextHighlight()
-	{
-		boolean resetHighlight = false;
-		if((lastHighlight + 1) >= engine.getCurrentWinLines().length)
-		{
-			lastHighlight = 0;
-			resetHighlight = true;
-			
-		}
-		int nextHighLight = lastHighlight;
-		if(!resetHighlight)
-		{
-			nextHighLight ++;
-		}
-		for(int i = nextHighLight; i < engine.getCurrentWinLines().length; i ++)
-		{
-			if(engine.getCurrentWinLines()[i].isWin())
-			{
-				lastHighlight = i;
-				return i;
-			}
-		}
-		if(engine.isFreeGames(engine.getCurrentSlotImage()))
-		{
-			lastHighlight = 9;
-			return 9;
-		}
-		for(int i = 0; i < lastHighlight; i ++)
-		{
-			if(engine.getCurrentWinLines()[i].isWin())
-			{
-				lastHighlight = i;
-				return i;
-			}
-		}
-		return lastHighlight;
 	}
 	
 	public void highlightWinLine1(int length)//Hellblau
@@ -924,6 +878,49 @@ public class GameScreen
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public void setEngine(Engine engine)
+	{
+		this.engine = engine;
+	}
+	
+	public int getNextHighlight()
+	{
+		boolean resetHighlight = false;
+		if((lastHighlight + 1) >= engine.getCurrentWinLines().length)
+		{
+			lastHighlight = 0;
+			resetHighlight = true;
+			
+		}
+		int nextHighLight = lastHighlight;
+		if(!resetHighlight)
+		{
+			nextHighLight ++;
+		}
+		for(int i = nextHighLight; i < engine.getCurrentWinLines().length; i ++)
+		{
+			if(engine.getCurrentWinLines()[i].isWin())
+			{
+				lastHighlight = i;
+				return i;
+			}
+		}
+		if(engine.isFreeGames(engine.getCurrentSlotImage()))
+		{
+			lastHighlight = 9;
+			return 9;
+		}
+		for(int i = 0; i < lastHighlight; i ++)
+		{
+			if(engine.getCurrentWinLines()[i].isWin())
+			{
+				lastHighlight = i;
+				return i;
+			}
+		}
+		return lastHighlight;
 	}
 	
 	public boolean isAllStopped()
