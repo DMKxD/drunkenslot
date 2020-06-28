@@ -1,14 +1,24 @@
 package de.teamproject.drunkenslot.swingclient;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 import de.teamproject.drunkenslot.engine.Engine;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 
 public class SummaryDialog extends JDialog 
 {
@@ -16,32 +26,98 @@ public class SummaryDialog extends JDialog
 	private final JPanel contentPanel = new JPanel();
 	private DrunkenSlotGUI drunkenSlotGUI;
 	private Engine engine;
+	private JTable table;
+	private JButton okButton;
 	
 	public SummaryDialog(DrunkenSlotGUI drunkenSlotGUI, Engine engine) 
 	{
+		super(drunkenSlotGUI.getMainFrame());
 		this.drunkenSlotGUI = drunkenSlotGUI;
 		this.engine = engine;
 		setTitle("Rundenzusammenfassung");
-		setBounds(100, 100, 450, 300);
+		setResizable(false);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout());
+		setPreferredSize(new Dimension(300, 250));
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		createTablePanel();
+		createButtonPanel();
+		createButton();
+		pack();
+		revalidate();
+		repaint();
+		positionieren(this, 0, 0);
+	}
+	
+	public void createButtonPanel()
+	{
+		JPanel buttonPane = new JPanel();
+		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		okButton = new JButton("OK");
+		buttonPane.add(okButton);
+		getRootPane().setDefaultButton(okButton);
+		getContentPane().add(buttonPane, BorderLayout.SOUTH);
+	}
+	
+	public void createButton()
+	{
+		JDialog ref = this;
+		okButton.addActionListener(new ActionListener() 
 		{
-			JPanel buttonPane = new JPanel();
-			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			getContentPane().add(buttonPane, BorderLayout.SOUTH);
+			
+			@Override
+			public void actionPerformed(ActionEvent e) 
 			{
-				JButton okButton = new JButton("OK");
-				okButton.setActionCommand("OK");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
+				drunkenSlotGUI.getGameScreen().setShownSummary(true);
+				drunkenSlotGUI.getGameScreen().showDialogs();
+				ref.dispose();
 			}
+		});
+	}
+	
+	public void updateTable()
+	{
+		String data[][] = new String[engine.getPlayerList().size()][3];
+		String columnNames[] = new String[] {
+				"Spieler", "Schlücke", "Shots"
+			};
+		for(int i = 0; i < engine.getPlayerList().size(); i ++)
+		{
+			if((engine.getRoundDrinks()[i]+engine.getRoundShots()[i]) > 0)
 			{
-				JButton cancelButton = new JButton("Cancel");
-				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton);
+				data[i][0] = engine.getPlayerList().get(i).getName();
+				data[i][1] = engine.getRoundDrinks()[i]+"";
+				data[i][2] = engine.getRoundShots()[i]+"";
 			}
 		}
+		DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
+		table.setModel(tableModel);
+		
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        
+		for(int i = 0; i < tableModel.getColumnCount(); i++)
+	    {
+			table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+	    }
+		table.setPreferredSize(new Dimension(200, 180));
 	}
+	
+	public void createTablePanel()
+	{
+		table = new JTable();
+		updateTable();
+		JPanel outerTabelPanel = new JPanel();
+		outerTabelPanel.add(new JScrollPane(table));
+		getContentPane().add(outerTabelPanel, BorderLayout.CENTER);
+		updateTable();
+	}
+	
+	public void positionieren(Component component, int x, int y)
+    {
+        double lXKoordinate = Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2.0 - component.getWidth() / 2.0;
+        double lYKoordinate = Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2.0 - component.getHeight() / 2.0;
+        component.setLocation((int)lXKoordinate + x, (int)lYKoordinate + y);
+    }
 }

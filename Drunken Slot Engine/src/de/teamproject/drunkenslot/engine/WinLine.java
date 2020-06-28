@@ -54,7 +54,6 @@ public class WinLine
 	 */
 	public void setSymbol(int symbol)
 	{
-		//System.out.println("This:"+this.symbol+" Input:"+symbol);//Debug
 		if(!isBroken)
 		{
 			if(symbol > 10 || symbol == 7)//If PlayerSymbol then check if match, else broken, override currentsymbol, if its the first time
@@ -72,7 +71,7 @@ public class WinLine
 					isBroken = true;
 				}
 			}
-			else if(this.symbol == 6 || this.symbol == 7 || this.symbol >= 11)//Override current Symbol, if it is a Wild or allPlayerWild or player Symbol 
+			else if(this.symbol == 6 || this.symbol == 7 || this.symbol > 10)//Override current Symbol, if it is a Wild or allPlayerWild or player Symbol 
 			{
 				this.symbol = symbol;
 			}
@@ -97,7 +96,6 @@ public class WinLine
 			}
 			if(!isBroken)
 			{
-				//System.out.println("length ++");//Debug
 				length ++;
 			}
 		}
@@ -129,7 +127,7 @@ public class WinLine
 				return true;
 			}
 		}
-		else if(player > 0 && playerList.get(player).isActive())
+		else if(player >= 0 && playerList.get(player).isActive())
 		{
 			if((this.symbol >= 8 && this.symbol <= 10) || this.symbol == 5)//Niete oder Scatter
 			{

@@ -50,6 +50,25 @@ public class Engine implements GameModel
 		updateAlternativeSymbolList();
 	}
 	
+	/*public static void main(String [] args)
+	{
+		GameConfig config = new GameConfig(0, true);
+		config.createPlayer(Engine.getID(), "Dominik", null);
+		config.createPlayer(Engine.getID(), "Jonas", null);
+		/*config.createPlayer(Engine.getID(), "Peter", null);
+		config.createPlayer(Engine.getID(), "Wilhelm", null);
+		config.createPlayer(Engine.getID(), "Dagobert", null);
+		config.createPlayer(Engine.getID(), "Alina", null);
+		config.createPlayer(Engine.getID(), "Sophie", null);
+		config.createPlayer(Engine.getID(), "Bruno", null);
+		config.createPlayer(Engine.getID(), "Nike", null);
+		config.createPlayer(Engine.getID(), "Nino", null);
+		
+		Engine engine = new Engine(config);
+		engine.createGame();
+		engine.testWinLine();
+	}*/
+	
 	/**
 	 * Set the alternative symbol list based on the player count.
 	 * if the count is less or equal 2, add 2 more blank symbols,
@@ -390,11 +409,14 @@ public class Engine implements GameModel
 	public void testWinLine()
 	{
 		WinLine line = new WinLine(currentPlayerSymbol, 1, symbolOffset, difficulty, playerList, logging);
-		line.setSymbol(2);
-		line.setSymbol(6);
-		line.setSymbol(2);
 		line.setSymbol(11);
-		line.setSymbol(7);
+		line.setSymbol(11);
+		line.setSymbol(11);
+		line.setSymbol(6);
+		line.setSymbol(3);
+		System.out.println(playerList.get(0).getPlayerSymbol());
+		System.out.println(line.isWin());
+		System.out.println(line.getSymbol());
 		System.out.print(line.getWinLineText(playerList));
 	}
 	
@@ -949,6 +971,22 @@ public class Engine implements GameModel
 		for(int i = 0; i < currentWinLines.length; i ++)
 		{
 			if(currentWinLines[i].isWin())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Check if atleast one entry in the roundDrinks or roundShots array > 0
+	 * @return boolean true or false
+	 */
+	public boolean hasRoundShotsOrDrinks()
+	{
+		for(int i = 0; i < roundDrinks.length; i ++)
+		{
+			if(roundDrinks[i] > 0 || roundShots[i] > 0)
 			{
 				return true;
 			}

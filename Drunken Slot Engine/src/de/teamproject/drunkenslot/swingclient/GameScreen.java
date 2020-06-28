@@ -72,6 +72,7 @@ public class GameScreen
 	
 	private boolean[] stopped = new boolean[5];
 	private boolean hasShownHighlight = false;
+	private boolean hasShownSummary = false;
 	private int lastHighlight = 0;
 	private int borderThickness = 5;
 	
@@ -130,6 +131,7 @@ public class GameScreen
 		}
 		continueButton.setEnabled(false);
 		winTextArea.setText("");
+		hasShownSummary = false;
 	}
 	
 	public void resetTimer()
@@ -825,13 +827,28 @@ public class GameScreen
 					}
 				}
 			}
+			if(!dialogShown && !hasShownSummary)
+			{
+				if(engine.hasRoundShotsOrDrinks())
+				{
+					SummaryDialog summaryDialog = new SummaryDialog(drunkenSlotGUI, engine);
+					summaryDialog.setVisible(true);
+					dialogShown = true;
+				}
+			}
 		}
 		else
 		{
 			engine.clearRoundArrays();
+			hasShownSummary = true;
 		}
 		
-		if(engine.allRoundArraysClear())
+		if(!engine.hasWin())
+		{
+			hasShownSummary = true;
+		}
+		
+		if(engine.allRoundArraysClear() && hasShownSummary)
 		{
 			continueButton.setEnabled(true);
 			if(!engine.isFreeGameEnabled())
@@ -883,6 +900,11 @@ public class GameScreen
 	public void setEngine(Engine engine)
 	{
 		this.engine = engine;
+	}
+	
+	public void setShownSummary(boolean hasShownSummary)
+	{
+		this.hasShownSummary = hasShownSummary;
 	}
 	
 	public int getNextHighlight()
