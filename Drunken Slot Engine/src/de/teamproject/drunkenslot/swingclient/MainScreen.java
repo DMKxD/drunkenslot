@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.swing.SwingConstants;
+import javax.swing.BoxLayout;
 
 public class MainScreen
 {
@@ -81,9 +82,9 @@ public class MainScreen
 	public void createButtonPanel()
 	{
 		buttonPanel = new JPanel();
-		buttonPanel.setLayout(new GridLayout(4, 1));
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		
-		Component rigidArea = Box.createRigidArea(new Dimension(0, 70));
+		Component rigidArea = Box.createRigidArea(new Dimension(0, 150));
 		buttonPanel.add(rigidArea);
 		
 		buttonOnline = new JButton("Online");
@@ -107,7 +108,9 @@ public class MainScreen
 		testPanel3.add(buttonRule);
 		buttonPanel.add(testPanel3);
 		
-		contentPane.add(buttonPanel, BorderLayout.CENTER);
+		JPanel buttonOuterPanel = new JPanel();
+		buttonOuterPanel.add(buttonPanel);
+		contentPane.add(buttonOuterPanel, BorderLayout.CENTER);
 	}
 	
 	public void loadImage() throws IOException

@@ -7,6 +7,11 @@ import javax.swing.UIManager;
 import de.teamproject.drunkenslot.cmdclient.DSCmdClient;
 import de.teamproject.drunkenslot.swingclient.DrunkenSlotGUI;
 
+/**
+ * Main Class to launch the cmd or swing client with different args
+ * @author Domninik Haacke
+ *
+ */
 public class Main 
 {
 	public static void main(String[] args) 
@@ -15,6 +20,7 @@ public class Main
 		if(args0.equals("-cmd"))
 		{
 			DSCmdClient cmdClient = new DSCmdClient();
+			cmdClient.preGameLoop();
 		}
 		else if(args0.equals("-swing"))
 		{

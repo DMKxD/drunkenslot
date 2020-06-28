@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -19,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
@@ -27,6 +29,8 @@ import de.teamproject.drunkenslot.engine.*;
 import java.awt.FlowLayout;
 import javax.swing.Box;
 import javax.swing.SwingConstants;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
 
 public class GameScreen
 {
@@ -37,6 +41,7 @@ public class GameScreen
 	private JPanel buttonPanel;
 	private JPanel topPanel;
 	private JPanel outerSlotPanel;
+	private JPanel winTextPanel;
 	
 	private JLabel mainImageLabel;
 	private JLabel freeGamesDescLabel;
@@ -56,7 +61,6 @@ public class GameScreen
 	
 	private Engine engine;
 	private DrunkenSlotGUI drunkenSlotGUI;
-	private Component rigidArea;
 	private Component rigidArea_1;
 	private Component rigidArea_2;
 	
@@ -75,6 +79,7 @@ public class GameScreen
 	private int borderThickness = 5;
 	
 	private ActionListener spinActionListener, stopActionListener;
+	private Component rigidArea;
 	
 	public GameScreen(DrunkenSlotGUI drunkenSlotGUI) 
 	{
@@ -108,7 +113,7 @@ public class GameScreen
 		outerSlotPanel = new JPanel();
 		outerSlotPanel.add(slotPanel);
 		contentPane.add(outerSlotPanel);
-		contentPane.add(winTextArea);
+		contentPane.add(winTextPanel);
 		contentPane.add(buttonPanel);
 	}
 	
@@ -513,15 +518,14 @@ public class GameScreen
 	public void createButtonPanel()
 	{
 		buttonPanel = new JPanel();
-		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		spinButton = new JButton("Drehen");
+		spinButton.setPreferredSize(new Dimension(75, 22));
 		buttonPanel.add(spinButton);
 		
 		rigidArea = Box.createRigidArea(new Dimension(20, 20));
 		buttonPanel.add(rigidArea);
 		surrenderButton = new JButton("Aufgeben");
 		buttonPanel.add(surrenderButton);
-		
 		rigidArea_1 = Box.createRigidArea(new Dimension(20, 20));
 		buttonPanel.add(rigidArea_1);
 		continueButton = new JButton("Weiter");
@@ -532,10 +536,13 @@ public class GameScreen
 	public void createWinTextArea()
 	{
 		winTextArea = new JTextArea("", 9, 50);
-		winTextArea.setMinimumSize(new Dimension(600, 90));
-		winTextArea.setPreferredSize(new Dimension(600, 90));
+		//winTextArea.setMinimumSize(new Dimension(600, 90));
+		//winTextArea.setPreferredSize(new Dimension(600, 90));
 		winTextArea.setEditable(false);
-		winTextArea.setBorder(BorderFactory.createTitledBorder("Gewinne:"));
+		winTextPanel = new JPanel();
+		winTextPanel.setLayout(new BoxLayout(winTextPanel, BoxLayout.Y_AXIS));
+		winTextPanel.setBorder(BorderFactory.createTitledBorder("Gewinne:"));
+		winTextPanel.add(new JScrollPane(winTextArea));
 	}
 	
 	public void updateWinTextArea()

@@ -160,7 +160,9 @@ public class LobbyScreen extends JFrame
 			}
 		});
 		playerPanel.add(addPlayerButton);
-		contentPane.add(playerPanel, BorderLayout.CENTER);
+		JPanel playerOuterPanel = new JPanel();
+		playerOuterPanel.add(playerPanel);
+		contentPane.add(playerOuterPanel, BorderLayout.CENTER);
 	}
 	
 	public void createButtonpanel()

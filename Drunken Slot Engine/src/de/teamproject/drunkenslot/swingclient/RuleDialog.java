@@ -48,7 +48,6 @@ public class RuleDialog extends JDialog
 		this.playerID = playerID;
 		setBounds(100, 100, 500, 130);
 		setResizable(false);
-		setAlwaysOnTop(true);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout());
 		

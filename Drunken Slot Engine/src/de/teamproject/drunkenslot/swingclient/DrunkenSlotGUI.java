@@ -36,7 +36,6 @@ public class DrunkenSlotGUI
 	public DrunkenSlotGUI()
 	{
 		createDemoEngine();
-		
 		createScreens();
 		createMainFrame();
 	}
@@ -76,9 +75,9 @@ public class DrunkenSlotGUI
 		positionieren(mainFrame, 0, 0);
 		setWindowListener();
 		contentPane = new JPanel();
-		//switchToGameScreen();
+		switchToGameScreen();
 		//switchToMainScreen();
-		switchToLobbyScreen();
+		//switchToLobbyScreen();
 	}
 	
 	public void positionieren(Component component, int x, int y)

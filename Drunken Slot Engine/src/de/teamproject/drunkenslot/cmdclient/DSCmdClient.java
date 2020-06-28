@@ -11,6 +11,11 @@ import java.util.concurrent.ThreadLocalRandom;
 import de.teamproject.drunkenslot.engine.Engine;
 import de.teamproject.drunkenslot.engine.GameConfig;
 
+/**
+ * Command Line Client Class
+ * @author Dominik Haacke
+ *
+ */
 public class DSCmdClient 
 {
 	static Scanner sc;
@@ -48,8 +53,8 @@ public class DSCmdClient
 		resetThreads();
 		resetSlotSymbols();
 		//preGameLoop();
-		createDemoEngine();
-		gameRound();
+		//createDemoEngine();
+		//gameRound();
 	}
 	
 	public void createStopHighLightThread()
