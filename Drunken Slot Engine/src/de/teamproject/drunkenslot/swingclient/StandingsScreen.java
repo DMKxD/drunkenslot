@@ -114,9 +114,9 @@ public class StandingsScreen extends JFrame
 	{
 		table = new JTable();
 		table.setBorder(new EmptyBorder(5, 5, 5, 5));
-		table.setShowVerticalLines(false);
-		table.setShowHorizontalLines(false);
-		table.setShowGrid(false);
+		table.setShowVerticalLines(true);
+		table.setShowHorizontalLines(true);
+		table.setShowGrid(true);
 		table.setFont(new Font(null, Font.BOLD, 15));
 		JTableHeader header = table.getTableHeader();
 		//DSTableHeaderRenderer renderer = new DSTableHeaderRenderer(table);
@@ -190,7 +190,7 @@ public class StandingsScreen extends JFrame
 	
 	public void loadImage() throws IOException
 	{
-		BufferedImage wPic = ImageIO.read(this.getClass().getResource("/TitleImagePlaceholder.png"));
+		BufferedImage wPic = ImageIO.read(this.getClass().getResource("/DSLogoLarge.png"));
 		mainImageLabel = new JLabel(new ImageIcon(wPic));
 		mainImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 	}

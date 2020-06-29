@@ -22,6 +22,7 @@ public class DrunkenSlotGUI
 	private JFrame mainFrame;
 	private JPanel contentPane;
 	private MainScreen mainScreen;
+	private RuleScreen ruleScreen;
 	private LobbyScreen lobbyScreen;
 	private GameScreen gameScreen;
 	private StandingsScreen standingsScreen;
@@ -34,13 +35,15 @@ public class DrunkenSlotGUI
 	public DrunkenSlotGUI()
 	{
 		createDemoEngine();
-		createScreens();
 		createMainFrame();
+		createScreens();
+		switchToMainScreen();
 	}
 	
 	public void createScreens()
 	{
 		mainScreen = new MainScreen(this);
+		ruleScreen = new RuleScreen(this);
 		lobbyScreen = new LobbyScreen(this);
 		gameScreen = new GameScreen(this);
 		standingsScreen = new StandingsScreen(this);
@@ -69,12 +72,11 @@ public class DrunkenSlotGUI
 	{
 		mainFrame = new JFrame("Drunken Slot");
 		mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		mainFrame.setBounds(100, 100, 1000, 750);
+		mainFrame.setBounds(100, 100, 1200, 900);
 		positionieren(mainFrame, 0, 0);
 		setWindowListener();
 		contentPane = new JPanel();
 		//switchToGameScreen();
-		switchToMainScreen();
 		//switchToLobbyScreen();
 	}
 	
@@ -133,6 +135,8 @@ public class DrunkenSlotGUI
 	{
 		endScreen.updateTable();
 		endScreen.setWinner(engine.getWinner().getName());
+		endScreen.createTextTimer();
+		endScreen.startTextTimer();
 		contentPane = endScreen.getScreen();
 		mainFrame.setContentPane(contentPane);
 		mainFrame.revalidate();
@@ -157,7 +161,10 @@ public class DrunkenSlotGUI
 	
 	public void switchToRuleScreen() 
 	{
-		//TODO
+		contentPane = ruleScreen.getScreen();
+		mainFrame.setContentPane(contentPane);
+		mainFrame.revalidate();
+		mainFrame.repaint();
 	}
 	
 	public void setWindowListener()
@@ -169,7 +176,7 @@ public class DrunkenSlotGUI
 			{
 				Object[] options = {"Ja", "Nein"};
 				int submit = JOptionPane.showOptionDialog(	mainFrame,
-															"Möchten sie das Programm wirklich beenden?", 
+															"Möchten sie DrunkenSlot wirklich beenden?", 
 															"Beenden",
 															JOptionPane.YES_NO_OPTION,
 															JOptionPane.QUESTION_MESSAGE,

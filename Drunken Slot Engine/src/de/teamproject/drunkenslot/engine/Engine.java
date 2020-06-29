@@ -339,14 +339,14 @@ public class Engine implements GameModel
 					{
 						if(currentWin.isDistribute())
 						{
-							for(int j = 0; j < roundRules.length; j ++)
+							for(int j = 0; j < roundShotsDistribute.length; j ++)
 							{
 								roundShotsDistribute[j] = roundShotsDistribute[j] + currentWin.getAmount();
 							}
 						}
 						else
 						{
-							for(int j = 0; j < roundRules.length; j ++)
+							for(int j = 0; j < roundShots.length; j ++)
 							{
 								roundShots[j] = roundShots[j] + currentWin.getAmount();
 							}
@@ -356,14 +356,14 @@ public class Engine implements GameModel
 					{
 						if(currentWin.isDistribute())
 						{
-							for(int j = 0; j < roundRules.length; j ++)
+							for(int j = 0; j < roundDrinksDistribute.length; j ++)
 							{
 								roundDrinksDistribute[j] = roundDrinksDistribute[j] + currentWin.getAmount();
 							}
 						}
 						else
 						{
-							for(int j = 0; j < roundRules.length; j ++)
+							for(int j = 0; j < roundDrinks.length; j ++)
 							{
 								roundDrinks[j] = roundDrinks[j] + currentWin.getAmount();
 							}

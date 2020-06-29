@@ -333,7 +333,7 @@ public class DSCmdClient
 			Thread.sleep(500);
 		} 
 		catch (InterruptedException e) {}
-		System.out.println("Teamproject im Sommersemester 2020 von Dominik Haacke");
+		System.out.println("Teamprojekt im Sommersemester 2020 von Dominik Haacke");
 	}
 	
 	public void printDrunkenSlotLogo()
@@ -351,7 +351,7 @@ public class DSCmdClient
 		System.out.print(drunkenSlotLogo4);
 		System.out.print(drunkenSlotLogo5);
 		System.out.print(drunkenSlotLogo6);
-		System.out.println("Teamproject im Sommersemester 2020 von Dominik Haacke");
+		System.out.println("Teamprojekt im Sommersemester 2020 von Dominik Haacke");
 	}
 	
 	public void preGameLoop()
@@ -388,21 +388,21 @@ public class DSCmdClient
 			{
 				continue;
 			}
-			if(difficultyString.equalsIgnoreCase("Alkoholiker"))
+			if(difficultyString.equalsIgnoreCase("Alkoholiker") || difficultyString.equalsIgnoreCase("schwer"))
 			{
 				difficulty = 0;
 				difficultySet = true;
 				System.out.println("Schwierigkeit Alkoholiker gesetzt!");
 				waitForEnter();
 			}
-			else if(difficultyString.equalsIgnoreCase("Kneipengänger"))
+			else if(difficultyString.equalsIgnoreCase("Kneipengänger") || difficultyString.equalsIgnoreCase("mittel"))
 			{
 				difficulty = 1;
 				difficultySet = true;
 				System.out.println("Schwierigkeit Kneipengänger gesetzt!");
 				waitForEnter();
 			}
-			else if(difficultyString.equalsIgnoreCase("Abendtrinker"))
+			else if(difficultyString.equalsIgnoreCase("Abendtrinker") || difficultyString.equalsIgnoreCase("leicht"))
 			{
 				difficulty = 2;
 				difficultySet = true;
@@ -1260,9 +1260,9 @@ public class DSCmdClient
 		switch(symbol)
 		{
 			case 0:
-				return "DS";
+				return "VS";
 			case 1:
-				return "DD";
+				return "VD";
 			case 2:
 				return "TS";
 			case 3:
@@ -1274,7 +1274,7 @@ public class DSCmdClient
 			case 6:
 				return "WL";
 			case 7:
-				return "WA";
+				return "AP";
 			case 8:
 				return "NT";
 			case 9:

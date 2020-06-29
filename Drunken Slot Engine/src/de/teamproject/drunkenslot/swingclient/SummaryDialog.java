@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 import de.teamproject.drunkenslot.engine.Engine;
 import javax.swing.JScrollPane;
@@ -38,15 +40,13 @@ public class SummaryDialog extends JDialog
 		setResizable(false);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout());
-		setPreferredSize(new Dimension(300, 250));
+		//setPreferredSize(new Dimension(300, 250));
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		createTablePanel();
 		createButtonPanel();
 		createButton();
+		createTablePanel();
 		pack();
-		revalidate();
-		repaint();
 		positionieren(this, 0, 0);
 	}
 	
@@ -78,19 +78,35 @@ public class SummaryDialog extends JDialog
 	
 	public void updateTable()
 	{
-		String data[][] = new String[engine.getPlayerList().size()][3];
-		String columnNames[] = new String[] {
-				"Spieler", "Schlücke", "Shots"
-			};
+		table = new JTable();
+		int numOfVisibleRows = 0;
 		for(int i = 0; i < engine.getPlayerList().size(); i ++)
 		{
 			if((engine.getRoundDrinks()[i]+engine.getRoundShots()[i]) > 0)
 			{
-				data[i][0] = engine.getPlayerList().get(i).getName();
-				data[i][1] = engine.getRoundDrinks()[i]+"";
-				data[i][2] = engine.getRoundShots()[i]+"";
+				numOfVisibleRows ++;
 			}
 		}
+		String data[][] = new String[numOfVisibleRows][3];
+		String columnNames[] = new String[] {
+				"Spieler", "Schlücke", "Shots"
+			};
+		int index = 0;
+		for(int i = 0; i < engine.getPlayerList().size(); i ++)
+		{
+			if((engine.getRoundDrinks()[i]+engine.getRoundShots()[i]) > 0)
+			{
+				data[index][0] = engine.getPlayerList().get(i).getName();
+				data[index][1] = engine.getRoundDrinks()[i]+"";
+				data[index][2] = engine.getRoundShots()[i]+"";
+				index++;
+			}
+		}
+		table.setFont(new Font(null, Font.BOLD, 15));
+		JTableHeader header = table.getTableHeader();
+		//DSTableHeaderRenderer renderer = new DSTableHeaderRenderer(table);
+		header.setDefaultRenderer(new DSTableHeaderRenderer(table));
+		
 		DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
 		table.setModel(tableModel);
 		
@@ -101,17 +117,19 @@ public class SummaryDialog extends JDialog
 	    {
 			table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
 	    }
-		table.setPreferredSize(new Dimension(200, 180));
+		int cols = table.getColumnModel().getTotalColumnWidth();
+		int rows = table.getRowHeight() * numOfVisibleRows;
+		Dimension d = new Dimension( cols, rows );
+		table.setPreferredScrollableViewportSize( d );
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 	}
 	
 	public void createTablePanel()
 	{
-		table = new JTable();
 		updateTable();
 		JPanel outerTabelPanel = new JPanel();
 		outerTabelPanel.add(new JScrollPane(table));
 		getContentPane().add(outerTabelPanel, BorderLayout.CENTER);
-		updateTable();
 	}
 	
 	public void positionieren(Component component, int x, int y)

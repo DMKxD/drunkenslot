@@ -260,7 +260,7 @@ public class LobbyScreen extends JFrame
 	
 	public void loadImage() throws IOException
 	{
-		BufferedImage wPic = ImageIO.read(this.getClass().getResource("/TitleImagePlaceholder.png"));
+		BufferedImage wPic = ImageIO.read(this.getClass().getResource("/DSLogoLarge.png"));
 		mainImageLabel = new JLabel(new ImageIcon(wPic));
 		mainImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 	}

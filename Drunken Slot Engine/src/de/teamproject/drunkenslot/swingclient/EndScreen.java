@@ -1,9 +1,11 @@
 package de.teamproject.drunkenslot.swingclient;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -15,12 +17,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.BoxLayout;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 import de.teamproject.drunkenslot.engine.Engine;
 
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -47,6 +52,8 @@ public class EndScreen extends JFrame
 	private Engine engine;
 	private DrunkenSlotGUI drunkenSlotGUI;
 	private Component rigidArea1, rigidArea2;
+	private Timer textTimer;
+	private int r,g,b;
 	/**
 	 * Create the frame.
 	 */
@@ -72,11 +79,48 @@ public class EndScreen extends JFrame
 		createTable();
 		
 		createSouthPanel();
+		createTextTimer();
+	}
+	
+	public void createTextTimer()
+	{
+		r =255;
+		g = 0;
+		b = 0;
+		
+		textTimer = new Timer(5, new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)//Color Fading algorithm
+			{
+				if(r > 0 && b == 0)//fade to green
+				{
+					r--;
+					g++;
+				}
+				if(g > 0 && r == 0)//fade to blue
+				{
+					g--;
+					b++;
+				}
+				if(b > 0 && g == 0)//fade to red
+				{
+					r++;
+					b--;
+				}
+				winnerLabel.setForeground(new Color(r,g,b));
+			}
+		});
+	}
+	
+	public void startTextTimer()
+	{
+		textTimer.start();
 	}
 	
 	public void setWinner(String winner)
 	{
-		winnerLabel.setText(winnerLabel.getText() + winner);
+		winnerLabel.setText("Gewinner: "+ winner);
 	}
 	
 	public void createTopPanel()
@@ -89,6 +133,7 @@ public class EndScreen extends JFrame
 		topPanel.add(rigidArea1);
 		
 		winnerLabel = new JLabel("Gewinner: ");
+		winnerLabel.setFont(new Font(winnerLabel.getFont().getName(), Font.BOLD, 30));
 		winnerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
 		topPanel.add(winnerLabel);
@@ -127,9 +172,14 @@ public class EndScreen extends JFrame
 	{
 		table = new JTable();
 		table.setBorder(new EmptyBorder(5, 5, 5, 5));
-		table.setShowVerticalLines(false);
-		table.setShowHorizontalLines(false);
-		table.setShowGrid(false);
+		table.setShowVerticalLines(true);
+		table.setShowHorizontalLines(true);
+		table.setShowGrid(true);
+		table.setFont(new Font(null, Font.BOLD, 15));
+		JTableHeader header = table.getTableHeader();
+		//DSTableHeaderRenderer renderer = new DSTableHeaderRenderer(table);
+		header.setDefaultRenderer(new DSTableHeaderRenderer(table));
+		
 		table.setModel(new DefaultTableModel
 				(
 			new Object[][] 
@@ -152,6 +202,7 @@ public class EndScreen extends JFrame
 				return columnEditables[column];
 			}
 		});
+		updateTable();
 		contentPane.add(new JScrollPane(table), BorderLayout.CENTER);
 	}
 	
@@ -188,6 +239,7 @@ public class EndScreen extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
+				textTimer.stop();
 				drunkenSlotGUI.switchToMainScreen();
 			}
 		});
@@ -201,7 +253,7 @@ public class EndScreen extends JFrame
 	
 	public void loadImage() throws IOException
 	{
-		BufferedImage wPic = ImageIO.read(this.getClass().getResource("/TitleImagePlaceholder.png"));
+		BufferedImage wPic = ImageIO.read(this.getClass().getResource("/DSLogoLarge.png"));
 		mainImageLabel = new JLabel(new ImageIcon(wPic));
 		mainImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 	}

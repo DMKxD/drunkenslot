@@ -26,6 +26,8 @@ import javax.swing.border.EmptyBorder;
 
 import de.teamproject.drunkenslot.engine.*;
 import java.awt.FlowLayout;
+import java.awt.Font;
+
 import javax.swing.Box;
 import javax.swing.SwingConstants;
 
@@ -314,8 +316,10 @@ public class GameScreen
 		freeGamesPanel = new JPanel();
 		freeGamesPanel.setLayout(new BoxLayout(freeGamesPanel, BoxLayout.X_AXIS));
 		freeGamesDescLabel = new JLabel("Freispiele: ");
+		freeGamesDescLabel.setFont(new Font(freeGamesDescLabel.getFont().getName(), Font.BOLD, 20)); 
 		freeGamesPanel.add(freeGamesDescLabel);
 		freeGamesLabel = new JLabel("0/0");
+		freeGamesLabel.setFont(new Font(freeGamesLabel.getFont().getName(), Font.BOLD, 20)); 
 		freeGamesPanel.add(freeGamesLabel);
 		freeGamesPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 	}
@@ -327,9 +331,11 @@ public class GameScreen
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		//playerPanel.setLayout(new BoxLayout(playerPanel, BoxLayout.X_AXIS));
 		playerDescLabel = new JLabel("Spieler: ");
+		playerDescLabel.setFont(new Font(playerDescLabel.getFont().getName(), Font.BOLD, 20)); 
 		playerDescLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		playerPanel.add(playerDescLabel);
 		playerLabel = new JLabel("PlayerX");
+		playerLabel.setFont(new Font(playerLabel.getFont().getName(), Font.BOLD, 20)); 
 		playerLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		playerPanel.add(playerLabel);
 	}
@@ -571,7 +577,7 @@ public class GameScreen
 		{
 			for(int j = 0; j < 5; j ++)
 			{
-				slotLabels[j][i].setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255) , borderThickness, false));
+				slotLabels[j][i].setBorder(BorderFactory.createLineBorder(drunkenSlotGUI.getMainFrame().getBackground(), borderThickness, false));
 			}
 		}
 	}
@@ -871,7 +877,7 @@ public class GameScreen
 	
 	public void loadImage() throws IOException
 	{
-		BufferedImage placeholder = ImageIO.read(this.getClass().getResource("/TitleImagePlaceholder.png"));
+		BufferedImage placeholder = ImageIO.read(this.getClass().getResource("/DSLogoV1.png"));
 		mainImageLabel = new JLabel(new ImageIcon(placeholder));
 		mainImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		

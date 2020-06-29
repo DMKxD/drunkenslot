@@ -1,0 +1,119 @@
+ _____                   _                 _____ _       _   
+|  __ \                 | |               / ____| |     | |  
+| |  | |_ __ _   _ _ __ | | _____ _ __   | (___ | | ___ | |_ 
+| |  | | '__| | | | '_ \| |/ / _ \ '_ \   \___ \| |/ _ \| __|
+| |__| | |  | |_| | | | |   <  __/ | | |  ____) | | (_) | |_ 
+|_____/|_|   \__,_|_| |_|_|\_\___|_| |_| |_____/|_|\___/ \__|
+Teamproject im Sommersemester 2020 von Dominik Haacke
+----------------------------------------------------
+
+DrunkenSlot verbindet ein Slotmachine mit einem Trinkspiel.
+Pro Runde ist jeder Spieler einmal dran, zu seinem Zug kann
+ein Spieler aufgeben und spielt ab da nicht mehr mit.
+Nachdem man gedreht hat wird ein zufälliges SlotImage generiert,
+auf fünf Walzen mit jeweils drei Plätzen werden also insgesammt
+15 verschiedene Symbole angezeigt.
+Eine Gewinnlinie ist eine Kombination aus Symbolen die zusammen
+einen Gewinn ergeben. Das sind entweder drei gleiche Symbole, eine
+Kombination auch gleichen Symbolen mit Wild Symbolen und einem Player
+oder AllPlayer Symbol.
+
+Es gibt drei verschiedene Schwierigkeitsgrade.
+1. Alkoholiker: Gewinnlinen zählen ab 3 Symbolen, 3 gleiche Symbole
+		sind Symboleffekt x 1, 4 gleiche sind Symboleffekt x 2 
+		und 5 Symbole sind Symboleffekt x 3.
+2. Kneipengänger: Gewinnlinen zählen ab 4 Symbolen, 4 gleiche sind Symboleffekt x 1 
+		und 5 Symbole sind Symboleffekt x 2.
+3. Abendtrinker: Gewinnlinen zählen ab 5 Symbolen, 5 gleiche sind Symboleffekt x 1.
+
+GewinnLinien:
+
+1:
+--------------------------------------
+| ([XX]   [XX]   [XX]   [XX]   [XX]) |
+| ( XX     XX     XX     XX     XX ) |
+| ( XX     XX     XX     XX     XX ) |
+--------------------------------------
+
+2:
+--------------------------------------
+| ( XX     XX     XX     XX     XX ) |
+| ([XX]   [XX]   [XX]   [XX]   [XX]) |
+| ( XX     XX     XX     XX     XX ) |
+--------------------------------------
+
+3:
+--------------------------------------
+| ( XX     XX     XX     XX     XX ) |
+| ( XX     XX     XX     XX     XX ) |
+| ([XX]   [XX]   [XX]   [XX]   [XX]) |
+--------------------------------------
+
+4:
+
+--------------------------------------
+| ( XX    [XX]   [XX]   [XX]    XX ) |
+| ([XX]    XX     XX     XX    [XX]) |
+| ( XX     XX     XX     XX     XX ) |
+--------------------------------------
+
+5:
+
+--------------------------------------
+| ( XX     XX     XX     XX     XX ) |
+| ([XX]    XX     XX     XX    [XX]) |
+| ( XX    [XX]   [XX]   [XX]    XX ) |
+--------------------------------------
+
+6:
+--------------------------------------
+| ([XX]    XX     XX     XX    [XX]) |
+| ( XX    [XX]    XX    [XX]    XX ) |
+| ( XX     XX    [XX]    XX     XX ) |
+--------------------------------------
+
+7:
+--------------------------------------
+| ( XX     XX    [XX]    XX     XX ) |
+| ( XX    [XX]    XX    [XX]    XX ) |
+| ([XX]    XX     XX     XX    [XX]) |
+--------------------------------------
+
+8:
+--------------------------------------
+| ([XX]   [XX]    XX     XX     XX ) |
+| ( XX     XX    [XX]    XX     XX ) |
+| ( XX     XX     XX    [XX]   [XX]) |
+--------------------------------------
+
+9:
+--------------------------------------
+| ( XX     XX     XX    [XX]   [XX]) |
+| ( XX     XX    [XX]    XX     XX ) |
+| ([XX]   [XX]    XX     XX     XX ) |
+--------------------------------------
+
+Symbole:
+Mit Drink ist ein Schluck von einem Bier oder
+ähnlichem gemeint, ein Shot ist hier ein Kurzer.
+
+VS = Verteile Shot:	Der Spieler verteilt die gegebene Anzahl an Shots auf andere Spieler oder sich selbst.
+VD = Verteile Drink:	Der Spieler verteilt die gegebene Anzahl an Drinks auf andere Spieler oder sich selbst. 
+TS = Trinke Shot:	Der Spieler trinkt die gegebene Anzahl an Shots.
+TD = Trinke Drink:	Der Spieler Trinkt die gegebene Anzahl an Drinks.
+RL = Regel: 		Nur bei einer 5 Symbol Regel Gewinnlinie darf eine neue Regel bestimmt werden.
+			Eine Regel ist z.B. einem vor jedem Trinken etwas sagen oder tun. Eine Regel
+			gilt so lange, bis eine neue Regel bestimmt wird.
+SC = Scatter:		Ab 3 Scattern irgendwo im SlotImage werden Freispiele ausgelöst.
+WL = Wild:		Joker - wird in der Gewinnlinie als entsprechendes Symbol gezählt, dass zum
+			Gewinn führt.
+AP = Alle Spieler:	Linie zählt für alle Spieler dieses Symbol zählt als Wild, ist aber nicht mit anderen 
+			Spieler Symbolen kombinierbar.
+NT = Niete:		Ein Nieten Symbol bricht eine Gewinnliene und zählt als kein Gewinn.
+P1-P9 = Spieler Symbole:Überschreibt die jeweilige Gewinnliene an den Spieler. Zählt als Wild, ist aber
+			nicht mit anderen Spieler Symbolen oder dem Alle Spieler Symbol kombinierbar.
+
+Freispiele:
+Bei 3 oder mehr Scatter Symbolen werden Freispiele ausgelöst. Man gewinnt 5 Freispiele. Wenn während den Freispielen
+erneut 3 oder mehr Scatter Symbole in einem SlotImage sind, erhöhen sich die Freispiele um 5. Während den Freispielen
+bleibt der gleiche Spieler am Zug. Alle Spieler Symbole werden durch Wild Symbole ersetzt.	
