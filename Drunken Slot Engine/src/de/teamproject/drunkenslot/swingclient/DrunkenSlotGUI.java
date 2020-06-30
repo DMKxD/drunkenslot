@@ -17,6 +17,11 @@ import javax.swing.JPanel;
 import de.teamproject.drunkenslot.engine.Engine;
 import de.teamproject.drunkenslot.engine.GameConfig;
 
+/**
+ * Main Swing Graphical User Interface Class with all Screens
+ * @author DMKxD
+ *
+ */
 public class DrunkenSlotGUI 
 {
 	private JFrame mainFrame;

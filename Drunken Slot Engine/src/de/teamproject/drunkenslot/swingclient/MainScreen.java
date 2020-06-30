@@ -20,6 +20,11 @@ import java.io.IOException;
 import javax.swing.SwingConstants;
 import javax.swing.BoxLayout;
 
+/**
+ * MainScreen with Buttons to the Rule Screen and Offline Game
+ * @author Dominik Haacke
+ *
+ */
 public class MainScreen
 {
 	private JPanel contentPane;

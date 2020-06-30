@@ -22,6 +22,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 
+/**
+ * Summary Dialog, gets shown after every Round if logging is activated. Shows
+ * the drinks and shots for the round
+ * @author Dominik Haacke
+ *
+ */
 public class SummaryDialog extends JDialog 
 {
 	private static final long serialVersionUID = 1L;

@@ -29,6 +29,11 @@ import javax.swing.JButton;
 import javax.swing.Box;
 import java.awt.Dimension;
 
+/**
+ * Standings Screen, shows which player is aktive and how many drinks and shots every player had
+ * @author Dominik Haacke
+ *
+ */
 public class StandingsScreen extends JFrame 
 {
 	private static final long serialVersionUID = 1L;

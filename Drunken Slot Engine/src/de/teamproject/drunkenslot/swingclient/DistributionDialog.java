@@ -23,6 +23,11 @@ import java.util.ArrayList;
 
 import de.teamproject.drunkenslot.engine.*;
 
+/**
+ * Dialog to distribute Round Shots from the Engine
+ * @author Dominik Haacke
+ *
+ */
 public class DistributionDialog extends JDialog 
 {
 	

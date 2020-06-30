@@ -8,6 +8,11 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
+/**
+ * Custom DrunkenSlot TableCellRenderer, increases font size and makes it bold, it also centers the letters
+ * @author Dominik Haacke
+ *
+ */
 public class DSTableHeaderRenderer implements TableCellRenderer 
 {
 

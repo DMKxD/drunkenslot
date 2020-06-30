@@ -19,6 +19,11 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Rule Screen shows and explains all rules
+ * @author Dominik Haacke
+ *
+ */
 public class RuleScreen extends JFrame 
 {
 	private static final long serialVersionUID = 1L;

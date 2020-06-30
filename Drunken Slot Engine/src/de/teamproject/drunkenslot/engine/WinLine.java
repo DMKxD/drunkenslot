@@ -73,7 +73,15 @@ public class WinLine
 			}
 			else if(this.symbol == 6 || this.symbol == 7 || this.symbol > 10)//Override current Symbol, if it is a Wild or allPlayerWild or player Symbol 
 			{
-				this.symbol = symbol;
+				if(symbol > 7 && symbol < 11)
+				{
+					isBroken = true;
+				}
+				else
+				{
+					this.symbol = symbol;
+				}
+				
 			}
 			else if(this.symbol == -1)
 			{
@@ -395,7 +403,7 @@ public class WinLine
 		        				}
 		        			}
 		        			int nextRuleID = ids.get(ThreadLocalRandom.current().nextInt(0, ids.size()));
-		        			returnText += playerList.get(ids.get(nextRuleID)).getName() + " darf sich eine Regel ausdenken.\n";
+		        			returnText = playerList.get(ids.get(nextRuleID)).getName() + " darf sich eine Regel ausdenken.\n";
 		        		}
 		        	}
 		            break;

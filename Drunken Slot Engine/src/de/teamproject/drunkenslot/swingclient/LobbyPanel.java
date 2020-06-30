@@ -11,7 +11,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 /**
- * 
+ * Custom JPanel that holds the data for one new player in the lobby
  * @author Dominik Haacke
  *
  */

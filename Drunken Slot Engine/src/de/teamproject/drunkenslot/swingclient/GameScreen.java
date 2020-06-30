@@ -31,6 +31,11 @@ import java.awt.Font;
 import javax.swing.Box;
 import javax.swing.SwingConstants;
 
+/**
+ * Most important GUI Class, shows the SlotMachine and all its components
+ * @author Dominik Haacke
+ *
+ */
 public class GameScreen
 {
 	private JPanel contentPane;
@@ -63,7 +68,7 @@ public class GameScreen
 	private Component rigidArea_1;
 	private Component rigidArea_2;
 	
-	private boolean freeGamesStartetThisRound = false;
+	//private boolean freeGamesStartetThisRound = false;
 
 	private final int slotLineDelay = 5;
 	private final int minRollCounter = 12;
@@ -107,6 +112,7 @@ public class GameScreen
 		createTimer();
 		createButtons();
 		clearHighlights();
+		resetSlotmachine();
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 		contentPane.add(mainImageLabel);
 		contentPane.add(topPanel);
@@ -119,9 +125,14 @@ public class GameScreen
 	
 	public void clearAndUpdateScreen()
 	{
-		resetSlotmachine();
+		//resetSlotmachine();
 		playerLabel.setText(engine.getPlayerList().get(engine.getCurrentPlayerID()).getName());
+		if(engine.isFreeGameEnabled())
+		{
+			freeGamesLabel.setText((engine.getFreeSpinsLeft()+1)+"/"+engine.getFreeSpinsTotal());
+		}
 		freeGamesLabel.setText(engine.getFreeSpinsLeft()+"/"+engine.getFreeSpinsTotal());
+		freeGamesLabel.repaint();
 		spinButton.setEnabled(true);
 		if(engine.isFreeGameEnabled())
 		{
@@ -539,6 +550,7 @@ public class GameScreen
 		//winTextArea.setMinimumSize(new Dimension(600, 90));
 		//winTextArea.setPreferredSize(new Dimension(600, 90));
 		winTextArea.setEditable(false);
+		winTextArea.setFont(new Font(winTextArea.getFont().getName(), Font.BOLD, 15));
 		winTextPanel = new JPanel();
 		winTextPanel.setLayout(new BoxLayout(winTextPanel, BoxLayout.Y_AXIS));
 		winTextPanel.setBorder(BorderFactory.createTitledBorder("Gewinne:"));
@@ -566,7 +578,7 @@ public class GameScreen
 			{
 				engine.checkFreeGames(engine.getCurrentSlotImage());
 				winTextArea.append(engine.getFreeSpinsAmount()+" Freispiele gewonnen!");
-				freeGamesStartetThisRound = true;
+				//freeGamesStartetThisRound = true;
 			}
 		}
 	}
@@ -863,14 +875,7 @@ public class GameScreen
 			}
 			else
 			{
-				if(!freeGamesStartetThisRound)
-				{
-					engine.updateFreeGames();
-				}
-				else
-				{
-					freeGamesStartetThisRound = false;
-				}
+				engine.updateFreeGames();
 			}
 		}
 	}

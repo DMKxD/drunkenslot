@@ -36,7 +36,7 @@ public class Engine implements GameModel
 	static Scanner sc;
 	
 	/**
-	 * Standard engine constructor, takes a Config object to set all game values
+	 * Standard engine constructor, takes a config object to set all game values
 	 * @param config
 	 */
 	public Engine(GameConfig config)
@@ -412,8 +412,8 @@ public class Engine implements GameModel
 		line.setSymbol(11);
 		line.setSymbol(11);
 		line.setSymbol(11);
-		line.setSymbol(6);
-		line.setSymbol(3);
+		line.setSymbol(10);
+		line.setSymbol(10);
 		System.out.println(playerList.get(0).getPlayerSymbol());
 		System.out.println(line.isWin());
 		System.out.println(line.getSymbol());

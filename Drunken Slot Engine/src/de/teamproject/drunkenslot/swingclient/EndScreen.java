@@ -32,6 +32,11 @@ import javax.swing.JButton;
 import javax.swing.Box;
 import java.awt.Dimension;
 
+/**
+ * Endscreen that shows the winner and the result table
+ * @author Dominik Haacke
+ *
+ */
 public class EndScreen extends JFrame 
 {
 	private static final long serialVersionUID = 1L;

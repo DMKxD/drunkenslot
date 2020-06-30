@@ -107,7 +107,7 @@ RL = Regel: 		Nur bei einer 5 Symbol Regel Gewinnlinie darf eine neue Regel best
 SC = Scatter:		Ab 3 Scattern irgendwo im SlotImage werden Freispiele ausgelöst.
 WL = Wild:		Joker - wird in der Gewinnlinie als entsprechendes Symbol gezählt, dass zum
 			Gewinn führt.
-AP = Alle Spieler:	Linie zählt für alle Spieler dieses Symbol zählt als Wild, ist aber nicht mit anderen 
+AP = Alle Spieler:	Linie zählt für alle Spieler, dieses Symbol zählt als Wild, ist aber nicht mit anderen 
 			Spieler Symbolen kombinierbar.
 NT = Niete:		Ein Nieten Symbol bricht eine Gewinnliene und zählt als kein Gewinn.
 P1-P9 = Spieler Symbole:Überschreibt die jeweilige Gewinnliene an den Spieler. Zählt als Wild, ist aber
@@ -118,10 +118,15 @@ Bei 3 oder mehr Scatter Symbolen werden Freispiele ausgelöst. Man gewinnt 5 Fre
 erneut 3 oder mehr Scatter Symbole in einem SlotImage sind, erhöhen sich die Freispiele um 5. Während den Freispielen
 bleibt der gleiche Spieler am Zug. Alle Spieler Symbole werden durch Wild Symbole ersetzt.
 
+Logging:
+Ist logging aktiviert werden immer Dialoge zum verteilen der Shots und Drinks und eine Zwischenstandstabelle angezeigt.
+Deaktiviert man es gibt es so zusagen ein schnelleres Spiel, wo jeder Spieler sofort nacheinander dran kommt ohne immer
+Dialoge auszufüllen und es wird auch kein Zwischenstand angezeigt.
+
 Aufgeben
 Sobald ein Spieler aufgibt, wird er bei keinem Gewinn mehr mit einbezogen. Das Symbol des Spielers bleibt, ist aber
 dann so zusagen auch ein Nieten Symbol. Ebenfalls kann er beim verteilen von Drinks oder Shots nicht mehr ausgewählt
 werden. Geben alle Spieler bis auf einen auf, hat dieser gewonnen.
 
 Spieler
-Es müssen mindestens zwei Spieler mitmitspielen. Das Maximum liegt bei 10 Spielern.	
+Es müssen mindestens zwei Spieler mitspielen. Das Maximum liegt bei 10 Spielern.	

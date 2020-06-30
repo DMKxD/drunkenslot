@@ -8,7 +8,6 @@ import java.util.ArrayList;
  * @author Dominik Haacke
  *
  */
-
 public class GameConfig
 {
 

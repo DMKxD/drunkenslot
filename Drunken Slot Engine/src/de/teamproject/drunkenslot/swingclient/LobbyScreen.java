@@ -27,6 +27,11 @@ import de.teamproject.drunkenslot.engine.GameConfig;
 
 import java.awt.FlowLayout;
 
+/**
+ * LobbyScreen GUI Class to register new player and change the Game Settings
+ * @author Dominik Haacke
+ *
+ */
 public class LobbyScreen extends JFrame 
 {
 	/**

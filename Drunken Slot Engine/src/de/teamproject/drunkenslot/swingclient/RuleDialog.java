@@ -20,6 +20,11 @@ import java.awt.Component;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+/**
+ * Rule Dialog to set the new Rule for the Game
+ * @author Dominik Haacke
+ *
+ */
 public class RuleDialog extends JDialog 
 {
 

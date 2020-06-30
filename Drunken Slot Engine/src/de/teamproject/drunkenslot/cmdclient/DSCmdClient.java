@@ -68,7 +68,9 @@ public class DSCmdClient
 				{
 					synchronized (sc) 
 					{
+						sc.reset();
 						sc.nextLine();
+						sc.reset();
 						isHighLighting = false;
 					}	
 				}
@@ -103,18 +105,22 @@ public class DSCmdClient
 					clearHighlights();
 					clearScreen();
 					printSlot();
+					while(sc.hasNext())
+					{
+						sc.nextLine();
+					}
 					if(engine.isLogging())
 					{
 						distributeRoundShots();
 						distributeRoundDrinks();
 						checkChangeRule();
-						try 
+						if(engine.hasWin())
 						{
-							Thread.sleep(200);
-						} 
-						catch (InterruptedException e) 
-						{
-							e.printStackTrace();
+							clearScreen();
+							printSlot();
+							printWinLines();
+							showRoundSummaryScreen();
+							waitForEnter();
 						}
 					}
 					engine.finalizeRound();
@@ -252,8 +258,8 @@ public class DSCmdClient
 		GameConfig config = new GameConfig(0, true);
 		config.createPlayer(Engine.getID(), "Dominik", null);
 		config.createPlayer(Engine.getID(), "Jonas", null);
-		/*config.createPlayer(Engine.getID(), "Peter", null);
-		config.createPlayer(Engine.getID(), "Wilhelm", null);
+		config.createPlayer(Engine.getID(), "Peter", null);
+		/*config.createPlayer(Engine.getID(), "Wilhelm", null);
 		config.createPlayer(Engine.getID(), "Dagobert", null);
 		config.createPlayer(Engine.getID(), "Alina", null);
 		config.createPlayer(Engine.getID(), "Sophie", null);
@@ -595,7 +601,6 @@ public class DSCmdClient
 	public void showResultScreen()
 	{
 		System.out.println("---------------------------------------------");
-		System.out.println();
 		System.out.println("Gewinner: "+engine.getWinner().getName());
 		System.out.println();
 		System.out.println("Spieler		Symbol	Shots	Drinks	Aktiv");
@@ -607,6 +612,24 @@ public class DSCmdClient
 		}
 		System.out.println("Regel: "+engine.getRule());
 		System.out.println("---------------------------------------------");
+	}
+	
+	public void showRoundSummaryScreen()
+	{
+		System.out.println("--------------------------------------");
+		System.out.println("Rundenzusammenfassung:");
+		System.out.println("Spieler		Shots	Drinks");
+		for(int i = 0; i < engine.getPlayerList().size(); i ++)
+		{
+			if((engine.getRoundDrinks()[i]+engine.getRoundShots()[i]) > 0)
+			{
+				if(engine.getPlayerList().get(i).isActive())
+				{
+					System.out.println(engine.getPlayerList().get(i).getName()+"		"+engine.getRoundShots()[i]+"	"+engine.getRoundDrinks()[i]);
+				}
+			}
+		}
+		System.out.println("--------------------------------------");
 	}
 	
 	public void printWinLines()
@@ -652,7 +675,7 @@ public class DSCmdClient
 	 */
 	public void distributeRoundShotsLoop(int playerID)
 	{
-		System.out.println("----------------------------------------------------");
+		System.out.println("--------------------------------------");
 		while(engine.getRoundShotsDistribute()[playerID] != 0)
 		{
 			String messageString = engine.getPlayerList().get(playerID).getName()+" verteile noch "+engine.getRoundShotsDistribute()[playerID];
@@ -669,6 +692,7 @@ public class DSCmdClient
 			String name;
 			try
 			{
+				sc.reset();
 				name = sc.nextLine();
 			}
 			catch(NoSuchElementException e)
@@ -696,6 +720,7 @@ public class DSCmdClient
 				try
 				{
 					amount = sc.nextInt();
+					sc.nextLine();
 				}
 				catch(InputMismatchException e)
 				{
@@ -723,7 +748,7 @@ public class DSCmdClient
 			}
 		}
 		sc.reset();
-		System.out.println("----------------------------------------------------");
+		System.out.println("--------------------------------------");
 	}
 	
 	/**
@@ -750,7 +775,7 @@ public class DSCmdClient
 	 */
 	public void distributeRoundDrinksLoop(int playerID)
 	{
-		System.out.println("----------------------------------------------------");
+		System.out.println("--------------------------------------");
 		while(engine.getRoundDrinksDistribute()[playerID] != 0)
 		{
 			String messageString = engine.getPlayerList().get(playerID).getName()+" verteile noch "+engine.getRoundDrinksDistribute()[playerID];
@@ -767,6 +792,7 @@ public class DSCmdClient
 			String name = "";
 			try
 			{
+				sc.reset();
 				name = sc.nextLine();
 			}
 			catch (NoSuchElementException e)
@@ -795,6 +821,7 @@ public class DSCmdClient
 				try
 				{
 					amount = sc.nextInt();
+					sc.nextLine();
 				}
 				catch(InputMismatchException e)
 				{
@@ -822,7 +849,7 @@ public class DSCmdClient
 			}
 		}
 		sc.reset();
-		System.out.println("----------------------------------------------------");
+		System.out.println("--------------------------------------");
 	}
 	
 	/**
@@ -885,9 +912,11 @@ public class DSCmdClient
 		boolean nextRuleSet = false;
 		while(!nextRuleSet)
 		{
-			System.out.println("----------------------------------------------------");
-			System.out.print("Spieler "+engine.getPlayerList().get(playerID).getName()+" gib deine Regel ein: ");
+			System.out.println("--------------------------------------");
+			System.out.print(engine.getPlayerList().get(playerID).getName()+" gib deine Regel ein: ");
+			sc.reset();
 			String ruleInput = sc.nextLine();
+			sc.nextLine();
 			if(ruleInput.trim().equals("") || ruleInput == null)
 			{
 				System.out.println("Keine Eingabe!");
@@ -896,7 +925,7 @@ public class DSCmdClient
 			engine.setRule(ruleInput);
 			nextRuleSet = true;
 		}
-		System.out.println("----------------------------------------------------");
+		System.out.println("--------------------------------------");
 		sc.reset();
 	}
 	
@@ -909,7 +938,7 @@ public class DSCmdClient
 		boolean yesOrNo = false;
 		while(yesOrNo == false)
 		{
-			System.out.print("Spieler "+engine.getPlayerList().get(engine.getCurrentPlayerID()).getName()+" möchtest du diese Runde spielen? [Ja / Nein]: ");
+			System.out.print(engine.getPlayerList().get(engine.getCurrentPlayerID()).getName()+" möchtest du weiter spielen? [Ja / Nein]: ");
 			String name;
 			try
 			{
