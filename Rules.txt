@@ -116,4 +116,12 @@ P1-P9 = Spieler Symbole:Überschreibt die jeweilige Gewinnliene an den Spieler. 
 Freispiele:
 Bei 3 oder mehr Scatter Symbolen werden Freispiele ausgelöst. Man gewinnt 5 Freispiele. Wenn während den Freispielen
 erneut 3 oder mehr Scatter Symbole in einem SlotImage sind, erhöhen sich die Freispiele um 5. Während den Freispielen
-bleibt der gleiche Spieler am Zug. Alle Spieler Symbole werden durch Wild Symbole ersetzt.	
+bleibt der gleiche Spieler am Zug. Alle Spieler Symbole werden durch Wild Symbole ersetzt.
+
+Aufgeben
+Sobald ein Spieler aufgibt, wird er bei keinem Gewinn mehr mit einbezogen. Das Symbol des Spielers bleibt, ist aber
+dann so zusagen auch ein Nieten Symbol. Ebenfalls kann er beim verteilen von Drinks oder Shots nicht mehr ausgewählt
+werden. Geben alle Spieler bis auf einen auf, hat dieser gewonnen.
+
+Spieler
+Es müssen mindestens zwei Spieler mitmitspielen. Das Maximum liegt bei 10 Spielern.	

@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -145,16 +144,17 @@ public class EndScreen extends JFrame
 	
 	public void updateTable()
 	{
-		String data[][] = new String[engine.getPlayerList().size()][4];
+		String data[][] = new String[engine.getPlayerList().size()][5];
 		String columnNames[] = new String[] {
-				"Spieler", "Schlücke", "Shots", "Aktiv"
+				"Spieler", "Symbol", "Schlücke", "Shots", "Aktiv"
 			};
 		for(int i = 0; i < engine.getPlayerList().size(); i ++)
 		{
 			data[i][0] = engine.getPlayerList().get(i).getName();
-			data[i][1] = engine.getPlayerList().get(i).getDrinks()+"";
-			data[i][2] = engine.getPlayerList().get(i).getShots()+"";
-			data[i][3] = engine.getPlayerList().get(i).isActive() ? "Ja" : "Nein";
+			data[i][1] = "Player "+(i+1);
+			data[i][2] = engine.getPlayerList().get(i).getDrinks()+"";
+			data[i][3] = engine.getPlayerList().get(i).getShots()+"";
+			data[i][4] = engine.getPlayerList().get(i).isActive() ? "Ja" : "Nein";
 		}
 		DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
 		table.setModel(tableModel);
@@ -187,7 +187,7 @@ public class EndScreen extends JFrame
 				{null, null, null},
 			},
 			new String[] {
-				"Spieler", "Schlücke", "Shots", "Aktiv"
+				"Spieler", "Symbol", "Schlücke", "Shots", "Aktiv"
 			}
 		)
 			{

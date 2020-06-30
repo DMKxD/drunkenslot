@@ -84,7 +84,10 @@ public class SummaryDialog extends JDialog
 		{
 			if((engine.getRoundDrinks()[i]+engine.getRoundShots()[i]) > 0)
 			{
-				numOfVisibleRows ++;
+				if(engine.getPlayerList().get(i).isActive())
+				{
+					numOfVisibleRows ++;
+				}
 			}
 		}
 		String data[][] = new String[numOfVisibleRows][3];
@@ -96,10 +99,13 @@ public class SummaryDialog extends JDialog
 		{
 			if((engine.getRoundDrinks()[i]+engine.getRoundShots()[i]) > 0)
 			{
-				data[index][0] = engine.getPlayerList().get(i).getName();
-				data[index][1] = engine.getRoundDrinks()[i]+"";
-				data[index][2] = engine.getRoundShots()[i]+"";
-				index++;
+				if(engine.getPlayerList().get(i).isActive())
+				{
+					data[index][0] = engine.getPlayerList().get(i).getName();
+					data[index][1] = engine.getRoundDrinks()[i]+"";
+					data[index][2] = engine.getRoundShots()[i]+"";
+					index++;
+				}
 			}
 		}
 		table.setFont(new Font(null, Font.BOLD, 15));
