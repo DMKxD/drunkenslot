@@ -570,6 +570,7 @@ public class DSCmdClient
 		{
 			clearScreen();
 			showResultScreen();
+			waitForEnter();
 			sc.close();
 		}
 	}
@@ -608,6 +609,7 @@ public class DSCmdClient
 		}
 		System.out.println("Regel: "+engine.getRule());
 		System.out.println("---------------------------------------------");
+		sc.nextLine();
 	}
 	
 	public void showRoundSummaryScreen()
