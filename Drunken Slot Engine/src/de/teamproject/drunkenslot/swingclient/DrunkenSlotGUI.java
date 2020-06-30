@@ -35,6 +35,7 @@ public class DrunkenSlotGUI
 	private Engine engine;
 	private JLabel mainImageLabel;
 	private BufferedImage slotPlaceHolderImage;
+	private BufferedImage dsLogo;
 	private BufferedImage slotImages[];
 	
 	public DrunkenSlotGUI()
@@ -75,12 +76,21 @@ public class DrunkenSlotGUI
 	
 	private void createMainFrame() 
 	{
+		try 
+		{
+			loadImage();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
 		mainFrame = new JFrame("Drunken Slot");
 		mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		mainFrame.setBounds(100, 100, 1200, 900);
 		positionieren(mainFrame, 0, 0);
 		setWindowListener();
 		contentPane = new JPanel();
+		mainFrame.setIconImage(dsLogo);
 		//switchToGameScreen();
 		//switchToLobbyScreen();
 	}
@@ -218,6 +228,8 @@ public class DrunkenSlotGUI
 		{
 			slotImages[i] = ImageIO.read(this.getClass().getResource("/slotImages/slotSymbol"+i+".png"));
 		}
+		
+		dsLogo = ImageIO.read(this.getClass().getResource("/DSIcon.png")); 
 	}
 	
 	public BufferedImage[] getSlotImages()
@@ -228,6 +240,11 @@ public class DrunkenSlotGUI
 	public BufferedImage getSlotPlaceHolderImage()
 	{
 		return slotPlaceHolderImage;
+	}
+	
+	public BufferedImage getDSLogo()
+	{
+		return dsLogo;
 	}
 	
 	public JLabel getMainImageLabel()

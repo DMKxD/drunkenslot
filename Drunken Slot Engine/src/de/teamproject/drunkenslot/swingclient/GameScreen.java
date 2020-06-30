@@ -68,7 +68,7 @@ public class GameScreen
 	private Component rigidArea_1;
 	private Component rigidArea_2;
 	
-	//private boolean freeGamesStartetThisRound = false;
+	private boolean freeGamesStartetThisRound = false;
 
 	private final int slotLineDelay = 5;
 	private final int minRollCounter = 12;
@@ -449,7 +449,7 @@ public class GameScreen
 							    "Spieler "+engine.getWinner().getName()+" hat gewonnen",
 							    JOptionPane.YES_OPTION,
 							    JOptionPane.QUESTION_MESSAGE,
-							    null,//TODO Icon
+							    new ImageIcon(drunkenSlotGUI.getDSLogo()),
 							    options,
 							    options[1]);
 						if(n == JOptionPane.YES_OPTION || n == JOptionPane.CLOSED_OPTION)
@@ -474,7 +474,7 @@ public class GameScreen
 						    "Spieler "+engine.getPlayerList().get(engine.getCurrentPlayerID()).getName()+" will aufgeben.",
 						    JOptionPane.YES_NO_OPTION,
 						    JOptionPane.QUESTION_MESSAGE,
-						    null,//TODO Icon
+						    new ImageIcon(drunkenSlotGUI.getDSLogo()),
 						    options,
 						    options[1]);
 					if(n == JOptionPane.YES_OPTION)
@@ -513,7 +513,7 @@ public class GameScreen
 							    "Gewinner",
 							    JOptionPane.YES_OPTION,
 							    JOptionPane.QUESTION_MESSAGE,
-							    null,//TODO Icon
+							    new ImageIcon(drunkenSlotGUI.getDSLogo()),
 							    options,
 							    options[0]);
 						if(n == JOptionPane.YES_OPTION || n == JOptionPane.CLOSED_OPTION)
@@ -550,7 +550,7 @@ public class GameScreen
 		//winTextArea.setMinimumSize(new Dimension(600, 90));
 		//winTextArea.setPreferredSize(new Dimension(600, 90));
 		winTextArea.setEditable(false);
-		winTextArea.setFont(new Font(winTextArea.getFont().getName(), Font.BOLD, 15));
+		winTextArea.setFont(new Font(winTextArea.getFont().getName(), Font.BOLD, 18));
 		winTextPanel = new JPanel();
 		winTextPanel.setLayout(new BoxLayout(winTextPanel, BoxLayout.Y_AXIS));
 		winTextPanel.setBorder(BorderFactory.createTitledBorder("Gewinne:"));
@@ -578,7 +578,7 @@ public class GameScreen
 			{
 				engine.checkFreeGames(engine.getCurrentSlotImage());
 				winTextArea.append(engine.getFreeSpinsAmount()+" Freispiele gewonnen!");
-				//freeGamesStartetThisRound = true;
+				freeGamesStartetThisRound = true;
 			}
 		}
 	}
@@ -869,13 +869,20 @@ public class GameScreen
 		if(engine.allRoundArraysClear() && hasShownSummary)
 		{
 			continueButton.setEnabled(true);
+			if(engine.isFreeGameEnabled())
+			{
+				if(!freeGamesStartetThisRound)
+				{
+					engine.updateFreeGames();
+				}
+				else
+				{
+					freeGamesStartetThisRound = false;
+				}
+			}
 			if(!engine.isFreeGameEnabled())
 			{
 				engine.updateCurrentPlayer();
-			}
-			else
-			{
-				engine.updateFreeGames();
 			}
 		}
 	}

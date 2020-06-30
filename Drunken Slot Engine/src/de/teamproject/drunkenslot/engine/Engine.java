@@ -270,13 +270,6 @@ public class Engine implements GameModel
 						slotImage.set(i, j, alternativeSymbolList.get(ThreadLocalRandom.current().nextInt(0, alternativeSymbolList.size())));
 					}
 				}
-				if(isFreeGameEnabled)//First Iteration, alle Spieler Wilds durch normale ersetzen
-				{
-					if(slotImage.get(i, j) >= slotMachine.getSymbolOffset())
-					{
-						slotImage.set(i, j, 6);
-					}
-				}
 
 				if(slotImage.get(i,j) == 5)//Reduce scatter occurrence
 				{
@@ -284,6 +277,14 @@ public class Engine implements GameModel
 					if(keepScatter > 0)
 					{
 						slotImage.set(i, j, alternativeSymbolList.get(ThreadLocalRandom.current().nextInt(0, alternativeSymbolList.size())));
+					}
+				}
+				
+				if(isFreeGameEnabled)//First Iteration, alle Spieler Wilds durch normale ersetzen
+				{
+					if(slotImage.get(i, j) >= slotMachine.getSymbolOffset())
+					{
+						slotImage.set(i, j, 6);
 					}
 				}
 			}

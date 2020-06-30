@@ -53,6 +53,7 @@ public class RuleDialog extends JDialog
 		this.playerID = playerID;
 		setBounds(100, 100, 500, 130);
 		setResizable(false);
+		setIconImage(drunkenSlotGUI.getDSLogo());
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout());
 		

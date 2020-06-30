@@ -105,10 +105,6 @@ public class DSCmdClient
 					clearHighlights();
 					clearScreen();
 					printSlot();
-					while(sc.hasNext())
-					{
-						sc.nextLine();
-					}
 					if(engine.isLogging())
 					{
 						distributeRoundShots();
